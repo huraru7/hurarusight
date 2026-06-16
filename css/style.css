@@ -1,0 +1,38 @@
+/* =============================================================
+   style.css — ベーススタイル（最小）
+   ここに見た目を少しずつ足していきます。
+   ============================================================= */
+
+/* --- 最小リセット --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- ベース --- */
+body {
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", sans-serif;
+  color: #222;
+  background-color: #ffffff;
+  line-height: 1.6;
+}
+
+/* --- サイト全体: いまは中央にタイトルだけ --- */
+.site {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.site__title {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
