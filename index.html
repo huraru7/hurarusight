@@ -5,15 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>huraru</title>
     <link rel="stylesheet" href="css/style.css" />
+
+    <!-- 粒子アニメ用に Three.js を CDN(esm.sh) から読み込む準備（まだ描画はしない） -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://esm.sh/three@0.160.0"
+        }
+      }
+    </script>
   </head>
   <body>
-    <main class="site">
-      <h1 class="site__title">huraru</h1>
+    <!-- 粒子アニメを描く背景キャンバス（今は空＝何も描いていない） -->
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
 
-      <!-- ここから少しずつセクションを足していきます
+    <main class="site">
+      <!-- ファーストビュー（玄関） -->
+      <section class="hero">
+        <h1 class="hero__title">huraru</h1>
+        <p class="hero__tagline">Wanderer of Worlds</p>
+
+        <div class="hero__scroll" aria-hidden="true">
+          <span class="hero__scroll-text">Scroll</span>
+          <span class="hero__arrow">↓</span>
+        </div>
+      </section>
+
+      <!-- ここから下に少しずつセクションを足していきます
            例: <section id="about">…</section> など -->
     </main>
 
+    <!-- サイトの動き（素のスクリプト） -->
     <script defer src="js/main.js"></script>
+
+    <!-- 粒子アニメの足場（Three.js モジュール。準備だけで描画はしていない） -->
+    <script type="module" src="js/particles.js"></script>
   </body>
 </html>

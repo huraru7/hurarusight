@@ -20,19 +20,111 @@ body {
   color: #222;
   background-color: #ffffff;
   line-height: 1.6;
+
+  /* 操作ミスで文字が選択状態になるのを防ぐ（選択・コピー不可） */
+  -webkit-user-select: none; /* Safari/旧Chrome 用 */
+  user-select: none;
+  -webkit-touch-callout: none; /* iOS の長押しメニュー抑止 */
 }
 
-/* --- サイト全体: いまは中央にタイトルだけ --- */
+/* --- 粒子アニメ用の背景キャンバス（今は空。粒子を足すと背面に表示される） --- */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: -1; /* コンテンツの背面 */
+  pointer-events: none;
+}
+
+/* --- サイト全体のラッパー（粒子キャンバスより前面に） --- */
 .site {
+  position: relative;
+  z-index: 1;
+}
+
+/* =============================================================
+   ファーストビュー（玄関）
+   ============================================================= */
+.hero {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
-.site__title {
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
+/* 粒子の上でも文字が読みやすいよう、中央にうっすら白い光をしく */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    closest-side at 50% 45%,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+
+.hero__title {
+  font-size: clamp(3rem, 11vw, 6.5rem);
+  font-weight: 300;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em; /* letter-spacing の右余白を相殺して中央に */
+}
+
+.hero__tagline {
+  margin-top: 0.6rem;
+  font-size: clamp(0.8rem, 2.4vw, 1.05rem);
   font-weight: 400;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.35em;
+  text-indent: 0.35em;
+  text-transform: uppercase;
+  color: #6b6560;
+}
+
+/* スクロールを促すヒント（下部） */
+.hero__scroll {
+  position: absolute;
+  bottom: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: #8a857d;
+}
+.hero__scroll-text {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+}
+.hero__arrow {
+  font-size: 1.1rem;
+  animation: scrollBob 2s ease-in-out infinite;
+}
+
+@keyframes scrollBob {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+/* 視差を減らす設定では、揺れる演出を止める */
+@media (prefers-reduced-motion: reduce) {
+  .hero__arrow {
+    animation: none;
+  }
 }
