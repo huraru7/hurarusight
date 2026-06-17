@@ -8,11 +8,36 @@
 huraru-portfolio/
 ├── index.html      入口。ブラウザが最初に開くページ
 ├── css/
-│   └── style.css   見た目（スタイル）
-└── js/
-    ├── main.js       動き（素のスクリプト）
-    └── particles.js  粒子アニメの足場（Three.js / 準備のみ・未描画）
+│   ├── style.css     見た目（スタイル）
+│   └── terminal.css  ターミナルの見た目（独立）
+├── js/
+│   ├── main.js       内容（data/content.js）を読み込んで HTML に流し込む
+│   ├── particles.js  ファーストビュー背景の粒子アニメ（Three.js）
+│   └── terminal/     ターミナルコンソール（裏の顔・コンソールからのみ参照）
+└── data/
+    ├── content.js    ★サイトの「中身」（自己紹介・リンク等）の編集場所
+    └── settings.js   ★サイトの「設定」（見た目・動き）の編集場所
 ```
+
+## 2つのデータファイルの使い分け
+
+- **`data/content.js`** … 文章・リンクなどの **中身**（何を表示するか）
+- **`data/settings.js`** … 色・動きなどの **設定**（どう見せるか）。今は粒子アニメの設定（`particles`）。
+  数値を変えるだけで `js/` を触らず調整できます（今後 background や hero の設定もここに追加予定）。
+
+## 内容の編集（`data/content.js` 一箇所だけ）
+
+文章やリンクは **`data/content.js` を直すだけ**で反映されます。HTML 側は「ここに入れる」と
+印を付けておくと、`js/main.js` が自動で流し込みます。
+
+| HTML の印 | 入るもの | 例 |
+|---|---|---|
+| `data-bind="profile.tagline"` | その値（テキスト） | キャッチコピー |
+| `data-intro` | `profile.intro` の各行を `<p>` 段落に | 自己紹介 |
+| `data-links` | `links` を `<li><a>` 一覧に | SNS リンク |
+
+例: 自己紹介を出したいセクションに `<div data-intro></div>` を置くだけ
+（中身は `data/content.js` の `profile.intro`）。index.html にコメント例があります。
 
 - 基本は素の HTML / CSS / JS です。
 - 粒子アニメ用に **Three.js だけ CDN(esm.sh) から読み込む準備**を入れてあります（後述）。
@@ -31,12 +56,21 @@ huraru-portfolio/
 
 ## 粒子アニメ（`js/particles.js` / Three.js）
 
-ファーストビューの背景として、柔らかな点がゆっくり漂います。`#particle-canvas` は画面全面・背面。
+ファーストビューの背景。水色に発光する粒が、**いくつかの形（球・波・らせん・環）に集まり、
+数秒ごとに次の形へモーフして巡回**します。`#particle-canvas` は画面全面・背面。
 
-- 数・色・大きさ・透明度 → `js/particles.js` の `COUNT` と `PointsMaterial`
-- 動きの速さ → `_loop()` 内の係数（回転 `0.03`・呼吸 `0.25` など）
-- `window.huraruParticles` で後から操作可能（`.stop()` / `.start()`）
-- `prefers-reduced-motion`（視差を減らす設定）では自動で静止します
+**調整は `data/settings.js` の `particles` を編集するだけ**（`js/particles.js` は触らなくてOK）:
+
+- 数 → `count` ／ 色 → `colorEdge`(ふち)・`colorCore`(芯) ／ 大きさ → `size`
+- 形を保つ時間・モーフ時間 → `hold` / `morph`
+- 巡回する形と順番 → `shapes`（例 `["sphere","ring"]` にすれば2形だけ）
+- 動き → `rotateSpeed` / `breatheAmp` / `breatheSpeed` / `twinkleSpeed` / `parallax`
+- 処理の重さ → `maxPixelRatio`
+
+その他:
+- `window.huraruParticles` で操作可能（`.stop()` / `.start()` / `.next()` で次の形へ）
+- `prefers-reduced-motion`（視差を減らす設定）では巡回せず1形を静止表示
+- 形の種類そのものを増やす場合は `js/particles.js` の `SHAPE_GENERATORS` に関数を足します
 
 ## ここから足していくときの目安
 
@@ -47,3 +81,27 @@ huraru-portfolio/
 
 > メモ: 以前は `src/` で細かくモジュール分割し、CDN からライブラリを読み込む構成でしたが、
 > 個人サイトの出発点としては過剰だったため、分かりやすい classic 構成にリセットしました。
+
+## ターミナルコンソール（vβ1.0 / サイトの「裏の顔」）
+
+画面右下にポップアップする、ターミナル風のコンソール。コマンドでサイトの情報取得・操作ができる。
+
+- **開く/閉じる:** `` ` ``（バッククォート）または `Cmd+K` / `Ctrl+K`。閉じるは `Esc` か `[x]`。
+- **コマンド:** `help` で一覧。`<動詞> [対象] [--フラグ]` 形式（例 `search link` / `go top` /
+  `run effect particles-next` / `scan status` / `clear`）。`Tab` で補完、`↑↓` で候補/履歴、`Enter` で実行。
+- **vβ1.0:** 11コマンドの**枠組み**まで。まだ無いサイト機能（go先のセクション・テーマ・効果音 等）は
+  「未登録」等の応答で受ける（中身はサイトを作り込むほど増える）。隠し要素（`unlock`）は未実装。
+
+### 編集する場所
+
+- 応答メッセージの文言 → `js/terminal/responses.js`
+- コマンドの文法（動詞・対象・使い方） → `js/terminal/grammar.js`
+- コマンドの処理 → `js/terminal/commands.js`
+- 見た目 → `css/terminal.css`
+
+### 層のルール（情報の置き場所）
+
+- `data/`（content.js / settings.js）… **公開層**。サイト全体から参照可。
+- `js/terminal/` … **非公開層**。コンソールからのみ参照（サイト本体は import しない）。
+- `js/terminal/secrets.js` … 最深部。**外部 export しない**。解放は `tryUnlock()` 経由のみ。
+
