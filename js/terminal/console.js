@@ -66,6 +66,7 @@ export class Terminal {
       </div>
       <div class="term__log" role="log" aria-live="polite"></div>
       <div class="term__inputline">
+        <div class="term__suggest" role="listbox" aria-label="候補"></div>
         <span class="term__prompt">&gt;</span>
         <span class="term__field-wrap">
           <input class="term__field" type="text" autocomplete="off" autocapitalize="off"
@@ -81,9 +82,31 @@ export class Terminal {
     this.field = el.querySelector(".term__field");
     this.mirror = el.querySelector(".term__mirror");
     this.ghost = el.querySelector(".term__ghost");
+    this.suggestEl = el.querySelector(".term__suggest");
     el.querySelector(".term__close").addEventListener("click", () => this.close());
     el.addEventListener("pointerdown", (e) => {
-      if (e.target !== this.field) setTimeout(() => this.field.focus(), 0);
+      if (e.target !== this.field && !e.target.closest(".term__suggest")) {
+        setTimeout(() => this.field.focus(), 0);
+      }
+    });
+
+    // 候補のクリック確定 / ホバー選択
+    this.suggestEl.addEventListener("pointerdown", (e) => {
+      const item = e.target.closest(".term__suggest-item");
+      if (!item) return;
+      e.preventDefault(); // フォーカスを奪わない
+      this._sel = Number(item.dataset.index);
+      this._acceptSuggestion();
+      this.field.focus();
+    });
+    this.suggestEl.addEventListener("pointermove", (e) => {
+      const item = e.target.closest(".term__suggest-item");
+      if (!item) return;
+      const i = Number(item.dataset.index);
+      if (i !== this._sel) {
+        this._sel = i;
+        this._refresh();
+      }
     });
   }
 
@@ -113,23 +136,60 @@ export class Terminal {
     this.isOpen ? this.close() : this.open();
   }
 
-  /* ---------- 入力 ---------- */
+  /* ---------- 入力 / 補完 ---------- */
   _onInput() {
     this._sel = 0;
-    this._refreshGhost();
+    this._refresh();
   }
 
-  _refreshGhost() {
+  /** 候補・ゴースト・ドロップダウンをまとめて更新 */
+  _refresh() {
     const val = this.field.value;
     this._sugg = suggest(val);
-    const { candidates, token } = this._sugg;
+    const { candidates, token, index } = this._sugg;
+    if (this._sel >= candidates.length) this._sel = 0;
+
+    // 空入力（まだ何も打っていない）では候補を出さない
+    const show = candidates.length > 0 && !(index === 0 && token === "");
+
+    // インライン・ゴースト
     this.mirror.textContent = val;
-    if (candidates.length && this._sel < candidates.length) {
-      this.ghost.textContent = candidates[this._sel].slice(token.length);
+    if (show) {
+      this.ghost.textContent = candidates[this._sel].name.slice(token.length);
       this.ghost.style.left = this.mirror.offsetWidth + "px";
     } else {
       this.ghost.textContent = "";
     }
+
+    // ドロップダウン
+    this._showSuggest = show;
+    if (show) {
+      this.suggestEl.innerHTML = candidates
+        .map(
+          (c, i) => `
+        <div class="term__suggest-item${i === this._sel ? " is-active" : ""}" data-index="${i}" role="option">
+          <span class="term__suggest-name">${c.name}</span>
+          <span class="term__suggest-desc">${c.desc ?? ""}</span>
+        </div>`
+        )
+        .join("");
+      this.suggestEl.classList.add("is-open");
+    } else {
+      this.suggestEl.classList.remove("is-open");
+      this.suggestEl.innerHTML = "";
+    }
+  }
+
+  /** 選択中の候補を入力に確定 */
+  _acceptSuggestion() {
+    const { candidates } = this._sugg;
+    if (!this._showSuggest || !candidates.length) return false;
+    this.field.value = applyCandidate(this._sugg, candidates[this._sel].name);
+    this._sel = 0;
+    this._refresh();
+    const n = this.field.value.length;
+    this.field.setSelectionRange(n, n);
+    return true;
   }
 
   _onKey(e) {
@@ -143,33 +203,37 @@ export class Terminal {
     }
 
     if (e.key === "Enter") {
+      // Enter は常にコマンド実行（候補確定はしない＝ターミナルらしく）
       e.preventDefault();
       const val = this.field.value;
       this.field.value = "";
-      this._refreshGhost();
+      this._refresh();
       this._submit(val);
       return;
     }
 
+    // Tab / →（行末）で候補を確定
     if (e.key === "Tab") {
       e.preventDefault();
-      const { candidates } = this._sugg;
-      if (candidates.length) {
-        this.field.value = applyCandidate(this._sugg, candidates[this._sel]);
-        this._sel = 0;
-        this._refreshGhost();
+      this._acceptSuggestion();
+      return;
+    }
+    if (e.key === "ArrowRight") {
+      if (this._showSuggest && this.field.selectionStart === this.field.value.length) {
+        e.preventDefault();
+        this._acceptSuggestion();
       }
       return;
     }
 
     if (e.key === "ArrowUp" || e.key === "ArrowDown") {
       const { candidates } = this._sugg;
-      if (candidates.length > 1) {
-        // 候補を循環
+      if (this._showSuggest && candidates.length > 1) {
+        // 候補リストを移動
         e.preventDefault();
         const dir = e.key === "ArrowDown" ? 1 : -1;
         this._sel = (this._sel + dir + candidates.length) % candidates.length;
-        this._refreshGhost();
+        this._refresh();
       } else {
         // 履歴呼び出し
         e.preventDefault();
@@ -183,7 +247,7 @@ export class Terminal {
     if (!this.history.length) return;
     this._histIndex = Math.max(0, Math.min(this.history.length, this._histIndex + dir));
     this.field.value = this.history[this._histIndex] ?? "";
-    this._refreshGhost();
+    this._refresh();
     // カーソルを末尾へ
     const n = this.field.value.length;
     this.field.setSelectionRange(n, n);

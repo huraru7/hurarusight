@@ -8,20 +8,20 @@ export const settings = {
 	/* 粒子アニメ（ファーストビュー背景） */
 	particles: {
 		count: 3000, // 粒の数（多いほど密。重い時は減らす）
-		size: 26, // 粒の大きさ
+		size: 30, // 粒の大きさ
 
 		colorEdge: "#2456c8", // 粒のふちの色（背景の空と差をつける濃い青）
 		colorCore: "#5b9bf0", // 粒の芯（中心）の色
 
 		/* モーフ（形の巡回） */
-		hold: 6.5, // 1つの形を保つ秒数
+		hold: 5, // 1つの形を保つ秒数
 		morph: 2.6, // 次の形へ移るのにかける秒数
 		// 使える形: sphere / wave / spiral / ring / heart / star / helix / infinity / rose / cube
 		shapes: ["sphere", "ring", "spiral", "helix", "infinity", "star", "heart", "rose", "cube", "wave"], // 巡回する形と順番（消す/並べ替え自由）
 		shapeScale: 2.6, // 形のおおよその大きさ
 
 		/* 動き */
-		rotateSpeed: 0.03, // 全体がゆっくり回る速さ
+		rotateSpeed: 0.06, // 全体がゆっくり回る速さ
 		breatheAmp: 0.15, // 上下にふわっと呼吸する幅
 		breatheSpeed: 0.25, // 呼吸の速さ
 		twinkleSpeed: 1.6, // 粒が瞬く速さ

@@ -1,9 +1,9 @@
 /* =============================================================
-   autocomplete.js — 入力補完（ゴースト文字 + 候補リスト）
-     suggest(input)        → { token, candidates, segs, index }
-     applyCandidate(s, c)   → 候補を反映した新しい入力文字列
-   ・verb 入力中 → verb 候補
-   ・verb + 空白後 → その verb の target 候補（help は verb 名）
+   autocomplete.js — 入力補完（予測変換）
+     suggest(input) → { token, candidates:[{name,desc}], segs, index }
+     applyCandidate(s, name) → 候補を反映した新しい入力文字列
+   ・verb 入力中 → verb 候補（説明 = その verb の help）
+   ・verb + 空白後 → target 候補（説明 = targetDesc）。help は verb 名 + "tags"
    ・隠し要素関連 target は候補に出さない（grammar.targets に含めない）
    ============================================================= */
 
@@ -14,20 +14,30 @@ export function suggest(input) {
   const index = segs.length - 1;
   const token = segs[index] ?? "";
 
-  let list = [];
+  // [{ name, desc }] の候補プールを作る
+  let pool = [];
   if (index === 0) {
-    list = VERBS; // verb 補完
+    pool = VERBS.map((v) => ({ name: v, desc: GRAMMAR[v].help }));
   } else if (index === 1 && GRAMMAR[segs[0]]) {
-    list = segs[0] === "help" ? VERBS : GRAMMAR[segs[0]].targets; // target 補完
+    const verb = segs[0];
+    if (verb === "help") {
+      pool = [
+        ...VERBS.map((v) => ({ name: v, desc: GRAMMAR[v].help })),
+        { name: "tags", desc: "応答タグ（[OK]/[ERROR] 等）の説明" },
+      ];
+    } else {
+      const g = GRAMMAR[verb];
+      pool = g.targets.map((t) => ({ name: t, desc: g.targetDesc?.[t] ?? "" }));
+    }
   }
 
-  const candidates = list.filter((x) => x.startsWith(token));
+  const candidates = pool.filter((c) => c.name.startsWith(token));
   return { token, candidates, segs, index };
 }
 
-/** 候補を選んで入力に反映（末尾にスペースを足し次のトークンへ） */
-export function applyCandidate(suggestion, candidate) {
+/** 候補名を選んで入力に反映（末尾にスペースを足し次のトークンへ） */
+export function applyCandidate(suggestion, name) {
   const copy = suggestion.segs.slice();
-  copy[suggestion.index] = candidate;
+  copy[suggestion.index] = name;
   return copy.join(" ") + " ";
 }

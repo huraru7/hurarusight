@@ -94,12 +94,56 @@
 
 /* 入力行（最下部固定） */
 .term__inputline {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 8px 10px;
   border-top: 1px solid #23232b;
   flex: 0 0 auto;
+}
+
+/* 予測変換ドロップダウン（入力行の上に出る） */
+.term__suggest {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 100%;
+  margin-bottom: 6px;
+  display: none;
+  flex-direction: column;
+  max-height: 220px;
+  overflow-y: auto;
+  background: rgba(18, 18, 24, 0.98);
+  border: 1px solid #2a2a33;
+  border-radius: 6px;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.4);
+}
+.term__suggest.is-open {
+  display: flex;
+}
+.term__suggest-item {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.term__suggest-item.is-active {
+  background: #23232e;
+}
+.term__suggest-name {
+  flex: 0 0 auto;
+  min-width: 88px;
+  color: #ffffff;
+}
+.term__suggest-desc {
+  flex: 1 1 auto;
+  color: #6b6b78;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .term__prompt {
   color: #ffffff;

@@ -6,7 +6,7 @@
        await?: "confirm", onConfirm?: ()=>result }
    ============================================================= */
 
-import { GRAMMAR, VERBS, VERSION } from "./grammar.js";
+import { GRAMMAR, VERBS, VERSION, TAGS } from "./grammar.js";
 import { responses as R, MANIFEST } from "./responses.js";
 import { nearest } from "./parser.js";
 import { tryUnlock } from "./secrets.js";
@@ -194,11 +194,40 @@ const HANDLERS = {
 
   /* ---------- help ---------- */
   help({ target }) {
+    // タグの説明
+    if (target === "tags") {
+      const lines = ["[INFO] response tags", ""];
+      for (const { tag, desc } of TAGS) lines.push(`[${tag}] ${desc}`);
+      return { lines };
+    }
+
+    // 個別コマンドの詳細
     if (target) {
       const g = GRAMMAR[target];
       if (!g) return { lines: R.unknownCommand(target, nearest(target, VERBS)) };
-      return { lines: [`[INFO] ${target} — ${g.help}`, `        Usage: ${g.usage}`] };
+      const lines = [`[INFO] ${target} — ${g.help}`, "", `  Usage: ${g.usage}`];
+
+      if (g.targets.length) {
+        lines.push("", "  Targets:");
+        for (const t of g.targets) lines.push(`    ${t.padEnd(10)} ${g.targetDesc?.[t] ?? ""}`);
+      }
+      const flagNames = Object.keys(g.flags);
+      if (flagNames.length) {
+        lines.push("", "  Flags:");
+        for (const f of flagNames) {
+          const def = g.flags[f];
+          const head = def.value ? `${f} ${def.placeholder ?? "<value>"}` : f;
+          lines.push(`    ${head.padEnd(18)} ${def.desc ?? ""}`);
+        }
+      }
+      if (g.examples?.length) {
+        lines.push("", "  Examples:");
+        for (const ex of g.examples) lines.push(`    ${ex}`);
+      }
+      return { lines };
     }
+
+    // 一覧（カテゴリ別）+ 案内
     const byCat = {};
     for (const v of VERBS) {
       const c = GRAMMAR[v].category;
@@ -209,7 +238,7 @@ const HANDLERS = {
       lines.push(`  ${cat}`);
       for (const v of verbs) lines.push(`    ${v.padEnd(8)} ${GRAMMAR[v].help}`);
     }
-    lines.push("", "[INFO] type 'help <verb>' for usage.");
+    lines.push("", "[INFO] 'help <verb>' で詳細 / 'help tags' でタグの説明");
     return { lines };
   },
 
