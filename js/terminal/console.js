@@ -8,6 +8,7 @@ import { VERSION } from "./grammar.js";
 import { parse } from "./parser.js";
 import { execute } from "./commands.js";
 import { suggest, applyCandidate } from "./autocomplete.js";
+import { onTerminalCommand } from "../fragments/triggers.js";
 
 const TAG_CLASS = {
   INFO: "term--info",
@@ -108,6 +109,51 @@ export class Terminal {
         this._refresh();
       }
     });
+
+    this._bindDrag(el.querySelector(".term__bar"));
+  }
+
+  /** ヘッダーをドラッグしてパレットを自由に移動できるようにする */
+  _bindDrag(bar) {
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
+    let startLeft = 0;
+    let startTop = 0;
+
+    const onMove = (e) => {
+      if (!dragging) return;
+      const maxLeft = window.innerWidth - this.root.offsetWidth;
+      const maxTop = window.innerHeight - this.root.offsetHeight;
+      const left = Math.min(Math.max(0, startLeft + (e.clientX - startX)), Math.max(0, maxLeft));
+      const top = Math.min(Math.max(0, startTop + (e.clientY - startY)), Math.max(0, maxTop));
+      this.root.style.left = `${left}px`;
+      this.root.style.top = `${top}px`;
+    };
+    const onUp = () => {
+      dragging = false;
+      this.root.classList.remove("is-dragging");
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+
+    bar.addEventListener("pointerdown", (e) => {
+      if (e.target.closest(".term__close")) return;
+      const rect = this.root.getBoundingClientRect();
+      startX = e.clientX;
+      startY = e.clientY;
+      startLeft = rect.left;
+      startTop = rect.top;
+      // 初回ドラッグで中央寄せ(left:50%+transform)から絶対座標へ切り替える
+      this.root.style.left = `${rect.left}px`;
+      this.root.style.top = `${rect.top}px`;
+      this.root.style.transform = "none";
+      dragging = true;
+      this.root.classList.add("is-dragging");
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      e.preventDefault();
+    });
   }
 
   _bind() {
@@ -174,6 +220,9 @@ export class Terminal {
         )
         .join("");
       this.suggestEl.classList.add("is-open");
+      this.suggestEl
+        .querySelector(".term__suggest-item.is-active")
+        ?.scrollIntoView({ block: "nearest" });
     } else {
       this.suggestEl.classList.remove("is-open");
       this.suggestEl.innerHTML = "";
@@ -276,6 +325,7 @@ export class Terminal {
       this.print(parsed.lines);
       return;
     }
+    onTerminalCommand(parsed.verb, parsed.target);
     this._run(execute(parsed, this.ctx));
   }
 

@@ -40,7 +40,7 @@
   pointer-events: auto;
 }
 
-/* ヘッダー */
+/* ヘッダー（ドラッグハンドル） */
 .term__bar {
   display: flex;
   align-items: center;
@@ -48,6 +48,14 @@
   padding: 8px 10px;
   border-bottom: 1px solid #23232b;
   flex: 0 0 auto;
+  cursor: grab;
+  touch-action: none;
+}
+.term.is-dragging {
+  transition: none;
+}
+.term.is-dragging .term__bar {
+  cursor: grabbing;
 }
 .term__title {
   color: #6b6b78;
@@ -79,9 +87,12 @@
   min-height: 1.65em;
 }
 
-/* ユーザー入力のエコー */
-.term__echo {
-  color: #ffffff;
+/* ユーザー入力のエコー（自分が打ったコマンド。タグ色の中でも一目で分かるように強調） */
+.term--echo {
+  color: #61afef;
+  font-weight: 600;
+  border-left: 2px solid #61afef;
+  padding-left: 6px;
 }
 
 /* タグ別カラー */

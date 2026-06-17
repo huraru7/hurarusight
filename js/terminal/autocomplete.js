@@ -8,6 +8,7 @@
    ============================================================= */
 
 import { GRAMMAR, VERBS } from "./grammar.js";
+import { getState } from "../fragments/state.js";
 
 export function suggest(input) {
   const segs = input.split(" ");
@@ -28,6 +29,10 @@ export function suggest(input) {
     } else {
       const g = GRAMMAR[verb];
       pool = g.targets.map((t) => ({ name: t, desc: g.targetDesc?.[t] ?? "" }));
+      // 断片システム解放後だけ「fragments」を候補に出す（解放前は隠す）
+      if (verb === "run" && getState().unlocked) {
+        pool.push({ name: "fragments", desc: "断片の収集状況を開く" });
+      }
     }
   }
 

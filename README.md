@@ -108,3 +108,15 @@ huraru-portfolio/
 - `js/terminal/` … **非公開層**。コンソールからのみ参照（サイト本体は import しない）。
 - `js/terminal/secrets.js` … 最深部。**外部 export しない**。解放は `tryUnlock()` 経由のみ。
 
+## 断片収集システム（`js/fragments/`）
+
+サイトの裏側を探索すると見つかる隠しコレクション要素。ターミナルで特定のコードを `unlock`
+すると有効化され、その後サイト内の特定の行動を取ると断片を1つずつ集められる。
+有効化後は `run fragments` で収集状況（モーダル）を確認できる。進捗は `localStorage` に保存され、
+他端末とは同期しない。
+
+- 何が解放トリガーになるか・解放コードなどは**意図的に非公開**（コードを直接読めば分かるが、
+  README やヘルプには出さない）。
+- 関連ファイル: `js/fragments/`（data/state/toast/modal/triggers）、`css/fragments.css`、
+  `robots.txt` / `wanderer/`。`js/terminal/secrets.js` の解放にもフックしている。
+

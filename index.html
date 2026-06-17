@@ -6,11 +6,17 @@
     <title>huraru</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/terminal.css" />
+    <link rel="stylesheet" href="css/fragments.css" />
 
-    <!-- ターミナル用フォント（JetBrains Mono） -->
+    <!-- ターミナル用フォント（JetBrains Mono）/ 断片収集モーダル用フォント（Crimson Text） -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Crimson+Text:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- hurarunium.echo("threshold") -->
 
     <!-- 粒子アニメ用に Three.js を CDN(esm.sh) から読み込む準備（まだ描画はしない） -->
     <script type="importmap">
@@ -35,6 +41,8 @@
           <span class="hero__scroll-text">Scroll</span>
           <span class="hero__arrow">↓</span>
         </div>
+
+        <span class="frag-trigger-03" aria-hidden="true" style="position:absolute;bottom:6px;right:6px;width:10px;height:10px;opacity:0.02;"></span>
       </section>
 
       <!-- ここから下に少しずつセクションを足していきます。
@@ -60,5 +68,8 @@
 
     <!-- ターミナルコンソール（裏の顔・独立モジュール。` か Cmd/Ctrl+K で開く） -->
     <script type="module" src="js/terminal/index.js"></script>
+
+    <!-- 断片収集システムの行動トリガー（裏の顔の一部） -->
+    <script type="module" src="js/fragments/triggers.js"></script>
   </body>
 </html>

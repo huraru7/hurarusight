@@ -14,11 +14,16 @@ import { tryUnlock } from "./secrets.js";
 import { content } from "../../data/content.js";
 import { settings } from "../../data/settings.js";
 
+import { getState } from "../fragments/state.js";
+import { open as openFragmentsModal } from "../fragments/modal.js";
+import { FRAGMENTS } from "../fragments/data.js";
+
 const OPEN_TARGET_VERBS = new Set(["go", "unlock", "help"]); // 対象が自由 or 別検証
 
 /** 閉じた target 集合に対する検証（不正なら error 行を返す） */
 function targetError(verb, target) {
   if (OPEN_TARGET_VERBS.has(verb)) return null;
+  if (verb === "run" && target === "fragments") return null; // 隠しターゲット。補完には出さない
   const allowed = GRAMMAR[verb].targets;
   if (allowed.length && target && !allowed.includes(target)) {
     return R.unknownTarget(target, nearest(target, allowed));
@@ -114,7 +119,15 @@ const HANDLERS = {
     if (target === "journal") {
       const intro = content.profile?.intro ?? [];
       if (!intro.length) return { lines: ["[INFO] journal is empty."] };
-      return { lines: ["[INFO] journal", ...intro.map((p) => `  ${p}`)] };
+      const lines = ["[INFO] journal", ...intro.map((p) => `  ${p}`)];
+      if (getState().stage >= 1) {
+        lines.push("", "[CLASSIFIED] behind the lines");
+        for (const id of getState().collected) {
+          const f = FRAGMENTS.find((x) => x.id === id);
+          if (f) lines.push(`  #${f.id} ${f.name} — ${f.note}`, `    (${f.condition})`);
+        }
+      }
+      return { lines };
     }
     if (target === "log") {
       if (!ctx.history.length) return { lines: R.read.emptyLog() };
@@ -139,12 +152,19 @@ const HANDLERS = {
 
   /* ---------- run ---------- */
   run({ target, value, flags }) {
+    if (target === "fragments") {
+      if (!getState().unlocked) return { lines: [`[ERROR] unknown script: 'fragments'`] };
+      return { lines: [], effect: () => openFragmentsModal() };
+    }
     if (target === "effect") {
       if (!value) return { lines: [R.run.needName()] };
       const p = window.huraruParticles;
       if (value === "particles-next" && p?.next) return { lines: [R.run.ok(value)], effect: () => p.next() };
       if (value === "particles-stop" && p?.stop) return { lines: [R.run.ok(value)], effect: () => p.stop() };
       if (value === "particles-start" && p?.start) return { lines: [R.run.ok(value)], effect: () => p.start() };
+      if (value === "fade" && getState().stage >= 2 && p?.next) {
+        return { lines: [R.run.ok(value)], effect: () => { p.stop(); setTimeout(() => p.start(), 600); } };
+      }
       return { lines: [R.run.notRegistered(value)] };
     }
     // intro / ambient はまだ未登録
