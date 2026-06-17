@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/terminal.css" />
     <link rel="stylesheet" href="css/fragments.css" />
+    <link rel="stylesheet" href="css/links.css" />
 
-    <!-- ターミナル用フォント（JetBrains Mono）/ 断片収集モーダル用フォント（Crimson Text） -->
+    <!-- ターミナル用フォント（JetBrains Mono）/ 断片収集モーダル用フォント（Crimson Text）/ Links見出し用（Cinzel） -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Crimson+Text:ital@0;1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Crimson+Text:ital@0;1&family=Cinzel&display=swap"
       rel="stylesheet"
     />
 
@@ -28,12 +29,12 @@
     </script>
   </head>
   <body>
-    <!-- 粒子アニメを描く背景キャンバス（今は空＝何も描いていない） -->
-    <canvas id="particle-canvas" aria-hidden="true"></canvas>
-
     <main class="site">
       <!-- ファーストビュー（玄関） -->
       <section class="hero">
+        <!-- 粒子アニメの背景キャンバス。.hero 内に収め、ここでだけ表示する -->
+        <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
         <h1 class="hero__title">huraru</h1>
         <p class="hero__tagline" data-bind="profile.tagline">Wanderer of Worlds</p>
 
@@ -52,12 +53,16 @@
            <section id="about">
              <div data-intro></div>
            </section>
-
-           ▼ リンク一覧を出したくなったら、このコメントを外すだけ:
-           <nav id="links">
-             <ul data-links></ul>
-           </nav>
       -->
+
+      <!-- Links セクション（扉/石版）。内容は data/links.js を編集すれば反映されます -->
+      <section class="links" id="links">
+        <div class="links__header">
+          <p class="links__title">L I N K S</p>
+          <p class="links__subtitle">// gates to other realms</p>
+        </div>
+        <div class="links__grid" data-links-grid></div>
+      </section>
     </main>
 
     <!-- サイトの動き（data/content.js を読み込むためモジュール） -->
@@ -65,6 +70,9 @@
 
     <!-- 粒子アニメの足場（Three.js モジュール。準備だけで描画はしていない） -->
     <script type="module" src="js/particles.js"></script>
+
+    <!-- Links セクション（扉/石版）の DOM 生成・挙動 -->
+    <script type="module" src="js/links.js"></script>
 
     <!-- ターミナルコンソール（裏の顔・独立モジュール。` か Cmd/Ctrl+K で開く） -->
     <script type="module" src="js/terminal/index.js"></script>

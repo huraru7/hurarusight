@@ -22,12 +22,7 @@ export const content = {
     ],
   },
 
-  /* リンク（SNS など）。※ url は実際のものに差し替えてください */
-  links: [
-    { label: "X", url: "https://x.com/hurarunium" },
-    { label: "YouTube", url: "https://www.youtube.com/@hurarunium" },
-    { label: "GitHub", url: "https://github.com/hurarunium" },
-  ],
+  /* リンク（SNS など）は data/links.js で管理しています */
 
   /* 作品など、今後増やす項目もここに足していけます
   works: [

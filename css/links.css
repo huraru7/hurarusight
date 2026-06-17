@@ -1,0 +1,249 @@
+/* =============================================================
+   links.css — Links セクション（扉/石版）の見た目
+   ============================================================= */
+
+.links {
+  position: relative;
+  padding: 8vh 6vw 12vh;
+  text-align: center;
+
+  /* ★ 仮の背景（本実装は別途デザイン検討）。粒子はファーストビューのみなので、
+     ここから下が唐突に見えないよう一旦トーンだけ合わせている。 */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 40%);
+}
+
+.links__header {
+  margin-bottom: 5vh;
+}
+.links__title {
+  font-family: "Cinzel", serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  color: #2a3640;
+}
+.links__subtitle {
+  margin-top: 0.5rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #5a6b78;
+}
+
+.links__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2.2rem;
+}
+
+/* ---------- 共通 ---------- */
+.link-item {
+  position: relative;
+  width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.link-item:hover {
+  transform: translateY(-4px);
+}
+.link-item__icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5a6b78;
+  transition: color 0.3s ease;
+}
+.link-item__icon svg {
+  width: 100%;
+  height: 100%;
+}
+.link-item__label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8rem;
+  color: #2a3640;
+}
+.link-item__sublabel {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
+  color: #8c98a3;
+}
+
+/* ---------- 扉（gate） ---------- */
+.link-item[data-type="gate"] {
+  padding: 1.4rem 0.8rem 0.9rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 6px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+.link-item__arch {
+  position: absolute;
+  top: 0.4rem;
+  left: 50%;
+  width: 60%;
+  height: 1px;
+  transform: translateX(-50%);
+  border-top: 1px dashed var(--color-border-secondary);
+  transition: border-color 0.3s ease;
+}
+.link-item__arch::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 2.2rem;
+  border-left: 1px dashed var(--color-border-secondary);
+  transition: border-color 0.3s ease;
+}
+.link-item__knobs {
+  position: absolute;
+  bottom: 0.7rem;
+  left: 50%;
+  width: 2.2rem;
+  transform: translateX(-50%);
+}
+.link-item__knobs::before,
+.link-item__knobs::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-border-secondary);
+  transition: background 0.3s ease;
+}
+.link-item__knobs::before {
+  left: 0;
+}
+.link-item__knobs::after {
+  right: 0;
+}
+
+.link-item[data-type="gate"]:hover {
+  border-color: #a78bfa;
+  box-shadow: 0 0 6px rgba(167, 139, 250, 0.55);
+}
+.link-item[data-type="gate"]:hover .link-item__icon {
+  color: #a78bfa;
+}
+.link-item[data-type="gate"]:hover .link-item__arch,
+.link-item[data-type="gate"]:hover .link-item__arch::after {
+  border-color: #a78bfa;
+}
+.link-item[data-type="gate"]:hover .link-item__knobs::before,
+.link-item[data-type="gate"]:hover .link-item__knobs::after {
+  background: #a78bfa;
+}
+.link-item[data-type="gate"]:hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.55), transparent);
+}
+.link-item[data-type="gate"]:hover::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.55), transparent);
+}
+.link-item[data-type="gate"].is-pressed {
+  transform: scale(0.95);
+  transition: transform 0.15s ease;
+}
+
+/* ---------- 石版（stone） ---------- */
+.link-item[data-type="stone"] {
+  padding: 1.2rem 0.8rem 0.9rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 10px 10px 2px 2px;
+  clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.link-item__lines {
+  display: block;
+  width: 70%;
+  height: 1.6rem;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-border-secondary) 0,
+    var(--color-border-secondary) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  opacity: 0.7;
+}
+
+.link-item[data-type="stone"]:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 0 6px rgba(148, 163, 184, 0.45);
+}
+.link-item[data-type="stone"]:hover .link-item__icon {
+  color: #94a3b8;
+}
+
+.link-item__popup {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 50%;
+  width: 220px;
+  transform: translate(-50%, -4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.5rem 0.7rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.3s ease;
+  z-index: 2;
+}
+.link-item[data-type="stone"].is-open .link-item__popup {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.link-item__popup-text {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  color: #2a3640;
+}
+.link-item__popup-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.6rem;
+  color: #8c98a3;
+}
+.link-item[data-type="stone"].is-copied .link-item__popup {
+  border-color: #4ade80;
+}
+.link-item[data-type="stone"].is-copied .link-item__popup-text {
+  color: #4ade80;
+}
+
+/* 視差を減らす設定では、浮き上がり・沈み込み・フェードを簡略化 */
+@media (prefers-reduced-motion: reduce) {
+  .link-item,
+  .link-item__popup {
+    transition: none !important;
+  }
+  .link-item:hover {
+    transform: none;
+  }
+}

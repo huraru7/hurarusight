@@ -322,8 +322,9 @@ export class ParticleField {
   }
 
   resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const rect = this.canvas.parentElement.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
     this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
@@ -384,10 +385,32 @@ export class ParticleField {
   }
 }
 
-/* ---- 起動: ファーストビューの背景として動かす ---- */
+/* ---- 起動: ファーストビューの背景として動かす ----
+   .hero が画面に映っていない（スクロールで隠れた / タブが非アクティブ）間は
+   描画ループを止めて軽量化する。 */
 const canvas = document.getElementById("particle-canvas");
 if (canvas) {
   const field = new ParticleField(canvas);
-  field.start();
   window.huraruParticles = field; // .next() で次の形へ / .stop() .start()
+
+  const hero = canvas.parentElement;
+  let heroVisible = true;
+
+  const syncRunning = () => {
+    if (heroVisible && !document.hidden) field.start();
+    else field.stop();
+  };
+
+  const io = new IntersectionObserver(
+    ([entry]) => {
+      heroVisible = entry.isIntersecting;
+      syncRunning();
+    },
+    { threshold: 0 }
+  );
+  io.observe(hero);
+
+  document.addEventListener("visibilitychange", syncRunning);
+
+  syncRunning();
 }

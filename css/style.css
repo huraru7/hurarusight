@@ -12,6 +12,10 @@
   padding: 0;
 }
 
+:root {
+  --color-border-secondary: rgba(58, 72, 82, 0.35); /* 落ち着いた青灰の枠線（空のテーマに合わせる） */
+}
+
 /* --- ベース --- */
 body {
   min-height: 100vh;
@@ -33,14 +37,14 @@ body {
   -webkit-touch-callout: none; /* iOS の長押しメニュー抑止 */
 }
 
-/* --- 粒子アニメ用の背景キャンバス（今は空。粒子を足すと背面に表示される） --- */
+/* --- 粒子アニメ用の背景キャンバス。.hero の中だけに収め、ファーストビュー以外には出さない --- */
 #particle-canvas {
-  position: fixed;
+  position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   display: block;
-  z-index: -1; /* コンテンツの背面 */
+  z-index: -1; /* .hero 内のコンテンツの背面 */
   pointer-events: none;
 }
 
