@@ -1,0 +1,37 @@
+/* =============================================================
+   content.js — サイトの内容をまとめる「唯一の編集場所」
+   ★ 文章・リンクなどはこのファイルだけ直せばOKです。
+     （コメント可・末尾カンマOK。JSON より手で書きやすい形式です）
+   ============================================================= */
+
+export const content = {
+  /* サイト全体の情報 */
+  site: {
+    title: "huraru",
+  },
+
+  /* プロフィール（自己紹介） */
+  profile: {
+    name: "huraru",
+    tagline: "Wanderer of Worlds", // ファーストビューのひとこと
+
+    // 自己紹介の本文。1行 = 1段落。増やしたい時は行を足すだけ。
+    intro: [
+      "ここに自己紹介の文章を書きます。",
+      "ゲームをつくり、動画を編み、絵を描き、世界を設計する。",
+    ],
+  },
+
+  /* リンク（SNS など）。※ url は実際のものに差し替えてください */
+  links: [
+    { label: "X", url: "https://x.com/hurarunium" },
+    { label: "YouTube", url: "https://www.youtube.com/@hurarunium" },
+    { label: "GitHub", url: "https://github.com/hurarunium" },
+  ],
+
+  /* 作品など、今後増やす項目もここに足していけます
+  works: [
+    { title: "作品名", category: "Game", desc: "説明", url: "#" },
+  ],
+  */
+};
