@@ -7,7 +7,7 @@
    ・隠し要素関連 target は候補に出さない（grammar.targets に含めない）
    ============================================================= */
 
-import { GRAMMAR, VERBS } from "./grammar.js";
+import { GRAMMAR, VERBS, RUN_EFFECT_VALUES } from "./grammar.js";
 import { getState } from "../fragments/state.js";
 
 export function suggest(input) {
@@ -34,6 +34,10 @@ export function suggest(input) {
         pool.push({ name: "fragments", desc: "断片の収集状況を開く" });
       }
     }
+  } else if (index === 2 && segs[0] === "run" && segs[1] === "effect") {
+    // run effect <value> の候補
+    pool = [...RUN_EFFECT_VALUES];
+    if (getState().stage >= 2) pool.push({ name: "fade", desc: "(隠し効果)" });
   }
 
   const candidates = pool.filter((c) => c.name.startsWith(token));

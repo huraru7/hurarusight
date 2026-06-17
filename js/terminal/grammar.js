@@ -141,14 +141,14 @@ export const GRAMMAR = {
     value: "optional",
     targets: ["reset", "override"],
     targetDesc: {
-      reset: "セッション状態を初期化（確認あり）",
+      reset: "セッション状態を初期化（確認あり）。'fragments' で断片収集をリセット",
       override: "特定コードで特権操作（確認あり）",
     },
     flags: {},
-    examples: ["exec reset", "exec override <code>"],
+    examples: ["exec reset", "exec reset fragments", "exec override <code>"],
     category: "特殊",
     help: "特殊・危険な操作を実行する",
-    usage: "exec <reset|override> [code]",
+    usage: "exec <reset|override> [code|fragments]",
   },
   help: {
     arg: "optional",
@@ -176,6 +176,13 @@ export const GRAMMAR = {
 
 /** 全 verb 名 */
 export const VERBS = Object.keys(GRAMMAR);
+
+/** `run effect <value>` の候補（commands.js / autocomplete.js で共有） */
+export const RUN_EFFECT_VALUES = [
+  { name: "particles-next", desc: "次の図形へモーフする" },
+  { name: "particles-stop", desc: "粒子の動きを止める" },
+  { name: "particles-start", desc: "粒子の動きを再開する" },
+];
 
 /** 応答タグの凡例（help tags） */
 export const TAGS = [

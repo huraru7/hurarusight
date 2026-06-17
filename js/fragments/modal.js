@@ -37,8 +37,53 @@ function build() {
   });
   el.querySelector(".frag-modal__close").addEventListener("click", close);
 
+  bindDrag(el.querySelector(".frag-modal__sheet"), el.querySelector(".frag-modal__head"));
+
   root = el;
   return el;
+}
+
+/** ヘッダーをドラッグしてシートを自由に移動できるようにする（terminal の挙動と統一） */
+function bindDrag(sheet, handle) {
+  let dragging = false;
+  let startX = 0;
+  let startY = 0;
+  let startLeft = 0;
+  let startTop = 0;
+
+  const onMove = (e) => {
+    if (!dragging) return;
+    const maxLeft = window.innerWidth - sheet.offsetWidth;
+    const maxTop = window.innerHeight - sheet.offsetHeight;
+    const left = Math.min(Math.max(0, startLeft + (e.clientX - startX)), Math.max(0, maxLeft));
+    const top = Math.min(Math.max(0, startTop + (e.clientY - startY)), Math.max(0, maxTop));
+    sheet.style.left = `${left}px`;
+    sheet.style.top = `${top}px`;
+  };
+  const onUp = () => {
+    dragging = false;
+    sheet.classList.remove("is-dragging");
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+  };
+
+  handle.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".frag-modal__close")) return;
+    const rect = sheet.getBoundingClientRect();
+    startX = e.clientX;
+    startY = e.clientY;
+    startLeft = rect.left;
+    startTop = rect.top;
+    sheet.style.position = "fixed";
+    sheet.style.left = `${rect.left}px`;
+    sheet.style.top = `${rect.top}px`;
+    sheet.style.margin = "0";
+    dragging = true;
+    sheet.classList.add("is-dragging");
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    e.preventDefault();
+  });
 }
 
 function cardHTML(fragment, index, collected, isNew) {

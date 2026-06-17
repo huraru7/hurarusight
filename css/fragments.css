@@ -59,7 +59,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(10, 8, 6, 0.55);
+  background: transparent;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -88,10 +88,18 @@
 .frag-modal.is-open .frag-modal__sheet {
   transform: translateY(0);
 }
+.frag-modal__sheet.is-dragging {
+  transition: none;
+}
 .frag-modal__head {
   position: relative;
   text-align: center;
   margin-bottom: 14px;
+  cursor: grab;
+  touch-action: none;
+}
+.frag-modal__sheet.is-dragging .frag-modal__head {
+  cursor: grabbing;
 }
 .frag-modal__title {
   font-family: "Crimson Text", "IM Fell English", serif;

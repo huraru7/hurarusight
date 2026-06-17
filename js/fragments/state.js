@@ -56,6 +56,12 @@ export function activateSystem() {
   save();
 }
 
+/** 断片収集の状態を初期化する（`exec reset fragments`） */
+export function resetFragments() {
+  state = { unlocked: false, collected: [], stage: 0 };
+  save();
+}
+
 export function unlockFragment(id) {
   if (!state.unlocked) return; // システム未解放なら無反応
   if (state.collected.includes(id)) return; // 既収集なら無視

@@ -14,7 +14,7 @@ import { tryUnlock } from "./secrets.js";
 import { content } from "../../data/content.js";
 import { settings } from "../../data/settings.js";
 
-import { getState } from "../fragments/state.js";
+import { getState, resetFragments } from "../fragments/state.js";
 import { open as openFragmentsModal } from "../fragments/modal.js";
 import { FRAGMENTS } from "../fragments/data.js";
 
@@ -191,7 +191,17 @@ const HANDLERS = {
   },
 
   /* ---------- exec ---------- */
-  exec({ target, ctx }) {
+  exec({ target, value, ctx }) {
+    if (target === "reset" && value === "fragments") {
+      return {
+        lines: [R.exec.confirm()],
+        await: "confirm",
+        onConfirm: () => ({
+          lines: [`[OK] fragment collection reset.`],
+          effect: () => resetFragments(),
+        }),
+      };
+    }
     if (target === "reset") {
       return {
         lines: [R.exec.confirm()],
