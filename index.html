@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>huraru</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/terminal.css" />
+
+    <!-- ターミナル用フォント（JetBrains Mono） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
     <!-- 粒子アニメ用に Three.js を CDN(esm.sh) から読み込む準備（まだ描画はしない） -->
     <script type="importmap">
@@ -23,7 +29,7 @@
       <!-- ファーストビュー（玄関） -->
       <section class="hero">
         <h1 class="hero__title">huraru</h1>
-        <p class="hero__tagline">Wanderer of Worlds</p>
+        <p class="hero__tagline" data-bind="profile.tagline">Wanderer of Worlds</p>
 
         <div class="hero__scroll" aria-hidden="true">
           <span class="hero__scroll-text">Scroll</span>
@@ -31,14 +37,28 @@
         </div>
       </section>
 
-      <!-- ここから下に少しずつセクションを足していきます
-           例: <section id="about">…</section> など -->
+      <!-- ここから下に少しずつセクションを足していきます。
+           内容は data/content.js を編集すれば反映されます。
+
+           ▼ 自己紹介を出したくなったら、このコメントを外すだけ:
+           <section id="about">
+             <div data-intro></div>
+           </section>
+
+           ▼ リンク一覧を出したくなったら、このコメントを外すだけ:
+           <nav id="links">
+             <ul data-links></ul>
+           </nav>
+      -->
     </main>
 
-    <!-- サイトの動き（素のスクリプト） -->
-    <script defer src="js/main.js"></script>
+    <!-- サイトの動き（data/content.js を読み込むためモジュール） -->
+    <script type="module" src="js/main.js"></script>
 
     <!-- 粒子アニメの足場（Three.js モジュール。準備だけで描画はしていない） -->
     <script type="module" src="js/particles.js"></script>
+
+    <!-- ターミナルコンソール（裏の顔・独立モジュール。` か Cmd/Ctrl+K で開く） -->
+    <script type="module" src="js/terminal/index.js"></script>
   </body>
 </html>

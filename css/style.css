@@ -17,9 +17,15 @@ body {
   min-height: 100vh;
   font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN",
     "Noto Sans JP", sans-serif;
-  color: #222;
-  background-color: #ffffff;
+  color: #2a3640; /* 青みのある濃いインク（空に合う） */
   line-height: 1.6;
+
+  /* 水色の空（上が明るく、下がしっかり濃い）。地平にごく淡い光を重ねて奥行きを出す */
+  background-color: #a8d6f5;
+  background-image:
+    radial-gradient(120% 70% at 50% 112%, rgba(255, 251, 235, 0.5), transparent 60%),
+    linear-gradient(180deg, #dceffb 0%, #a8d6f5 52%, #79bce8 100%);
+  background-attachment: fixed;
 
   /* 操作ミスで文字が選択状態になるのを防ぐ（選択・コピー不可） */
   -webkit-user-select: none; /* Safari/旧Chrome 用 */
@@ -57,7 +63,7 @@ body {
   text-align: center;
 }
 
-/* 粒子の上でも文字が読みやすいよう、中央にうっすら白い光をしく */
+/* 文字周りをほんのり明るくして読みやすく（空に馴染むよう淡く） */
 .hero::before {
   content: "";
   position: absolute;
@@ -65,8 +71,8 @@ body {
   z-index: -1;
   background: radial-gradient(
     closest-side at 50% 45%,
-    rgba(255, 255, 255, 0.85),
-    rgba(255, 255, 255, 0) 70%
+    rgba(245, 250, 255, 0.45),
+    rgba(245, 250, 255, 0) 70%
   );
 }
 
@@ -84,7 +90,7 @@ body {
   letter-spacing: 0.35em;
   text-indent: 0.35em;
   text-transform: uppercase;
-  color: #6b6560;
+  color: #5a6b78; /* くすんだ青灰 */
 }
 
 /* スクロールを促すヒント（下部） */
@@ -97,7 +103,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0.4rem;
-  color: #8a857d;
+  color: #7d8b96; /* 空に馴染む青灰 */
 }
 .hero__scroll-text {
   font-size: 0.65rem;
