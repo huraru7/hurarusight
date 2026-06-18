@@ -85,7 +85,7 @@ export function parse(input) {
   if (g.arg === "required" && !target) {
     return { type: "error", lines: responses.missingTarget(g.usage) };
   }
-  if (g.value === "required" && value == null) {
+  if (g.value === "required" && value == null && !(verb === "run" && target === "fragments")) {
     return { type: "error", lines: responses.missingValue(g.usage) };
   }
 
