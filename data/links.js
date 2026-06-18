@@ -8,5 +8,6 @@ export const links = [
 	{ type: "gate", icon: "x", label: "X / Twitter", subLabel: "声の届く広場", url: "https://x.com/hurarunium" },
 	{ type: "gate", icon: "github", label: "GitHub", subLabel: "コードの墓標", url: "https://github.com/huraru7" },
 	{ type: "gate", icon: "portfolio", label: "Portfolio", subLabel: "作品の眠る場所", url: "https://portfolio.huraru.com" },
+	{ type: "gate", icon: "note", label: "note", subLabel: "言葉の墓標", url: "https://note.com/huraru" },
 	{ type: "stone", icon: "mail", label: "Mail", subLabel: "刻まれた言葉", value: "hurarunium@gmail.com" },
 ];

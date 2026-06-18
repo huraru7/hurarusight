@@ -2,15 +2,14 @@
    main.js — サイトの動き
    data/content.js（唯一の編集場所）を読み込み、HTML の印に流し込む。
      - data-bind="profile.tagline" … その値をテキストとして入れる
-     - data-intro                   … profile.intro を <p> 段落で展開
-   リンク（Links セクション）は js/links.js / data/links.js が別途担当する。
+   リンク（Links セクション）は js/links.js / data/links.js が、
+   プロフィール詳細（About セクション）は js/about.js / data/profile.js が別途担当する。
    ============================================================= */
 
 import { content } from "../data/content.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   bindText();
-  renderIntro();
   console.log("huraru — content loaded");
 });
 
@@ -25,11 +24,4 @@ function bindText() {
     const value = getPath(content, el.dataset.bind);
     if (value != null) el.textContent = value;
   });
-}
-
-/** [data-intro] の中に、自己紹介を段落として生成 */
-function renderIntro() {
-  const host = document.querySelector("[data-intro]");
-  if (!host) return;
-  host.innerHTML = content.profile.intro.map((p) => `<p>${p}</p>`).join("");
 }

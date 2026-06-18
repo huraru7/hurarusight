@@ -15,7 +15,7 @@ huraru-portfolio/
 │   ├── particles.js  ファーストビュー背景の粒子アニメ（Three.js）
 │   └── terminal/     ターミナルコンソール（裏の顔・コンソールからのみ参照）
 └── data/
-    ├── content.js    ★サイトの「中身」（自己紹介・リンク等）の編集場所
+    ├── content.js    ★サイトの「中身」（キャッチコピー等）の編集場所
     └── settings.js   ★サイトの「設定」（見た目・動き）の編集場所
 ```
 
@@ -33,11 +33,9 @@ huraru-portfolio/
 | HTML の印 | 入るもの | 例 |
 |---|---|---|
 | `data-bind="profile.tagline"` | その値（テキスト） | キャッチコピー |
-| `data-intro` | `profile.intro` の各行を `<p>` 段落に | 自己紹介 |
-| `data-links` | `links` を `<li><a>` 一覧に | SNS リンク |
 
-例: 自己紹介を出したいセクションに `<div data-intro></div>` を置くだけ
-（中身は `data/content.js` の `profile.intro`）。index.html にコメント例があります。
+プロフィール詳細（About セクション）は `data/profile.js`、リンク（Links セクション）は
+`data/links.js` でそれぞれ別に一元管理しています（後述）。
 
 - 基本は素の HTML / CSS / JS です。
 - 粒子アニメ用に **Three.js だけ CDN(esm.sh) から読み込む準備**を入れてあります（後述）。
@@ -71,6 +69,15 @@ huraru-portfolio/
 - `window.huraruParticles` で操作可能（`.stop()` / `.start()` / `.next()` で次の形へ）
 - `prefers-reduced-motion`（視差を減らす設定）では巡回せず1形を静止表示
 - 形の種類そのものを増やす場合は `js/particles.js` の `SHAPE_GENERATORS` に関数を足します
+
+## About セクション（コルクボード）
+
+名前・誕生日や好きなものなどの情報カード・メモ・写真をコルクボードに貼ったように表示するセクション。
+各カードは固定パターンでチルトしており、ホバーすると正面を向く。
+
+- 掲載内容（名前・情報カード・メモ・画像）の編集 → `data/profile.js`
+- 見た目・演出 → `css/about.css`
+- DOM生成 → `js/about.js`
 
 ## Links セクション（扉/石版）
 

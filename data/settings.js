@@ -7,7 +7,7 @@
 export const settings = {
 	/* 粒子アニメ（ファーストビュー背景） */
 	particles: {
-		count: 3000, // 粒の数（多いほど密。重い時は減らす）
+		count: 5000, // 粒の数（多いほど密。重い時は減らす）
 		size: 30, // 粒の大きさ
 
 		colorEdge: "#2456c8", // 粒のふちの色（背景の空と差をつける濃い青）
@@ -17,10 +17,20 @@ export const settings = {
 		hold: 5, // 1つの形を保つ秒数
 		morph: 2.6, // 次の形へ移るのにかける秒数
 		randomOrder: true, // true: ランダムな順番で巡回（同じ形が連続しない）/ false: shapes配列の順番どおりに巡回
-		// 使える形: sphere / wave / spiral / helix /
-		//           lorenz / kleinBottle / torus / supernovaShell / quantumFoam / blackHole
-		shapes: ["lorenz", "kleinBottle", "sphere", "torus", "supernovaShell", "quantumFoam", "blackHole"], // 巡回する形と順番（randomOrder: false の時に使う順）
-		shapeScale: 2.6, // 形のおおよその大きさ
+		shapes: [
+			"sphere",
+			"wave",
+			"spiral",
+			"helix",
+			"lorenz",
+			"kleinBottle",
+			"sphere",
+			"torus",
+			"supernovaShell",
+			"quantumFoam",
+			"blackHole",
+		], // 巡回する形と順番（randomOrder: false の時に使う順）
+		shapeScale: 2.4, // 形のおおよその大きさ
 
 		/* 動き */
 		rotateSpeed: 0.06, // 全体がゆっくり回る速さ

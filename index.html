@@ -8,12 +8,14 @@
     <link rel="stylesheet" href="css/terminal.css" />
     <link rel="stylesheet" href="css/fragments.css" />
     <link rel="stylesheet" href="css/links.css" />
+    <link rel="stylesheet" href="css/about.css" />
 
-    <!-- ターミナル用フォント（JetBrains Mono）/ 断片収集モーダル用フォント（Crimson Text）/ Links見出し用（Cinzel） -->
+    <!-- ターミナル用フォント（JetBrains Mono）/ 断片収集モーダル用フォント（Crimson Text）/
+         Links・About見出し用（Cinzel）/ Aboutメモカード用（Klee One） -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Crimson+Text:ital@0;1&family=Cinzel&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Crimson+Text:ital@0;1&family=Cinzel&family=Klee+One&display=swap"
       rel="stylesheet"
     />
 
@@ -46,14 +48,14 @@
         <span class="frag-trigger-03" aria-hidden="true" style="position:absolute;bottom:6px;right:6px;width:10px;height:10px;opacity:0.02;"></span>
       </section>
 
-      <!-- ここから下に少しずつセクションを足していきます。
-           内容は data/content.js を編集すれば反映されます。
-
-           ▼ 自己紹介を出したくなったら、このコメントを外すだけ:
-           <section id="about">
-             <div data-intro></div>
-           </section>
-      -->
+      <!-- About セクション（コルクボード）。内容は data/profile.js を編集すれば反映されます -->
+      <section class="about" id="about">
+        <div class="about__header">
+          <p class="about__title">A B O U T</p>
+          <p class="about__subtitle">// the wanderer's record</p>
+        </div>
+        <div class="about-board" data-board></div>
+      </section>
 
       <!-- Links セクション（扉/石版）。内容は data/links.js を編集すれば反映されます -->
       <section class="links" id="links">
@@ -67,6 +69,9 @@
 
     <!-- サイトの動き（data/content.js を読み込むためモジュール） -->
     <script type="module" src="js/main.js"></script>
+
+    <!-- About セクション（コルクボード）の DOM 生成 -->
+    <script type="module" src="js/about.js"></script>
 
     <!-- 粒子アニメの足場（Three.js モジュール。準備だけで描画はしていない） -->
     <script type="module" src="js/particles.js"></script>

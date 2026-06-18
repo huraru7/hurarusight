@@ -10,19 +10,13 @@ export const content = {
     title: "huraru",
   },
 
-  /* プロフィール（自己紹介） */
+  /* プロフィール（ファーストビューのひとこと） */
   profile: {
-    name: "huraru",
-    tagline: "Wanderer of Worlds", // ファーストビューのひとこと
-
-    // 自己紹介の本文。1行 = 1段落。増やしたい時は行を足すだけ。
-    intro: [
-      "ここに自己紹介の文章を書きます。",
-      "ゲームをつくり、動画を編み、絵を描き、世界を設計する。",
-    ],
+    tagline: "Wanderer of Worlds",
   },
 
   /* リンク（SNS など）は data/links.js で管理しています */
+  /* プロフィール詳細（About セクション）は data/profile.js で管理しています */
 
   /* 作品など、今後増やす項目もここに足していけます
   works: [
