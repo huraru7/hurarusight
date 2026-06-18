@@ -5,8 +5,8 @@
    ============================================================= */
 
 export const links = [
-  { type: "gate", icon: "x", label: "X / Twitter", subLabel: "声の届く広場", url: "https://x.com/hurarunium" },
-  { type: "gate", icon: "github", label: "GitHub", subLabel: "コードの墓標", url: "https://github.com/hurarunium" },
-  { type: "gate", icon: "portfolio", label: "Portfolio", subLabel: "作品の眠る場所", url: "#" }, // ★ 要差し替え
-  { type: "stone", icon: "mail", label: "Mail", subLabel: "刻まれた言葉", value: "huraru@example.com" }, // ★ 要差し替え
+	{ type: "gate", icon: "x", label: "X / Twitter", subLabel: "声の届く広場", url: "https://x.com/hurarunium" },
+	{ type: "gate", icon: "github", label: "GitHub", subLabel: "コードの墓標", url: "https://github.com/huraru7" },
+	{ type: "gate", icon: "portfolio", label: "Portfolio", subLabel: "作品の眠る場所", url: "https://portfolio.huraru.com" },
+	{ type: "stone", icon: "mail", label: "Mail", subLabel: "刻まれた言葉", value: "hurarunium@gmail.com" },
 ];
