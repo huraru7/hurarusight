@@ -16,8 +16,10 @@ export const settings = {
 		/* モーフ（形の巡回） */
 		hold: 5, // 1つの形を保つ秒数
 		morph: 2.6, // 次の形へ移るのにかける秒数
-		// 使える形: sphere / wave / spiral / ring / heart / star / helix / infinity / rose / cube
-		shapes: ["sphere", "ring", "spiral", "helix", "infinity", "star", "heart", "rose", "cube", "wave"], // 巡回する形と順番（消す/並べ替え自由）
+		randomOrder: true, // true: ランダムな順番で巡回（同じ形が連続しない）/ false: shapes配列の順番どおりに巡回
+		// 使える形: sphere / wave / spiral / helix /
+		//           lorenz / kleinBottle / torus / supernovaShell / quantumFoam / blackHole
+		shapes: ["lorenz", "kleinBottle", "sphere", "torus", "supernovaShell", "quantumFoam", "blackHole"], // 巡回する形と順番（randomOrder: false の時に使う順）
 		shapeScale: 2.6, // 形のおおよその大きさ
 
 		/* 動き */

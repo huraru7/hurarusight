@@ -1,6 +1,6 @@
 /* =============================================================
    particles.js — ファーストビュー背景の粒子アニメ（Three.js）
-   水色の粒がいくつかの形（球・波・らせん・環）に集まり、数秒ごとに
+   水色の粒がいくつかの形（球・波・らせん・複雑な構造）に集まり、数秒ごとに
    次の形へモーフして巡回する。
    ★ 調整値はすべて data/settings.js の particles から読み込みます。
    ============================================================= */
@@ -61,54 +61,6 @@ const SHAPE_GENERATORS = {
     }
     return a;
   },
-  ring(count, scale) {
-    const a = new Float32Array(count * 3);
-    const R = scale;
-    const tube = scale * 0.21;
-    const golden = Math.PI * (3 - Math.sqrt(5));
-    for (let i = 0; i < count; i++) {
-      const u = (i / count) * Math.PI * 2;
-      const v = i * golden;
-      a[i * 3] = (R + tube * Math.cos(v)) * Math.cos(u);
-      a[i * 3 + 1] = (R + tube * Math.cos(v)) * Math.sin(u);
-      a[i * 3 + 2] = tube * Math.sin(v);
-    }
-    return a;
-  },
-
-  // ハート（パラメトリック曲線の内側を埋める）
-  heart(count, scale) {
-    const a = new Float32Array(count * 3);
-    const S = scale / 15;
-    for (let i = 0; i < count; i++) {
-      const t = Math.random() * Math.PI * 2;
-      const x = 16 * Math.pow(Math.sin(t), 3);
-      const y =
-        13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t) + 3.5; // 中心化
-      const f = Math.sqrt(Math.random()); // 内部を埋める
-      a[i * 3] = x * S * f;
-      a[i * 3 + 1] = y * S * f;
-      a[i * 3 + 2] = (Math.random() - 0.5) * scale * 0.16;
-    }
-    return a;
-  },
-
-  // 5つ星（中心から伸びる5本の腕。根元ほど太く先細り）
-  star(count, scale) {
-    const a = new Float32Array(count * 3);
-    const arms = 5;
-    for (let i = 0; i < count; i++) {
-      const base = Math.floor(Math.random() * arms) * ((Math.PI * 2) / arms) - Math.PI / 2;
-      const rN = Math.pow(Math.random(), 0.6);
-      const r = rN * scale * 1.15;
-      const off = (Math.random() - 0.5) * 2 * (1 - rN) * scale * 0.34;
-      a[i * 3] = Math.cos(base) * r + Math.cos(base + Math.PI / 2) * off;
-      a[i * 3 + 1] = Math.sin(base) * r + Math.sin(base + Math.PI / 2) * off;
-      a[i * 3 + 2] = (Math.random() - 0.5) * scale * 0.12;
-    }
-    return a;
-  },
-
   // 二重らせん（縦に伸びる2本の螺旋）
   helix(count, scale) {
     const a = new Float32Array(count * 3);
@@ -125,53 +77,191 @@ const SHAPE_GENERATORS = {
     return a;
   },
 
-  // ∞（無限記号・レムニスケート）
-  infinity(count, scale) {
+  // ローレンツアトラクター（カオス力学系の軌道をオイラー法で積分してサンプリング）
+  lorenz(count, scale) {
     const a = new Float32Array(count * 3);
-    const j = scale * 0.05;
+    const sigma = 10;
+    const rho = 28;
+    const beta = 8 / 3;
+    const dt = 0.005;
+    let x = 0.1;
+    let y = 0;
+    let z = 0;
+
+    const warmup = 500; // 過渡応答を捨て、軌道をアトラクター上に乗せる
+    for (let i = 0; i < warmup; i++) {
+      const dx = sigma * (y - x);
+      const dy = x * (rho - z) - y;
+      const dz = x * y - beta * z;
+      x += dx * dt;
+      y += dy * dt;
+      z += dz * dt;
+    }
+
+    const pts = new Float64Array(count * 3);
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
+    let minZ = Infinity, maxZ = -Infinity;
     for (let i = 0; i < count; i++) {
-      const t = Math.random() * Math.PI * 2;
-      a[i * 3] = Math.cos(t) * scale * 1.45 + (Math.random() - 0.5) * j;
-      a[i * 3 + 1] = Math.sin(t) * Math.cos(t) * scale * 1.45 + (Math.random() - 0.5) * j;
-      a[i * 3 + 2] = (Math.random() - 0.5) * scale * 0.12;
+      const dx = sigma * (y - x);
+      const dy = x * (rho - z) - y;
+      const dz = x * y - beta * z;
+      x += dx * dt;
+      y += dy * dt;
+      z += dz * dt;
+      pts[i * 3] = x;
+      pts[i * 3 + 1] = y;
+      pts[i * 3 + 2] = z;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+      if (z < minZ) minZ = z;
+      if (z > maxZ) maxZ = z;
+    }
+
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    const cz = (minZ + maxZ) / 2;
+    const ext = Math.max(maxX - minX, maxY - minY, maxZ - minZ) || 1;
+    const s = (scale * 1.8) / ext;
+
+    for (let i = 0; i < count; i++) {
+      a[i * 3] = (pts[i * 3] - cx) * s;
+      a[i * 3 + 1] = (pts[i * 3 + 2] - cz) * s; // z（縦に大きく動く軸）を画面の縦に
+      a[i * 3 + 2] = (pts[i * 3 + 1] - cy) * s;
     }
     return a;
   },
 
-  // 花（バラ曲線・5枚の花びら）
-  rose(count, scale) {
+  // クラインの壺（"figure-8 immersion" パラメトリック式）
+  kleinBottle(count, scale) {
     const a = new Float32Array(count * 3);
-    const k = 5;
+    const A = 1.6;
+    const S = scale * 0.42;
     for (let i = 0; i < count; i++) {
+      const u = Math.random() * Math.PI * 2;
+      const v = Math.random() * Math.PI * 2;
+      const r = A + Math.cos(u / 2) * Math.sin(v) - Math.sin(u / 2) * Math.sin(2 * v);
+      const x = r * Math.cos(u);
+      const y = r * Math.sin(u);
+      const z = Math.sin(u / 2) * Math.sin(v) + Math.cos(u / 2) * Math.sin(2 * v);
+      a[i * 3] = x * S;
+      a[i * 3 + 1] = z * S; // 「くびれ」の軸を縦に
+      a[i * 3 + 2] = y * S;
+    }
+    return a;
+  },
+
+  // トーラス構造（素直なドーナツ面。ring の捩れチューブとは別物）
+  torus(count, scale) {
+    const a = new Float32Array(count * 3);
+    const R = scale * 0.85;
+    const r = scale * 0.32;
+    for (let i = 0; i < count; i++) {
+      const u = Math.random() * Math.PI * 2;
+      const v = Math.random() * Math.PI * 2;
+      a[i * 3] = (R + r * Math.cos(v)) * Math.cos(u);
+      a[i * 3 + 1] = (R + r * Math.cos(v)) * Math.sin(u);
+      a[i * 3 + 2] = r * Math.sin(v);
+    }
+    return a;
+  },
+
+  // 超新星残骸のシェル構造（いびつな塊・フィラメント状の球殻）
+  supernovaShell(count, scale) {
+    const a = new Float32Array(count * 3);
+    const baseR = scale * 0.95;
+    const shellThickness = scale * 0.22;
+
+    // 呼び出しごとに周波数・位相をランダム再抽選 → モーフするたびに模様が変わる疑似ノイズ
+    const terms = [];
+    for (let k = 0; k < 5; k++) {
+      terms.push({
+        f: 2 + Math.floor(Math.random() * 4),
+        g: 2 + Math.floor(Math.random() * 5),
+        p: Math.random() * Math.PI * 2,
+        q: Math.random() * Math.PI * 2,
+        w: 0.18 + Math.random() * 0.12,
+      });
+    }
+
+    for (let i = 0; i < count; i++) {
+      const u = Math.random();
+      const v = Math.random();
+      const theta = u * Math.PI * 2;
+      const phi = Math.acos(2 * v - 1);
+      let bump = 0;
+      for (const t of terms) bump += t.w * Math.sin(t.f * theta + t.p) * Math.cos(t.g * phi + t.q);
+      const r = baseR * (1 + bump) + (Math.random() - 0.5) * shellThickness;
+      a[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      a[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      a[i * 3 + 2] = r * Math.cos(phi);
+    }
+    return a;
+  },
+
+  // 量子泡（無数の小さな泡＝球殻クラスタが空間内に散らばる、ゆらぎのある泡構造）
+  quantumFoam(count, scale) {
+    const a = new Float32Array(count * 3);
+    const bubbleCount = 40;
+
+    // 呼び出しごとに泡の位置・大きさを再抽選 → モーフするたびにゆらぎの模様が変わる
+    const bubbles = [];
+    for (let b = 0; b < bubbleCount; b++) {
+      const cr = Math.sqrt(Math.random()) * scale * 0.9;
+      const ctheta = Math.random() * Math.PI * 2;
+      const cphi = Math.acos(2 * Math.random() - 1);
+      bubbles.push({
+        cx: cr * Math.sin(cphi) * Math.cos(ctheta),
+        cy: cr * Math.sin(cphi) * Math.sin(ctheta),
+        cz: cr * Math.cos(cphi),
+        r: scale * (0.03 + Math.random() * 0.12), // 泡ごとに大きさをばらつかせる
+      });
+    }
+
+    for (let i = 0; i < count; i++) {
+      const bub = bubbles[i % bubbleCount];
+      const u = Math.random();
+      const v = Math.random();
+      const theta = u * Math.PI * 2;
+      const phi = Math.acos(2 * v - 1);
+      const r = bub.r * (0.85 + Math.random() * 0.3); // 泡の表面にうっすら厚みを持たせる
+      a[i * 3] = bub.cx + r * Math.sin(phi) * Math.cos(theta);
+      a[i * 3 + 1] = bub.cy + r * Math.sin(phi) * Math.sin(theta);
+      a[i * 3 + 2] = bub.cz + r * Math.cos(phi);
+    }
+    return a;
+  },
+
+  // ブラックホールの降着円盤と光子球
+  blackHole(count, scale) {
+    const a = new Float32Array(count * 3);
+    const diskCount = Math.floor(count * 0.8);
+    const innerR = scale * 0.32;
+    const outerR = scale * 1.25;
+    const photonR = scale * 0.16;
+
+    let i = 0;
+    for (; i < diskCount; i++) {
+      const t = Math.pow(Math.random(), 2); // 内側ほど密＝明るい降着円盤らしさ
+      const r = innerR + (outerR - innerR) * t;
       const theta = Math.random() * Math.PI * 2;
-      const r = Math.cos(k * theta) * scale * Math.sqrt(Math.random());
+      const thickness = scale * (0.015 + 0.05 * t); // 外側ほどわずかにフレア
+      const y = (Math.random() - 0.5) * thickness;
       a[i * 3] = Math.cos(theta) * r;
-      a[i * 3 + 1] = Math.sin(theta) * r;
-      a[i * 3 + 2] = (Math.random() - 0.5) * scale * 0.12;
+      a[i * 3 + 1] = y;
+      a[i * 3 + 2] = Math.sin(theta) * r;
     }
-    return a;
-  },
-
-  // 立方体（ワイヤーフレームの辺に沿って配置。回転すると立体的）
-  cube(count, scale) {
-    const a = new Float32Array(count * 3);
-    const s = scale * 0.8;
-    const c = [
-      [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
-      [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1],
-    ];
-    const edges = [
-      [0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6],
-      [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7],
-    ];
-    for (let i = 0; i < count; i++) {
-      const e = edges[i % edges.length];
-      const t = Math.random();
-      const p = c[e[0]];
-      const q = c[e[1]];
-      a[i * 3] = (p[0] + (q[0] - p[0]) * t) * s;
-      a[i * 3 + 1] = (p[1] + (q[1] - p[1]) * t) * s;
-      a[i * 3 + 2] = (p[2] + (q[2] - p[2]) * t) * s;
+    for (; i < count; i++) {
+      const u = Math.random();
+      const v = Math.random();
+      const ang = u * Math.PI * 2;
+      const phi = Math.acos(2 * v - 1);
+      const r = photonR + (Math.random() - 0.5) * scale * 0.02; // 薄い球殻
+      a[i * 3] = r * Math.sin(phi) * Math.cos(ang);
+      a[i * 3 + 1] = r * Math.sin(phi) * Math.sin(ang);
+      a[i * 3 + 2] = r * Math.cos(phi);
     }
     return a;
   },
@@ -183,6 +273,17 @@ if (SHAPES.length === 0) SHAPES.push(SHAPE_GENERATORS.sphere);
 
 const makeShape = (i) => SHAPES[i](P.count, P.shapeScale);
 
+/** 次に表示する形のインデックスを選ぶ。ランダム時は直前と同じ形を選ばない */
+function pickShapeIndex(current, length, random) {
+  if (length <= 1) return 0;
+  if (!random) return (current + 1) % length;
+  let next;
+  do {
+    next = Math.floor(Math.random() * length);
+  } while (next === current);
+  return next;
+}
+
 export class ParticleField {
   constructor(canvas) {
     this.canvas = canvas;
@@ -190,7 +291,8 @@ export class ParticleField {
     this.clock = new THREE.Clock();
     this.mouse = { x: 0, y: 0 };
 
-    this.shapeIndex = 0;
+    // 開始時の形は常にランダム（ページ読み込みごとに違う形から始まる）
+    this.shapeIndex = Math.floor(Math.random() * SHAPES.length);
     this.state = "hold"; // "hold" | "morph"
     this.stateTime = 0;
 
@@ -224,7 +326,7 @@ export class ParticleField {
 
   _buildParticles() {
     const count = P.count;
-    const start = makeShape(0); // 最初の形
+    const start = makeShape(this.shapeIndex); // 最初の形（ランダムに決定済み）
     const target = start.slice();
     const phases = new Float32Array(count);
     const delays = new Float32Array(count);
@@ -300,7 +402,7 @@ export class ParticleField {
   next() {
     if (this.state === "morph" || SHAPES.length < 2) return;
     const geo = this.points.geometry;
-    this.shapeIndex = (this.shapeIndex + 1) % SHAPES.length;
+    this.shapeIndex = pickShapeIndex(this.shapeIndex, SHAPES.length, P.randomOrder);
     geo.getAttribute("aTarget").array.set(makeShape(this.shapeIndex));
     geo.getAttribute("aTarget").needsUpdate = true;
     const delay = geo.getAttribute("aDelay").array;
@@ -363,6 +465,7 @@ export class ParticleField {
     this.points.material.uniforms.uTime.value = t;
 
     this.points.rotation.y = t * P.rotateSpeed;
+    this.points.rotation.x = t * P.rotateSpeed * 0.7;
     this.points.position.y = Math.sin(t * P.breatheSpeed) * P.breatheAmp;
 
     if (P.parallax) {
