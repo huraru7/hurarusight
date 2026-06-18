@@ -35,7 +35,7 @@ document.addEventListener("click", (e) => {
 })();
 
 /* ---------- #06: ターミナルでの定型コマンド列（console.js から呼ばれる） ---------- */
-const SEQUENCE_06 = ["scan status", "read manifest", "scan status"];
+const SEQUENCE_06 = ["scan status", "log", "scan status"];
 let progress06 = 0;
 
 export function onTerminalCommand(verb, target) {

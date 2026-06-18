@@ -7,18 +7,16 @@
    ============================================================= */
 
 import { GRAMMAR, VERBS, VERSION, TAGS } from "./grammar.js";
-import { responses as R, MANIFEST } from "./responses.js";
+import { responses as R } from "./responses.js";
 import { nearest } from "./parser.js";
 import { tryUnlock } from "./secrets.js";
 
-import { content } from "../../data/content.js";
 import { settings } from "../../data/settings.js";
 
 import { getState, resetFragments } from "../fragments/state.js";
 import { open as openFragmentsModal } from "../fragments/modal.js";
-import { FRAGMENTS } from "../fragments/data.js";
 
-const OPEN_TARGET_VERBS = new Set(["go", "unlock", "help"]); // 対象が自由 or 別検証
+const OPEN_TARGET_VERBS = new Set(["go", "unlock", "help", "set"]); // 対象が自由 or 別検証
 
 /** 閉じた target 集合に対する検証（不正なら error 行を返す） */
 function targetError(verb, target) {
@@ -38,35 +36,8 @@ const now = () => {
 };
 
 const HANDLERS = {
-  /* ---------- search ---------- */
-  search({ target, value, flags }) {
-    if (target === "link") {
-      const links = content.links ?? [];
-      if (!links.length) return { lines: [R.search.empty("link")] };
-      return { lines: links.map(R.search.linkItem) };
-    }
-    if (target === "realm") {
-      const realms = content.realms ?? [];
-      if (value) {
-        const r = realms.find((x) => x.id === value);
-        return { lines: [r ? R.search.realmItem(r) : R.search.notFound("realm", value)] };
-      }
-      if (!realms.length) return { lines: [R.search.empty("realm")] };
-      return { lines: realms.map(R.search.realmItem) };
-    }
-    if (target === "project") {
-      let projects = content.projects ?? content.works ?? [];
-      const tag = flags["--tag"];
-      if (tag) projects = projects.filter((p) => (p.tag ?? p.category) === tag);
-      if (!projects.length) return { lines: [R.search.empty("project")] };
-      return { lines: projects.map(R.search.projectItem) };
-    }
-    return { lines: [] };
-  },
-
   /* ---------- scan ---------- */
-  scan({ target, flags }) {
-    const verbose = !!flags["--verbose"];
+  scan({ target }) {
     if (target === "status") {
       const p = settings.particles;
       const sections = document.querySelectorAll("main section").length;
@@ -79,14 +50,6 @@ const HANDLERS = {
           R.scan.line("terminal", VERSION),
         ],
       };
-    }
-    if (target === "realm" || target === "project") {
-      const list = target === "realm" ? content.realms ?? [] : content.projects ?? content.works ?? [];
-      const out = [R.scan.header(target), R.scan.line(`${target}s`, String(list.length))];
-      if (verbose) {
-        for (const item of list) out.push(`[DATA]   - ${item.id ?? item.title ?? "?"}`);
-      }
-      return { lines: out };
     }
     return { lines: [] };
   },
@@ -113,27 +76,10 @@ const HANDLERS = {
     return { lines: [] };
   },
 
-  /* ---------- read ---------- */
-  read({ target, ctx }) {
-    if (target === "manifest") return { lines: MANIFEST };
-    if (target === "journal") {
-      const intro = content.profile?.intro ?? [];
-      if (!intro.length) return { lines: ["[INFO] journal is empty."] };
-      const lines = ["[INFO] journal", ...intro.map((p) => `  ${p}`)];
-      if (getState().stage >= 1) {
-        lines.push("", "[CLASSIFIED] behind the lines");
-        for (const id of getState().collected) {
-          const f = FRAGMENTS.find((x) => x.id === id);
-          if (f) lines.push(`  #${f.id} ${f.name} — ${f.note}`, `    (${f.condition})`);
-        }
-      }
-      return { lines };
-    }
-    if (target === "log") {
-      if (!ctx.history.length) return { lines: R.read.emptyLog() };
-      return { lines: ["[INFO] session log", ...ctx.history.map((h) => `[DATA]   ${h}`)] };
-    }
-    return { lines: [] };
+  /* ---------- log ---------- */
+  log({ ctx }) {
+    if (!ctx.history.length) return { lines: R.log.empty() };
+    return { lines: ["[INFO] session log", ...ctx.history.map((h) => `[DATA]   ${h}`)] };
   },
 
   /* ---------- go ---------- */
@@ -151,36 +97,25 @@ const HANDLERS = {
   },
 
   /* ---------- run ---------- */
-  run({ target, value, flags }) {
+  run({ target, bracket, value }) {
     if (target === "fragments") {
       if (!getState().unlocked) return { lines: [`[ERROR] unknown script: 'fragments'`] };
       return { lines: [], effect: () => openFragmentsModal() };
     }
     if (target === "effect") {
-      if (!value) return { lines: [R.run.needName()] };
+      if (bracket !== "particles") return { lines: [R.run.needBracket()] };
       const p = window.huraruParticles;
-      if (value === "particles-next" && p?.next) return { lines: [R.run.ok(value)], effect: () => p.next() };
-      if (value === "particles-stop" && p?.stop) return { lines: [R.run.ok(value)], effect: () => p.stop() };
-      if (value === "particles-start" && p?.start) return { lines: [R.run.ok(value)], effect: () => p.start() };
-      if (value === "fade" && getState().stage >= 2 && p?.next) {
-        return { lines: [R.run.ok(value)], effect: () => { p.stop(); setTimeout(() => p.start(), 600); } };
-      }
+      if (value === "next" && p?.next) return { lines: [R.run.ok(value)], effect: () => p.next() };
+      if (value === "stop" && p?.stop) return { lines: [R.run.ok(value)], effect: () => p.stop() };
+      if (value === "start" && p?.start) return { lines: [R.run.ok(value)], effect: () => p.start() };
       return { lines: [R.run.notRegistered(value)] };
     }
-    // intro / ambient はまだ未登録
     return { lines: [R.run.notRegistered(target)] };
   },
 
   /* ---------- set ---------- */
-  set({ target, value, ctx }) {
-    const valid = {
-      sound: ["on", "off"],
-      theme: ["dark", "light"],
-    };
-    if (!(target in valid)) return { lines: [R.set.invalidKey(target)] };
-    if (!valid[target].includes(value)) return { lines: [R.set.invalidValue(target, value)] };
-    ctx.settings[target] = value; // セッションに保存（視覚反映はまだ無い）
-    return { lines: R.set.okPending(target, value) };
+  set() {
+    return { lines: [`[INFO] set is not implemented yet. (sound/theme planned)`] };
   },
 
   /* ---------- unlock ---------- */
@@ -191,33 +126,22 @@ const HANDLERS = {
   },
 
   /* ---------- exec ---------- */
-  exec({ target, value, ctx }) {
+  exec({ target, value, tags, ctx }) {
     if (target === "reset" && value === "fragments") {
-      return {
-        lines: [R.exec.confirm()],
-        await: "confirm",
-        onConfirm: () => ({
-          lines: [`[OK] fragment collection reset.`],
-          effect: () => resetFragments(),
-        }),
-      };
+      const onConfirm = () => ({
+        lines: [`[OK] fragment collection reset.`],
+        effect: () => resetFragments(),
+      });
+      if (tags?.y) return onConfirm();
+      return { lines: [R.exec.confirm()], await: "confirm", onConfirm };
     }
     if (target === "reset") {
-      return {
-        lines: [R.exec.confirm()],
-        await: "confirm",
-        onConfirm: () => ({
-          lines: [R.exec.resetDone()],
-          effect: () => ctx.reset(),
-        }),
-      };
-    }
-    if (target === "override") {
-      return {
-        lines: [R.exec.confirm()],
-        await: "confirm",
-        onConfirm: () => ({ lines: [R.exec.denied()] }),
-      };
+      const onConfirm = () => ({
+        lines: [R.exec.resetDone()],
+        effect: () => ctx.reset(),
+      });
+      if (tags?.y) return onConfirm();
+      return { lines: [R.exec.confirm()], await: "confirm", onConfirm };
     }
     return { lines: [`[ERROR] unknown operation: '${target}'`] };
   },
@@ -240,15 +164,6 @@ const HANDLERS = {
       if (g.targets.length) {
         lines.push("", "  Targets:");
         for (const t of g.targets) lines.push(`    ${t.padEnd(10)} ${g.targetDesc?.[t] ?? ""}`);
-      }
-      const flagNames = Object.keys(g.flags);
-      if (flagNames.length) {
-        lines.push("", "  Flags:");
-        for (const f of flagNames) {
-          const def = g.flags[f];
-          const head = def.value ? `${f} ${def.placeholder ?? "<value>"}` : f;
-          lines.push(`    ${head.padEnd(18)} ${def.desc ?? ""}`);
-        }
       }
       if (g.examples?.length) {
         lines.push("", "  Examples:");

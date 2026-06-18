@@ -1,52 +1,37 @@
 /* =============================================================
    grammar.js — コマンド文法と説明の唯一の定義
+   形式: <動詞> <ターゲット>[引数] [value] -TAG
    parser（検証）/ autocomplete（候補+説明）/ help（詳細）が共有する。
      verb: {
        arg:    "required" | "optional" | "none"
        value:  "required" | "optional" | "none"
        targets:[...]                               // 補完に出す target（順序）
        targetDesc: { target: "説明" }              // 各 target の説明
-       flags:  { "--name": { value, desc, placeholder } }
+       targetBrackets: { target: [{name,desc}] }   // target[xxx] の xxx 候補（必要な場合のみ）
+       bracketValues: { "target:bracket": [{name,desc}] } // 角括弧確定後の value 候補
+       targetValues: { target: [{name,desc}] }     // 角括弧を使わない target の value 候補
+       flags: {}                                    // 現在未使用（-TAG 方式に統一）
        examples: ["..."]                           // 使用例
        usage, help, category
      }
+   -TAG は TAGS_SUPPORTED にあるものだけ有効（現在は -y のみ）。
    ============================================================= */
 
 export const VERSION = "vβ1.0";
 
 export const GRAMMAR = {
-  search: {
-    arg: "required",
-    value: "optional",
-    targets: ["realm", "project", "link"],
-    targetDesc: {
-      realm: "Realm（世界/カテゴリ）を検索。値で ID 指定も可",
-      project: "プロジェクト/作品を検索",
-      link: "外部リンク（SNS 等）を取得",
-    },
-    flags: { "--tag": { value: true, desc: "タグで絞り込む", placeholder: "<value>" } },
-    examples: ["search link", "search project --tag game", "search realm realm-of-light"],
-    category: "データ",
-    help: "データから情報を検索・取得する",
-    usage: "search <realm|project|link> [value] [--tag <value>]",
-  },
   scan: {
     arg: "required",
     value: "none",
-    targets: ["realm", "project", "status"],
+    targets: ["status"],
     targetDesc: {
-      realm: "Realm の件数を解析",
-      project: "プロジェクトの件数を解析",
       status: "サイト全体の状態を解析",
     },
-    flags: {
-      "--verbose": { value: false, desc: "詳細を表示" },
-      "--summary": { value: false, desc: "概要のみ（既定）" },
-    },
-    examples: ["scan status", "scan project --verbose"],
+    flags: {},
+    examples: ["scan status"],
     category: "データ",
     help: "対象を解析・サマリー表示する",
-    usage: "scan <realm|project|status> [--verbose|--summary]",
+    usage: "scan status",
   },
   show: {
     arg: "required",
@@ -64,66 +49,65 @@ export const GRAMMAR = {
     help: "UI・情報を画面に表示する",
     usage: "show <map|status|history|version>",
   },
-  read: {
-    arg: "required",
+  log: {
+    arg: "none",
     value: "none",
-    targets: ["log", "journal", "manifest"],
-    targetDesc: {
-      log: "今セッションのログ",
-      journal: "朝の記録（About の文章）",
-      manifest: "サイトのコンセプト・哲学",
-    },
-    flags: { "--from": { value: true, desc: "日付/セッションID で絞る", placeholder: "<id>" } },
-    examples: ["read manifest", "read journal"],
+    targets: [],
+    targetDesc: {},
+    flags: {},
+    examples: ["log"],
     category: "表示",
-    help: "テキスト・ログ・記録を読む",
-    usage: "read <log|journal|manifest> [--from <value>]",
+    help: "今セッションのログを表示する",
+    usage: "log",
   },
   go: {
     arg: "required",
     value: "none",
-    targets: ["top", "contact"],
+    targets: ["top"],
     targetDesc: {
       top: "ページ最上部へ",
-      contact: "コンタクトへ（未設置ならエラー）",
     },
     flags: {},
-    examples: ["go top", "go contact"],
+    examples: ["go top"],
     category: "移動",
     help: "指定セクションへ移動する",
-    usage: "go <top|contact|...section>",
+    usage: "go top",
   },
   run: {
     arg: "required",
-    value: "optional",
-    targets: ["intro", "ambient", "effect"],
-    targetDesc: {
-      intro: "イントロ演出（未登録）",
-      ambient: "環境音（未登録）",
-      effect: "エフェクトを発火（例: effect particles-next）",
-    },
-    flags: {
-      "--loop": { value: false, desc: "ループ再生" },
-      "--stop": { value: false, desc: "実行中のものを停止" },
-    },
-    examples: ["run effect particles-next", "run effect particles-stop"],
-    category: "実行",
-    help: "演出・スクリプトを実行する",
-    usage: "run <intro|ambient|effect> [effect-name] [--loop|--stop]",
-  },
-  set: {
-    arg: "required",
     value: "required",
-    targets: ["sound", "theme"],
+    targets: ["effect"],
     targetDesc: {
-      sound: "効果音の on/off",
-      theme: "テーマ dark/light",
+      effect: "エフェクトを発火（例: effect[particles] next）",
+    },
+    // effect[xxx] の xxx 候補
+    targetBrackets: {
+      effect: [{ name: "particles", desc: "粒子アニメ" }],
+    },
+    // ターゲット:角括弧 ごとの value 候補
+    bracketValues: {
+      "effect:particles": [
+        { name: "next", desc: "次の図形へモーフする" },
+        { name: "stop", desc: "粒子の動きを止める" },
+        { name: "start", desc: "粒子の動きを再開する" },
+      ],
     },
     flags: {},
-    examples: ["set sound on", "set theme dark"],
+    examples: ["run effect[particles] next", "run effect[particles] stop"],
+    category: "実行",
+    help: "演出を実行する",
+    usage: "run effect[particles] <next|stop|start>",
+  },
+  set: {
+    arg: "optional", // 何を打っても構文エラーにしない（未実装なので常に同じ応答を返す）
+    value: "optional",
+    targets: [], // 未実装。後日 sound/theme を追加予定
+    targetDesc: {},
+    flags: {},
+    examples: ["set"],
     category: "設定",
-    help: "状態・設定を変える",
-    usage: "set <sound|theme> <value>",
+    help: "状態・設定を変える（未実装）",
+    usage: "set （未実装。sound/theme は今後追加予定）",
   },
   unlock: {
     arg: "required",
@@ -139,16 +123,19 @@ export const GRAMMAR = {
   exec: {
     arg: "required",
     value: "optional",
-    targets: ["reset", "override"],
+    targets: ["reset"],
     targetDesc: {
       reset: "セッション状態を初期化（確認あり）。'fragments' で断片収集をリセット",
-      override: "特定コードで特権操作（確認あり）",
+    },
+    // target ごとの value 候補
+    targetValues: {
+      reset: [{ name: "fragments", desc: "断片収集の進捗だけリセットする" }],
     },
     flags: {},
-    examples: ["exec reset", "exec reset fragments", "exec override <code>"],
+    examples: ["exec reset", "exec reset fragments", "exec reset -y", "exec reset fragments -y"],
     category: "特殊",
     help: "特殊・危険な操作を実行する",
-    usage: "exec <reset|override> [code|fragments]",
+    usage: "exec reset [fragments] [-y]",
   },
   help: {
     arg: "optional",
@@ -156,7 +143,7 @@ export const GRAMMAR = {
     targets: [], // help の対象は verb 名 / tags（autocomplete 側で補完）
     targetDesc: {},
     flags: {},
-    examples: ["help", "help search", "help tags"],
+    examples: ["help", "help scan", "help tags"],
     category: "システム",
     help: "ヘルプを表示する",
     usage: "help [verb|tags]",
@@ -177,12 +164,10 @@ export const GRAMMAR = {
 /** 全 verb 名 */
 export const VERBS = Object.keys(GRAMMAR);
 
-/** `run effect <value>` の候補（commands.js / autocomplete.js で共有） */
-export const RUN_EFFECT_VALUES = [
-  { name: "particles-next", desc: "次の図形へモーフする" },
-  { name: "particles-stop", desc: "粒子の動きを止める" },
-  { name: "particles-start", desc: "粒子の動きを再開する" },
-];
+/** `-TAG` として使える唯一の集合（parser の検証・help 表示で使う） */
+export const TAGS_SUPPORTED = {
+  y: { desc: "確認をすべて省略してその場で実行する" },
+};
 
 /** 応答タグの凡例（help tags） */
 export const TAGS = [

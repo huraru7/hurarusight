@@ -6,17 +6,6 @@
 
 import { VERSION } from "./grammar.js";
 
-/** サイトのコンセプト/哲学（read manifest） */
-export const MANIFEST = [
-  "[INFO] hurarunium — manifest",
-  "",
-  "  Every work is a Realm.",
-  "  Every Realm is a world.",
-  "  Huraru wanders them all.",
-  "",
-  "  The world breathes. Walk slowly.",
-];
-
 export const responses = {
   /* ---- 共通エラー ---- */
   unknownCommand: (cmd, suggestion) => {
@@ -33,15 +22,6 @@ export const responses = {
   missingValue: (usage) => [`[ERROR] missing required value.`, `        Usage: ${usage}`],
   noArgsAllowed: (verb) => [`[ERROR] '${verb}' takes no arguments.`],
 
-  /* ---- search ---- */
-  search: {
-    linkItem: (l) => `[DATA] ${l.label} → ${l.url}`,
-    realmItem: (r) => `[DATA] ${r.id} — ${r.name ?? r.title ?? ""}`,
-    projectItem: (p) => `[DATA] ${p.title}${p.tag ? ` (${p.tag})` : ""}`,
-    empty: (kind) => `[INFO] No ${kind}s found.`,
-    notFound: (kind, id) => `[ERROR] ${kind} not found: '${id}'`,
-  },
-
   /* ---- scan ---- */
   scan: {
     line: (label, value) => `[DATA] ${label}: ${value}`,
@@ -55,9 +35,9 @@ export const responses = {
   ],
   emptyHistory: () => [`[INFO] No history yet.`],
 
-  /* ---- read ---- */
-  read: {
-    emptyLog: () => [`[INFO] Session log is empty.`],
+  /* ---- log ---- */
+  log: {
+    empty: () => [`[INFO] Session log is empty.`],
   },
 
   /* ---- go ---- */
@@ -70,18 +50,7 @@ export const responses = {
   run: {
     ok: (name) => `[OK] ${name} started.`,
     notRegistered: (name) => `[INFO] '${name}' is not registered yet.`,
-    needName: () => `[ERROR] run effect requires an effect name.`,
-  },
-
-  /* ---- set ---- */
-  set: {
-    ok: (key, value) => `[OK] ${key} set to ${value}.`,
-    okPending: (key, value) => [
-      `[OK] ${key} set to ${value}.`,
-      `[INFO] (no visible effect yet — this feature is not built.)`,
-    ],
-    invalidKey: (key) => `[ERROR] Unknown setting: '${key}'`,
-    invalidValue: (key, value) => `[ERROR] Invalid value for ${key}: '${value}'`,
+    needBracket: () => `[ERROR] run effect requires a qualifier, e.g. effect[particles].`,
   },
 
   /* ---- unlock ---- */
@@ -94,6 +63,5 @@ export const responses = {
     confirm: () => `[WARN] This action modifies session state. proceed? [y/N]`,
     cancelled: () => `[INFO] Cancelled.`,
     resetDone: () => `[OK] Session state reset.`,
-    denied: () => `[ERROR] permission denied.`,
   },
 };

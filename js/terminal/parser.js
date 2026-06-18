@@ -1,16 +1,23 @@
 /* =============================================================
    parser.js — 入力文字列を構文解析する
-   <verb> [target] [value] [--flag [value]]
+   <verb> <target>[bracket] [value] -TAG
    返り値:
      { type: "empty" }
      { type: "error", lines: string[] }
-     { type: "command", verb, target, value, flags }
-   ※ verb の存在・引数の要否・フラグ名は parser が検証（構文）。
-     target が「既知の対象か」等の意味検証は commands.js が担当。
+     { type: "command", verb, target, bracket, value, tags }
+   ※ verb の存在・引数の要否・タグ名は parser が検証（構文）。
+     target/bracket が「既知の対象か」等の意味検証は commands.js が担当。
    ============================================================= */
 
-import { GRAMMAR, VERBS } from "./grammar.js";
+import { GRAMMAR, VERBS, TAGS_SUPPORTED } from "./grammar.js";
 import { responses } from "./responses.js";
+
+/** "effect[particles]" のようなトークンを { name, bracket } に分解する */
+function splitBracket(token) {
+  const m = token.match(/^([^[\]]+)(?:\[([^[\]]+)\])?$/);
+  if (!m) return { name: token, bracket: null };
+  return { name: m[1], bracket: m[2] ?? null };
+}
 
 /** レーベンシュタイン距離 */
 function distance(a, b) {
@@ -54,31 +61,21 @@ export function parse(input) {
   const g = GRAMMAR[verb];
 
   const positional = [];
-  const flags = {};
+  const tags = {};
   for (let i = 1; i < tokens.length; i++) {
     const tok = tokens[i];
-    if (tok.startsWith("--")) {
-      const def = g.flags[tok];
-      if (!def) {
-        return { type: "error", lines: [`[ERROR] unknown flag '${tok}'`, `        Usage: ${g.usage}`] };
+    if (tok.startsWith("-") && !tok.startsWith("--") && tok.length > 1) {
+      const name = tok.slice(1);
+      if (!TAGS_SUPPORTED[name]) {
+        return { type: "error", lines: [`[ERROR] unknown tag '${tok}'`, `        Usage: ${g.usage}`] };
       }
-      if (def.value) {
-        const next = tokens[i + 1];
-        if (next && !next.startsWith("--")) {
-          flags[tok] = next;
-          i++;
-        } else {
-          flags[tok] = true;
-        }
-      } else {
-        flags[tok] = true;
-      }
+      tags[name] = true;
     } else {
       positional.push(tok);
     }
   }
 
-  const target = positional[0] ?? null;
+  const { name: target, bracket } = positional[0] != null ? splitBracket(positional[0]) : { name: null, bracket: null };
   const value = positional[1] ?? null;
 
   // 引数の要否（構文レベル）
@@ -92,5 +89,5 @@ export function parse(input) {
     return { type: "error", lines: responses.missingValue(g.usage) };
   }
 
-  return { type: "command", verb, target, value, flags };
+  return { type: "command", verb, target, bracket, value, tags };
 }
