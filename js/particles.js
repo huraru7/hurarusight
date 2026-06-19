@@ -265,6 +265,19 @@ const SHAPE_GENERATORS = {
     }
     return a;
   },
+
+  // 円相（完全な円のアウトライン）。data/settings.js の shapes には載せない隠し図形
+  void(count, scale) {
+    const a = new Float32Array(count * 3);
+    const r = scale * 0.9;
+    for (let i = 0; i < count; i++) {
+      const t = (i / count) * Math.PI * 2;
+      a[i * 3] = Math.cos(t) * r;
+      a[i * 3 + 1] = Math.sin(t) * r;
+      a[i * 3 + 2] = 0;
+    }
+    return a;
+  },
 };
 
 // 設定で指定された形だけを順番に（未知の名前は無視。空なら sphere）
@@ -421,6 +434,60 @@ export class ParticleField {
     this.points.material.uniforms.uProgress.value = 0;
     this.state = "hold";
     this.stateTime = 0;
+    if (this._frozen) this.points.rotation.set(0, 0, 0); // hold状態に入った瞬間だけ正面へ揃える
+    this._onSettle?.();
+    this._onSettle = null;
+  }
+
+  /** 名前を指定して直接その形へモーフする（サイクル位置は変えない）。
+      存在しない名前なら null、存在すれば「形が定まったら解決する Promise」を返す。 */
+  goToShape(name) {
+    const fn = SHAPE_GENERATORS[name];
+    if (!fn) return null;
+    const geo = this.points.geometry;
+    geo.getAttribute("aTarget").array.set(fn(P.count, P.shapeScale));
+    geo.getAttribute("aTarget").needsUpdate = true;
+    const delay = geo.getAttribute("aDelay").array;
+    for (let i = 0; i < delay.length; i++) delay[i] = Math.random();
+    geo.getAttribute("aDelay").needsUpdate = true;
+    this.points.material.uniforms.uProgress.value = 0;
+    this.state = "morph";
+    this.stateTime = 0;
+    return new Promise((resolve) => {
+      this._onSettle = resolve;
+    });
+  }
+
+  /** hold時間が来ても自動で次の形へ進まないようにする / 元に戻す */
+  freeze() {
+    this._frozen = true;
+  }
+  unfreeze() {
+    this._frozen = false;
+  }
+
+  /** カメラの目標距離を設定する（毎フレーム滑らかに近づく。既定値=6） */
+  setZoom(z) {
+    this._zoomTarget = z;
+  }
+
+  /** 粒子全体を duration 秒で縮小する。完了時に解決する Promise を返す */
+  shrink(duration = 0.8) {
+    return new Promise((resolve) => {
+      const start = this.points.scale.x;
+      const t0 = performance.now();
+      const step = () => {
+        const t = Math.min((performance.now() - t0) / 1000 / duration, 1);
+        this.points.scale.setScalar(Math.max(start * (1 - t), 0));
+        if (t < 1) requestAnimationFrame(step);
+        else resolve();
+      };
+      step();
+    });
+  }
+  /** shrink() で縮小したスケールを通常表示に戻す */
+  resetScale() {
+    this.points.scale.setScalar(1);
   }
 
   resize() {
@@ -455,7 +522,7 @@ export class ParticleField {
     // モーフの状態遷移
     this.stateTime += dt;
     if (this.state === "hold") {
-      if (this.stateTime >= P.hold) this.next();
+      if (!this._frozen && this.stateTime >= P.hold) this.next();
     } else {
       const p = Math.min(this.stateTime / P.morph, 1);
       this.points.material.uniforms.uProgress.value = p;
@@ -464,8 +531,11 @@ export class ParticleField {
 
     this.points.material.uniforms.uTime.value = t;
 
-    this.points.rotation.y = t * P.rotateSpeed;
-    this.points.rotation.x = t * P.rotateSpeed * 0.7;
+    // 静止保持中（freeze済みでhold状態）以外は通常どおり回転させる
+    if (!(this._frozen && this.state === "hold")) {
+      this.points.rotation.y = t * P.rotateSpeed;
+      this.points.rotation.x = t * P.rotateSpeed * 0.7;
+    }
     this.points.position.y = Math.sin(t * P.breatheSpeed) * P.breatheAmp;
 
     if (P.parallax) {
@@ -473,6 +543,7 @@ export class ParticleField {
       this.camera.position.y += (-this.mouse.y * P.parallax * 0.75 - this.camera.position.y) * 0.03;
       this.camera.lookAt(0, 0, 0);
     }
+    this.camera.position.z += ((this._zoomTarget ?? 6) - this.camera.position.z) * 0.04;
 
     this.renderer.render(this.scene, this.camera);
     this._raf = requestAnimationFrame(this._loop);
@@ -500,7 +571,8 @@ if (canvas) {
   let heroVisible = true;
 
   const syncRunning = () => {
-    if (heroVisible && !document.hidden) field.start();
+    // 神威空間（隠しページ）表示中は、タブ切り替え等で再始動しないようにする
+    if (heroVisible && !document.hidden && !field._voidActive) field.start();
     else field.stop();
   };
 

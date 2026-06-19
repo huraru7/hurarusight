@@ -82,7 +82,10 @@ export const GRAMMAR = {
     },
     // effect[xxx] の xxx 候補
     targetBrackets: {
-      effect: [{ name: "particles", desc: "粒子アニメ" }],
+      effect: [
+        { name: "particles", desc: "粒子アニメ" },
+        { name: "shapez", desc: "図形を直接指定する" },
+      ],
     },
     // ターゲット:角括弧 ごとの value 候補
     bracketValues: {
@@ -91,12 +94,25 @@ export const GRAMMAR = {
         { name: "stop", desc: "粒子の動きを止める" },
         { name: "start", desc: "粒子の動きを再開する" },
       ],
+      // 「void」は秘匿図形のため候補に出さない
+      "effect:shapez": [
+        { name: "sphere", desc: "球体" },
+        { name: "torus", desc: "トーラス構造" },
+        { name: "lorenz", desc: "ローレンツアトラクター" },
+        { name: "kleinBottle", desc: "クラインの壺" },
+        { name: "supernovaShell", desc: "超新星残骸のシェル構造" },
+        { name: "quantumFoam", desc: "量子泡" },
+        { name: "blackHole", desc: "ブラックホールの降着円盤と光子球" },
+        { name: "wave", desc: "波" },
+        { name: "spiral", desc: "渦巻き" },
+        { name: "helix", desc: "二重らせん" },
+      ],
     },
     flags: {},
-    examples: ["run effect[particles] next", "run effect[particles] stop"],
+    examples: ["run effect[particles] next", "run effect[shapez] sphere"],
     category: "実行",
     help: "演出を実行する",
-    usage: "run effect[particles] <next|stop|start>",
+    usage: "run effect[particles] <next|stop|start> | run effect[shapez] <図形名>",
   },
   set: {
     arg: "optional", // 何を打っても構文エラーにしない（未実装なので常に同じ応答を返す）
