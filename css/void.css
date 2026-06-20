@@ -114,6 +114,189 @@
   z-index: 6;
 }
 
+/* クリック後に発動する光条の高速回転（魔法陣が起動した印象） */
+.void-glow.is-activating .void-rays {
+  animation-duration: 0.7s;
+}
+
+/* 緻密な線で描く魔法陣（粒子だけでは表現しにくい文様を補う装飾） */
+.void-sigil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-width: 0.6;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.85));
+  opacity: 0.85;
+}
+.void-sigil__outer,
+.void-sigil__mid,
+.void-sigil__inner {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.void-sigil__outer {
+  animation: voidSigilSpin 42s linear infinite;
+}
+.void-sigil__mid {
+  animation: voidSigilSpin 28s linear infinite reverse;
+}
+.void-sigil__inner {
+  animation: voidSigilSpin 20s linear infinite;
+}
+@keyframes voidSigilSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* 発動時: 三層それぞれ違う速さで一気に回転が速くなる（巻き上がっていく印象） */
+.void-glow.is-activating .void-sigil__outer {
+  animation-duration: 2.6s;
+}
+.void-glow.is-activating .void-sigil__mid {
+  animation-duration: 1.6s;
+}
+.void-glow.is-activating .void-sigil__inner {
+  animation-duration: 0.9s;
+}
+/* さらに加速する最高潮（クライマックス直前）。is-activating の上に重ねて適用される */
+.void-glow.is-climax .void-rays {
+  animation-duration: 0.3s;
+}
+.void-glow.is-climax .void-sigil__outer {
+  animation-duration: 1s;
+}
+.void-glow.is-climax .void-sigil__mid {
+  animation-duration: 0.6s;
+}
+.void-glow.is-climax .void-sigil__inner {
+  animation-duration: 0.35s;
+}
+
+/* 魔法陣の外周5つの印に対応する発光ポイント */
+.void-runes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+.void-rune {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  transform: translate(var(--rx, 0), var(--ry, 0));
+  transition: opacity 0.6s ease, box-shadow 0.6s ease;
+}
+.void-rune.is-lit {
+  opacity: 1;
+  box-shadow: 0 0 18px 6px rgba(255, 255, 255, 0.9);
+}
+
+/* 円の位置から全画面へ広がり、裏側へ抜けるポータル */
+.void-portal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40vmin;
+  height: 40vmin;
+  transform: translate(-50%, -50%) scale(1);
+  border-radius: 50%;
+  background: radial-gradient(circle, #000 60%, #05070d 100%);
+  box-shadow: 0 0 40px 14px rgba(255, 255, 255, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 7;
+  transition: opacity 0.3s ease, transform 1.85s cubic-bezier(0.7, 0, 0.84, 0),
+    box-shadow 1.85s ease;
+}
+.void-portal.is-expanding {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(40);
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+}
+/* 空間が奥から現れるのに合わせて、ポータルは静かに消えていく */
+.void-portal.is-fading {
+  transition: opacity 1.5s ease;
+  opacity: 0;
+}
+
+/* ポータルが画面を覆った後の「何かを読み込んでいる」気配の演出（ソナー状に広がる輪） */
+.void-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  z-index: 9;
+  pointer-events: none;
+}
+.void-loading__core {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  margin: -2px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 14px 5px rgba(255, 255, 255, 0.9);
+  animation: voidLoadingPulse 1.8s ease-in-out infinite;
+}
+.void-loading__ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  margin: -5px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  animation: voidLoadingRing 2.4s ease-out infinite;
+}
+.void-loading__ring:nth-child(3) {
+  animation-delay: 0.8s;
+}
+.void-loading__ring:nth-child(4) {
+  animation-delay: 1.6s;
+}
+@keyframes voidLoadingPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 1;
+  }
+}
+@keyframes voidLoadingRing {
+  0% {
+    width: 10px;
+    height: 10px;
+    margin: -5px;
+    opacity: 0.8;
+  }
+  100% {
+    width: 360px;
+    height: 360px;
+    margin: -180px;
+    opacity: 0;
+  }
+}
+
 /* ---------- 全画面オーバーレイ ---------- */
 .void-overlay {
   position: fixed;
@@ -123,7 +306,10 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 1.1s ease, visibility 1.1s;
+  transform: scale(1);
+  /* opacity/visibility はトランジションさせず即時切り替え（表側が透けて見える隙間を作らない）。
+     ズーム（奥から出てくる動き）だけを transform で滑らかにする。 */
+  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: "IM Fell English", serif;
   color: #7a8aaa;
 }
@@ -131,6 +317,14 @@
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+}
+/* 奥から出てくる入場時の初期スケール（小さく・遠くに見える状態） */
+.void-overlay.is-emerging {
+  transform: scale(0.4);
+}
+/* ポータルが画面を覆っている間に初期状態をセットするための、トランジション無し即時反映 */
+.void-overlay.is-instant {
+  transition: none;
 }
 
 .void-stars {
@@ -434,6 +628,11 @@
   .void-book,
   .void-fragment,
   .void-rays,
+  .void-sigil__outer,
+  .void-sigil__mid,
+  .void-sigil__inner,
+  .void-loading__core,
+  .void-loading__ring,
   .hero.void-shake {
     animation: none !important;
   }

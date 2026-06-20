@@ -6,11 +6,11 @@
        await?: "confirm", onConfirm?: ()=>result }
    ============================================================= */
 
-import { GRAMMAR, VERBS, VERSION, TAGS } from "./grammar.js";
-import { responses as R } from "./responses.js";
 import { nearest } from "./parser.js";
 import { tryUnlock } from "./secrets.js";
 
+import { GRAMMAR, VERBS, VERSION, TAGS } from "../../data/grammar.js";
+import { responses as R } from "../../data/responses.js";
 import { settings } from "../../data/settings.js";
 
 import { getState, resetFragments } from "../fragments/state.js";

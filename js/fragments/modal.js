@@ -3,7 +3,7 @@
    羊皮紙テイスト。収集済み=セピア/淡インクのserif、未収集=ノイズ「????」。
    ============================================================= */
 
-import { FRAGMENTS, TOTAL } from "./data.js";
+import { FRAGMENTS, TOTAL } from "../../data/hidden/fragments.js";
 import { getState, subscribe } from "./state.js";
 
 const ROTATIONS = [-1, 0.6, -0.4, 1, -0.8, 0.3, -1]; // 固定パターン（カード毎の微小回転）

@@ -114,15 +114,21 @@ huraru-portfolio/
 
 ### 編集する場所
 
-- 応答メッセージの文言 → `js/terminal/responses.js`
-- コマンドの文法（動詞・対象・使い方） → `js/terminal/grammar.js`
+- 応答メッセージの文言 → `data/responses.js`
+- コマンドの文法（動詞・対象・使い方） → `data/grammar.js`
 - コマンドの処理 → `js/terminal/commands.js`
 - 見た目 → `css/terminal.css`
 
 ### 層のルール（情報の置き場所）
 
-- `data/`（content.js / settings.js）… **公開層**。サイト全体から参照可。
-- `js/terminal/` … **非公開層**。コンソールからのみ参照（サイト本体は import しない）。
+- `data/` … **コンテンツ層**。文言・設定・コマンド文法など「内容」を持つファイルを置く
+  （`content.js` / `settings.js` / `links.js` / `profile.js` / `grammar.js` / `responses.js`）。
+  サイト全体から参照可。
+- `data/hidden/` … 他のどこからも参照されない・ユーザーに公開しないコンテンツ
+  （`fragments.js`＝断片の定義、`void.js`＝神威空間の本文）。実際に読み込むのは
+  `js/fragments/` / `js/terminal/void-ui.js` のみ。
+- `js/terminal/` … **非公開層**。コンソールの処理・UIロジックを置く（コンソールからのみ参照、
+  サイト本体は import しない）。
 - `js/terminal/secrets.js` … 最深部。**外部 export しない**。解放は `tryUnlock()` 経由のみ。
 
 ## 断片収集システム（`js/fragments/`）
@@ -134,6 +140,6 @@ huraru-portfolio/
 
 - 何が解放トリガーになるか・解放コードなどは**意図的に非公開**（コードを直接読めば分かるが、
   README やヘルプには出さない）。
-- 関連ファイル: `js/fragments/`（data/state/toast/modal/triggers）、`css/fragments.css`、
-  `robots.txt` / `wanderer/`。`js/terminal/secrets.js` の解放にもフックしている。
+- 関連ファイル: `js/fragments/`（state/toast/modal/triggers）、断片の内容は `data/hidden/fragments.js`、
+  `css/fragments.css`、`robots.txt` / `wanderer/`。`js/terminal/secrets.js` の解放にもフックしている。
 

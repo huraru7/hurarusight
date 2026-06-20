@@ -10,7 +10,7 @@
    ・隠し要素関連 target は候補に出さない（grammar.targets に含めない）
    ============================================================= */
 
-import { GRAMMAR, VERBS } from "./grammar.js";
+import { GRAMMAR, VERBS } from "../../data/grammar.js";
 import { getState } from "../fragments/state.js";
 
 /** "effect[par" のようなトークンを { name, bracketOpen, bracketToken } に分解する */

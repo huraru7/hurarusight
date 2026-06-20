@@ -266,14 +266,99 @@ const SHAPE_GENERATORS = {
     return a;
   },
 
-  // 円相（完全な円のアウトライン）。data/settings.js の shapes には載せない隠し図形
+  // 魔法陣（二重の外周リング＋目盛り＋外側5つの印＋中心の六芒星）。
+  // data/settings.js の shapes には載せない隠し図形
   void(count, scale) {
     const a = new Float32Array(count * 3);
-    const r = scale * 0.9;
-    for (let i = 0; i < count; i++) {
-      const t = (i / count) * Math.PI * 2;
-      a[i * 3] = Math.cos(t) * r;
-      a[i * 3 + 1] = Math.sin(t) * r;
+    const rOuter = scale * 0.9; // 外周リングの半径
+    const rOuter2 = scale * 0.8; // 内側に添える2本目のリング
+    const tickOuter = scale * 0.86;
+    const tickInner = scale * 0.84; // 二重リングの間を結ぶ目盛り
+    const markR = scale * 0.09; // 外側の印（マーク）の大きさ
+    const ringR = scale * 0.46; // 六芒星を囲む小さな円
+    const starR = scale * 0.38; // 中心の六芒星の半径
+
+    const ringCount = Math.floor(count * 0.26);
+    const ring2Count = Math.floor(count * 0.12);
+    const tickTotal = Math.floor(count * 0.12);
+    const markCount = Math.floor(count * 0.15);
+    const innerRingCount = Math.floor(count * 0.08);
+    let i = 0;
+
+    // 外周のリング（一番外側）
+    for (; i < ringCount; i++) {
+      const t = (i / ringCount) * Math.PI * 2;
+      a[i * 3] = Math.cos(t) * rOuter;
+      a[i * 3 + 1] = Math.sin(t) * rOuter;
+      a[i * 3 + 2] = 0;
+    }
+
+    // 二重リングの内側の輪
+    for (let k = 0; k < ring2Count; k++, i++) {
+      const t = (k / ring2Count) * Math.PI * 2;
+      a[i * 3] = Math.cos(t) * rOuter2;
+      a[i * 3 + 1] = Math.sin(t) * rOuter2;
+      a[i * 3 + 2] = 0;
+    }
+
+    // 二重リングの間を結ぶ目盛り（時計の目盛りのような短い線）
+    const tickN = 24;
+    const perTick = Math.floor(tickTotal / tickN);
+    for (let m = 0; m < tickN; m++) {
+      const angle = (m / tickN) * Math.PI * 2;
+      const x1 = Math.cos(angle) * tickOuter;
+      const y1 = Math.sin(angle) * tickOuter;
+      const x2 = Math.cos(angle) * tickInner;
+      const y2 = Math.sin(angle) * tickInner;
+      for (let k = 0; k < perTick; k++, i++) {
+        const t = Math.random();
+        a[i * 3] = x1 + (x2 - x1) * t;
+        a[i * 3 + 1] = y1 + (y2 - y1) * t;
+        a[i * 3 + 2] = 0;
+      }
+    }
+
+    // 外周上に均等配置した5つの印（小さな円塊）
+    const perMark = Math.floor(markCount / 5);
+    for (let m = 0; m < 5; m++) {
+      const angle = (m / 5) * Math.PI * 2 - Math.PI / 2;
+      const cx = Math.cos(angle) * rOuter;
+      const cy = Math.sin(angle) * rOuter;
+      for (let k = 0; k < perMark; k++, i++) {
+        const rt = Math.random() * Math.PI * 2;
+        const rr = Math.sqrt(Math.random()) * markR;
+        a[i * 3] = cx + Math.cos(rt) * rr;
+        a[i * 3 + 1] = cy + Math.sin(rt) * rr;
+        a[i * 3 + 2] = 0;
+      }
+    }
+
+    // 六芒星を囲む小さな円
+    for (let k = 0; k < innerRingCount; k++, i++) {
+      const t = (k / innerRingCount) * Math.PI * 2;
+      a[i * 3] = Math.cos(t) * ringR;
+      a[i * 3 + 1] = Math.sin(t) * ringR;
+      a[i * 3 + 2] = 0;
+    }
+
+    // 中心の文様（二つの三角形を重ねた六芒星）
+    const hexPoints = [];
+    for (let p = 0; p < 6; p++) {
+      const angle = (p / 6) * Math.PI * 2 - Math.PI / 2;
+      hexPoints.push([Math.cos(angle) * starR, Math.sin(angle) * starR]);
+    }
+    const triA = [hexPoints[0], hexPoints[2], hexPoints[4], hexPoints[0]];
+    const triB = [hexPoints[1], hexPoints[3], hexPoints[5], hexPoints[1]];
+    const starEdges = [];
+    for (const tri of [triA, triB]) {
+      for (let e = 0; e < tri.length - 1; e++) starEdges.push([tri[e], tri[e + 1]]);
+    }
+
+    for (; i < count; i++) {
+      const e = starEdges[i % starEdges.length];
+      const t = Math.random();
+      a[i * 3] = e[0][0] + (e[1][0] - e[0][0]) * t;
+      a[i * 3 + 1] = e[0][1] + (e[1][1] - e[0][1]) * t;
       a[i * 3 + 2] = 0;
     }
     return a;
@@ -285,6 +370,15 @@ const SHAPES = P.shapes.map((name) => SHAPE_GENERATORS[name]).filter(Boolean);
 if (SHAPES.length === 0) SHAPES.push(SHAPE_GENERATORS.sphere);
 
 const makeShape = (i) => SHAPES[i](P.count, P.shapeScale);
+
+/** 角度を (-π, π] に正規化する（経過時間で蓄積した大きな値のまま使うと
+    イージング時に何周も回ってしまうため） */
+function normalizeAngle(a) {
+  a = a % (Math.PI * 2);
+  if (a > Math.PI) a -= Math.PI * 2;
+  if (a < -Math.PI) a += Math.PI * 2;
+  return a;
+}
 
 /** 次に表示する形のインデックスを選ぶ。ランダム時は直前と同じ形を選ばない */
 function pickShapeIndex(current, length, random) {
@@ -453,6 +547,8 @@ export class ParticleField {
     this.points.material.uniforms.uProgress.value = 0;
     this.state = "morph";
     this.stateTime = 0;
+    this._rotStartY = normalizeAngle(this.points.rotation.y);
+    this._rotStartX = normalizeAngle(this.points.rotation.x);
     return new Promise((resolve) => {
       this._onSettle = resolve;
     });
@@ -464,11 +560,6 @@ export class ParticleField {
   }
   unfreeze() {
     this._frozen = false;
-  }
-
-  /** カメラの目標距離を設定する（毎フレーム滑らかに近づく。既定値=6） */
-  setZoom(z) {
-    this._zoomTarget = z;
   }
 
   /** 粒子全体を duration 秒で縮小する。完了時に解決する Promise を返す */
@@ -526,13 +617,19 @@ export class ParticleField {
     } else {
       const p = Math.min(this.stateTime / P.morph, 1);
       this.points.material.uniforms.uProgress.value = p;
+      if (this._frozen) {
+        // 形が完成するのに合わせて回転を正面（0）へ滑らかに収束させる
+        const ease = p * p * (3 - 2 * p); // smoothstep
+        this.points.rotation.y = this._rotStartY * (1 - ease);
+        this.points.rotation.x = this._rotStartX * (1 - ease);
+      }
       if (p >= 1) this._commit();
     }
 
     this.points.material.uniforms.uTime.value = t;
 
-    // 静止保持中（freeze済みでhold状態）以外は通常どおり回転させる
-    if (!(this._frozen && this.state === "hold")) {
+    // freeze中は上の処理（モーフ中のイージング／hold中は0で固定）に任せ、通常時のみ回転させる
+    if (!this._frozen) {
       this.points.rotation.y = t * P.rotateSpeed;
       this.points.rotation.x = t * P.rotateSpeed * 0.7;
     }
@@ -543,7 +640,6 @@ export class ParticleField {
       this.camera.position.y += (-this.mouse.y * P.parallax * 0.75 - this.camera.position.y) * 0.03;
       this.camera.lookAt(0, 0, 0);
     }
-    this.camera.position.z += ((this._zoomTarget ?? 6) - this.camera.position.z) * 0.04;
 
     this.renderer.render(this.scene, this.camera);
     this._raf = requestAnimationFrame(this._loop);

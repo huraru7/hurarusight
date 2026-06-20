@@ -6,7 +6,7 @@
    ・stage     … 0/1/2/3（1件以上→1, 3件以上→2, 7件→3）
    ============================================================= */
 
-import { TOTAL, fragmentById } from "./data.js";
+import { TOTAL, fragmentById } from "../../data/hidden/fragments.js";
 import { showToast } from "./toast.js";
 
 const KEY = "hurarunium.fragments";

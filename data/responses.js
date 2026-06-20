@@ -2,6 +2,7 @@
    responses.js — 応答メッセージの雛形（verb ごと）
    ★ 文言の調整はこのファイルで。動的な値は関数で返す。
      行頭の [TAG]（INFO/DATA/OK/ERROR/WARN/CLASSIFIED）で色が変わる。
+   js/terminal/commands.js・parser.js が読み込む。
    ============================================================= */
 
 import { VERSION } from "./grammar.js";

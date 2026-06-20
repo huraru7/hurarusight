@@ -5,7 +5,7 @@
    CSS・Webフォントはここで動的に <link> を注入する（index.html は無関係）。
    ============================================================= */
 
-import { voidContent } from "./void.js";
+import { voidContent } from "../../data/hidden/void.js";
 
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -340,6 +340,52 @@ function bindExit() {
 }
 
 /* ---------- 入場直前の演出（粒子の収束→円→クリック→崩壊） ---------- */
+
+/** 半径rOuter〜rInnerを結ぶ短い目盛り線をcount本、中心(cx,cy)を軸に均等配置したSVG文字列 */
+function tickMarksSVG(cx, cy, rOuter, rInner, count) {
+  let s = "";
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2;
+    const x1 = (cx + Math.cos(angle) * rOuter).toFixed(1);
+    const y1 = (cy + Math.sin(angle) * rOuter).toFixed(1);
+    const x2 = (cx + Math.cos(angle) * rInner).toFixed(1);
+    const y2 = (cy + Math.sin(angle) * rInner).toFixed(1);
+    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />`;
+  }
+  return s;
+}
+
+/** 中心(cx,cy)・半径rの六芒星（二つの三角形）のSVGパス文字列 */
+function hexagramSVG(cx, cy, r) {
+  const pts = [];
+  for (let i = 0; i < 6; i++) {
+    const angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+    pts.push([cx + Math.cos(angle) * r, cy + Math.sin(angle) * r]);
+  }
+  const toPath = (idx) =>
+    "M" + idx.map((n) => pts[n].map((v) => v.toFixed(1)).join(",")).join(" L") + " Z";
+  return `<path d="${toPath([0, 2, 4])}" /><path d="${toPath([1, 3, 5])}" />`;
+}
+
+/** クリアな線で描く魔法陣のSVG装飾（粒子だけでは出せない緻密な文様を補う） */
+function sigilSVG() {
+  return `
+    <svg class="void-sigil" viewBox="0 0 200 200" aria-hidden="true">
+      <g class="void-sigil__outer">
+        <circle cx="100" cy="100" r="92" />
+        <circle cx="100" cy="100" r="78" stroke-dasharray="1.5 5" />
+        ${tickMarksSVG(100, 100, 86, 80, 24)}
+      </g>
+      <g class="void-sigil__mid">
+        <circle cx="100" cy="100" r="58" stroke-dasharray="5 4" />
+      </g>
+      <g class="void-sigil__inner">
+        <circle cx="100" cy="100" r="46" />
+        ${hexagramSVG(100, 100, 38)}
+      </g>
+    </svg>`;
+}
+
 function createGlow() {
   const hero = document.querySelector(".hero");
   if (!hero) return null;
@@ -348,6 +394,7 @@ function createGlow() {
   const rays = document.createElement("div");
   rays.className = "void-rays";
   glow.appendChild(rays);
+  glow.insertAdjacentHTML("beforeend", sigilSVG());
   hero.appendChild(glow);
   glowEl = glow;
   return glow;
@@ -370,6 +417,116 @@ function flashAndShake() {
     flash.remove();
     hero.classList.remove("void-shake");
   }, 500);
+}
+
+/** 魔法陣の外周5箇所に対応する「印」を光らせる装飾（円相＝魔法陣の発動演出用） */
+function createRunes() {
+  const hero = document.querySelector(".hero");
+  if (!hero) return null;
+  const wrap = document.createElement("div");
+  wrap.className = "void-runes";
+  const vmin = Math.min(window.innerWidth, window.innerHeight) / 100;
+  const radius = 18 * vmin; // .void-glow(40vmin)の外周5マークに合わせた半径
+  for (let i = 0; i < 5; i++) {
+    const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+    const rune = document.createElement("span");
+    rune.className = "void-rune";
+    rune.style.setProperty("--rx", `${(Math.cos(angle) * radius).toFixed(1)}px`);
+    rune.style.setProperty("--ry", `${(Math.sin(angle) * radius).toFixed(1)}px`);
+    rune.style.transitionDelay = `${i * 0.3}s`;
+    wrap.appendChild(rune);
+  }
+  hero.appendChild(wrap);
+  return wrap;
+}
+
+/** 円の位置から画面全体を覆っていく「裏側へ抜ける」ポータル拡大演出 */
+function createPortal() {
+  const hero = document.querySelector(".hero");
+  if (!hero) return null;
+  const portal = document.createElement("div");
+  portal.className = "void-portal";
+  hero.appendChild(portal);
+  return portal;
+}
+
+/** ポータルが画面を覆っている間に表示する、何かを読み込んでいるような気配の演出 */
+function createLoading() {
+  const hero = document.querySelector(".hero");
+  if (!hero) return null;
+  const el = document.createElement("div");
+  el.className = "void-loading";
+  el.innerHTML = `
+    <span class="void-loading__core"></span>
+    <span class="void-loading__ring"></span>
+    <span class="void-loading__ring"></span>
+    <span class="void-loading__ring"></span>`;
+  hero.appendChild(el);
+  return el;
+}
+
+/** 魔法陣を発動させ、ポータルで裏側へ抜けてから神威空間を表示する（reduced-motionでは簡略化） */
+async function revealVoid(field) {
+  if (REDUCED) {
+    field.resetScale();
+    removeGlow();
+    field._voidActive = true;
+    field.stop();
+    overlayEl.classList.add("is-open");
+    return;
+  }
+
+  const runes = createRunes();
+
+  // 1) 外周5つの印が、間を置きながら一つずつ光っていく
+  await wait(200);
+  runes?.querySelectorAll(".void-rune").forEach((r) => r.classList.add("is-lit"));
+  await wait(1700); // 5つ点灯し終えて、しばらく魔法陣そのものを見せる
+
+  // 2) 魔法陣全体がゆっくり起動し、回転が増していく（巻き上がっていく感じ）
+  glowEl?.classList.add("is-activating");
+  await wait(900);
+
+  // 3) さらに加速し、最高潮へ
+  glowEl?.classList.add("is-climax");
+  await wait(400);
+
+  // 4) クライマックス: フラッシュ＋画面シェイク
+  flashAndShake();
+  await wait(320);
+
+  removeGlow();
+  await field.shrink(1.1);
+
+  // 5) ポータルが裏側へ向けてゆっくり広がっていく
+  const portal = createPortal();
+  requestAnimationFrame(() => portal?.classList.add("is-expanding"));
+  await wait(1900);
+
+  // 6) 画面が完全に覆われた後、何かが読み込まれているような気配を少し見せる
+  const loading = createLoading();
+  await wait(2400);
+  loading?.remove();
+
+  field._voidActive = true;
+  field.stop();
+
+  // 7) 奥から出てきてゆっくり止まるように空間が現れる。
+  //    ポータルはこの間ずっと不透明のまま全画面を覆っておき、ズームが完全に終わる
+  //    までは消さない（同時にフェードさせると表側が一瞬透けて見えてしまうため）。
+  overlayEl.classList.add("is-emerging", "is-instant");
+  requestAnimationFrame(() => {
+    overlayEl.classList.remove("is-instant");
+    overlayEl.classList.add("is-open");
+    overlayEl.classList.remove("is-emerging");
+  });
+  await wait(1700); // ズーム（scale 0.4→1）が終わるまで待つ
+
+  // ズームが終わり空間が完全に不透明で画面を覆ってから、ポータルを消す
+  portal?.classList.add("is-fading");
+  await wait(900);
+  portal?.remove();
+  runes?.remove();
 }
 
 function waitForHotspotClick() {
@@ -410,36 +567,24 @@ export async function beginVoidSequence() {
     field.freeze();
     await field.goToShape("void");
 
-    if (!REDUCED) field.setZoom(3.6); // 何かに引き込まれるような寄り
-
     const glow = REDUCED ? null : createGlow();
     if (glow) {
       requestAnimationFrame(() => glow.classList.add("is-bright"));
-      await wait(900);
+      await wait(1700);
     }
 
-    await wait(REDUCED ? 200 : 1200);
+    await wait(REDUCED ? 200 : 2400);
     window.hurarunium?.terminal?.print(["[INFO] something is here."]);
 
     if (glow) {
       glow.classList.remove("is-bright");
       glow.classList.add("is-dim");
-      await wait(800);
+      await wait(1500);
     }
 
     await waitForHotspotClick();
-    if (!REDUCED) flashAndShake();
-    await wait(REDUCED ? 0 : 150); // フラッシュの立ち上がりを少し見せてから収束開始
-    removeGlow();
+    await revealVoid(field); // 魔法陣の発動→ポータルで裏側へ抜ける演出→空間表示
 
-    if (!REDUCED) await field.shrink(0.8);
-    else field.resetScale();
-
-    field.setZoom(6); // 退場時に通常表示へ戻れるよう距離を戻しておく
-    field._voidActive = true;
-    field.stop();
-
-    overlayEl.classList.add("is-open");
     const coordEl = overlayEl.querySelector("[data-void-coord]");
     const c = voidContent.coordinates;
     if (coordEl) coordEl.textContent = `${c.x} / ${c.y} / ${c.z}`;

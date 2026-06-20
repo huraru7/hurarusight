@@ -4,7 +4,7 @@
    表層（サイト本体）には干渉しない独立した固定要素。
    ============================================================= */
 
-import { VERSION } from "./grammar.js";
+import { VERSION } from "../../data/grammar.js";
 import { parse } from "./parser.js";
 import { execute } from "./commands.js";
 import { suggest, applyCandidate } from "./autocomplete.js";

@@ -9,8 +9,8 @@
      target/bracket が「既知の対象か」等の意味検証は commands.js が担当。
    ============================================================= */
 
-import { GRAMMAR, VERBS, TAGS_SUPPORTED } from "./grammar.js";
-import { responses } from "./responses.js";
+import { GRAMMAR, VERBS, TAGS_SUPPORTED } from "../../data/grammar.js";
+import { responses } from "../../data/responses.js";
 
 /** "effect[particles]" のようなトークンを { name, bracket } に分解する */
 function splitBracket(token) {

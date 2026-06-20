@@ -1,7 +1,7 @@
 /* =============================================================
    grammar.js — コマンド文法と説明の唯一の定義
    形式: <動詞> <ターゲット>[引数] [value] -TAG
-   parser（検証）/ autocomplete（候補+説明）/ help（詳細）が共有する。
+   js/terminal/parser.js（検証）/ autocomplete.js（候補+説明）/ commands.js（help詳細）が共有する。
      verb: {
        arg:    "required" | "optional" | "none"
        value:  "required" | "optional" | "none"
