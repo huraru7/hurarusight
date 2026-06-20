@@ -528,7 +528,6 @@ export class ParticleField {
     this.points.material.uniforms.uProgress.value = 0;
     this.state = "hold";
     this.stateTime = 0;
-    if (this._frozen) this.points.rotation.set(0, 0, 0); // hold状態に入った瞬間だけ正面へ揃える
     this._onSettle?.();
     this._onSettle = null;
   }
@@ -547,8 +546,17 @@ export class ParticleField {
     this.points.material.uniforms.uProgress.value = 0;
     this.state = "morph";
     this.stateTime = 0;
+
+    // 回転の正面揃え（freeze中のみ使う）は形のモーフとは別の時間軸で進める。
+    // 角度をそのまま使うと蓄積した大きな値になりがちなので (-π, π] に正規化したうえで、
+    // 最大角速度を決めて「どれだけ回転が残っていても、その速さ以上では回さない」ようにする。
     this._rotStartY = normalizeAngle(this.points.rotation.y);
     this._rotStartX = normalizeAngle(this.points.rotation.x);
+    this._rotTime = 0;
+    const maxAngle = Math.max(Math.abs(this._rotStartY), Math.abs(this._rotStartX));
+    const maxRotSpeed = 0.5; // rad/s（通常の巡回回転より速いが、回っているとわかる程度に留める）
+    this._rotDuration = Math.max(P.morph, maxAngle / maxRotSpeed);
+
     return new Promise((resolve) => {
       this._onSettle = resolve;
     });
@@ -610,26 +618,29 @@ export class ParticleField {
     this._last = now;
     const t = this.clock.getElapsedTime();
 
-    // モーフの状態遷移
+    // モーフの状態遷移（位置のブレンドのみ。回転は別の時間軸で扱う）
     this.stateTime += dt;
     if (this.state === "hold") {
       if (!this._frozen && this.stateTime >= P.hold) this.next();
     } else {
       const p = Math.min(this.stateTime / P.morph, 1);
       this.points.material.uniforms.uProgress.value = p;
-      if (this._frozen) {
-        // 形が完成するのに合わせて回転を正面（0）へ滑らかに収束させる
-        const ease = p * p * (3 - 2 * p); // smoothstep
-        this.points.rotation.y = this._rotStartY * (1 - ease);
-        this.points.rotation.x = this._rotStartX * (1 - ease);
-      }
       if (p >= 1) this._commit();
     }
 
     this.points.material.uniforms.uTime.value = t;
 
-    // freeze中は上の処理（モーフ中のイージング／hold中は0で固定）に任せ、通常時のみ回転させる
-    if (!this._frozen) {
+    if (this._frozen) {
+      // 正面への回転収束（goToShape() で設定した、速度上限つきの専用タイマーで進める）
+      if (this._rotDuration != null) {
+        this._rotTime += dt;
+        const rp = Math.min(this._rotTime / this._rotDuration, 1);
+        const ease = rp * rp * (3 - 2 * rp); // smoothstep
+        this.points.rotation.y = this._rotStartY * (1 - ease);
+        this.points.rotation.x = this._rotStartX * (1 - ease);
+        if (rp >= 1) this._rotDuration = null; // 完了。以後は0のまま動かさない
+      }
+    } else {
       this.points.rotation.y = t * P.rotateSpeed;
       this.points.rotation.x = t * P.rotateSpeed * 0.7;
     }

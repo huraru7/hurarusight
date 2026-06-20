@@ -2,8 +2,9 @@
    main.js — サイトの動き
    data/content.js（唯一の編集場所）を読み込み、HTML の印に流し込む。
      - data-bind="profile.tagline" … その値をテキストとして入れる
-   リンク（Links セクション）は js/links.js / data/links.js が、
-   プロフィール詳細（About セクション）は js/about.js / data/profile.js が別途担当する。
+   リンク（Links セクション）は js/links.js が、
+   プロフィール詳細（About セクション）は js/about.js が、それぞれ content.links / content.profile
+   を読み込んで担当する。
    ============================================================= */
 
 import { content } from "../data/content.js";

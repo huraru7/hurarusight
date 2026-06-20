@@ -332,7 +332,7 @@ function exitVoid() {
     field._voidActive = false;
     field.start();
   }
-  overlayEl.classList.remove("is-open");
+  overlayEl.classList.remove("is-open", "is-content-hidden", "is-instant");
 }
 
 function bindExit() {
@@ -498,31 +498,29 @@ async function revealVoid(field) {
   removeGlow();
   await field.shrink(1.1);
 
-  // 5) ポータルが裏側へ向けてゆっくり広がっていく
+  // 5) 背景（黒）をここで即座に・確実に画面全体に敷く。以後この上に重ねる演出
+  //    （ポータルの拡大・ローディング・コンテンツのズーム等）は全て装飾であり、
+  //    途中状態がどうであれ背景の不透明性そのものには影響しない
+  //    （ポータル自身が小さい間に表側が透けて見えていた、というバグの根本対策）。
+  overlayEl.classList.add("is-open", "is-content-hidden", "is-instant");
+  requestAnimationFrame(() => overlayEl.classList.remove("is-instant"));
+  field._voidActive = true;
+  field.stop();
+
+  // 6) ポータルが裏側へ向けてゆっくり広がっていく（黒背景の上に重なる装飾）
   const portal = createPortal();
   requestAnimationFrame(() => portal?.classList.add("is-expanding"));
   await wait(1900);
 
-  // 6) 画面が完全に覆われた後、何かが読み込まれているような気配を少し見せる
+  // 7) 画面が完全に覆われた後、何かが読み込まれているような気配を少し見せる
   const loading = createLoading();
   await wait(2400);
   loading?.remove();
 
-  field._voidActive = true;
-  field.stop();
+  // 8) 奥から出てきてゆっくり止まるように、空間のコンテンツ（星・本文）が現れる
+  overlayEl.classList.remove("is-content-hidden");
+  await wait(1700);
 
-  // 7) 奥から出てきてゆっくり止まるように空間が現れる。
-  //    ポータルはこの間ずっと不透明のまま全画面を覆っておき、ズームが完全に終わる
-  //    までは消さない（同時にフェードさせると表側が一瞬透けて見えてしまうため）。
-  overlayEl.classList.add("is-emerging", "is-instant");
-  requestAnimationFrame(() => {
-    overlayEl.classList.remove("is-instant");
-    overlayEl.classList.add("is-open");
-    overlayEl.classList.remove("is-emerging");
-  });
-  await wait(1700); // ズーム（scale 0.4→1）が終わるまで待つ
-
-  // ズームが終わり空間が完全に不透明で画面を覆ってから、ポータルを消す
   portal?.classList.add("is-fading");
   await wait(900);
   portal?.remove();

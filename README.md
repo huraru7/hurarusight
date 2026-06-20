@@ -34,8 +34,8 @@ huraru-portfolio/
 |---|---|---|
 | `data-bind="profile.tagline"` | その値（テキスト） | キャッチコピー |
 
-プロフィール詳細（About セクション）は `data/profile.js`、リンク（Links セクション）は
-`data/links.js` でそれぞれ別に一元管理しています（後述）。
+プロフィール詳細（About セクション）・リンク（Links セクション）も `data/content.js` の
+`profile` / `links` でそれぞれ管理しています（後述）。
 
 - 基本は素の HTML / CSS / JS です。
 - 粒子アニメ用に **Three.js だけ CDN(esm.sh) から読み込む準備**を入れてあります（後述）。
@@ -75,7 +75,7 @@ huraru-portfolio/
 名前・誕生日や好きなものなどの情報カード・メモ・写真をコルクボードに貼ったように表示するセクション。
 各カードは固定パターンでチルトしており、ホバーすると正面を向く。
 
-- 掲載内容（名前・情報カード・メモ・画像）の編集 → `data/profile.js`
+- 掲載内容（名前・情報カード・メモ・画像）の編集 → `data/content.js` の `profile`
 - 見た目・演出 → `css/about.css`
 - DOM生成 → `js/about.js`
 
@@ -84,7 +84,7 @@ huraru-portfolio/
 外部リンクを「扉」、メールアドレスなどコピー可能な情報を「石版」として表示するセクション。
 クリックで扉は新しいタブへ遷移、石版は情報を浮かび上がらせてもう一度クリックでコピー。
 
-- 掲載内容（ラベル・リンク先・メールアドレス等）の編集 → `data/links.js`
+- 掲載内容（ラベル・リンク先・メールアドレス等）の編集 → `data/content.js` の `links`
 - 見た目・演出 → `css/links.css`
 - 挙動（クリック処理など） → `js/links.js`
 
@@ -122,7 +122,7 @@ huraru-portfolio/
 ### 層のルール（情報の置き場所）
 
 - `data/` … **コンテンツ層**。文言・設定・コマンド文法など「内容」を持つファイルを置く
-  （`content.js` / `settings.js` / `links.js` / `profile.js` / `grammar.js` / `responses.js`）。
+  （`content.js`＝プロフィール/リンク/サイト情報、`settings.js`、`grammar.js`、`responses.js`）。
   サイト全体から参照可。
 - `data/hidden/` … 他のどこからも参照されない・ユーザーに公開しないコンテンツ
   （`fragments.js`＝断片の定義、`void.js`＝神威空間の本文）。実際に読み込むのは

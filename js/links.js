@@ -1,11 +1,13 @@
 /* =============================================================
    links.js — Links セクションの DOM 生成・挙動
-   data/links.js を読み込み、扉（gate）/ 石版（stone）の要素を生成する。
+   data/content.js（links）を読み込み、扉（gate）/ 石版（stone）の要素を生成する。
    ・扉   : クリックで新しいタブへ遷移
    ・石版 : 1回目クリックで情報をポップアップ表示、2回目でクリップボードへコピー
    ============================================================= */
 
-import { links } from "../data/links.js";
+import { content } from "../data/content.js";
+
+const { links } = content;
 
 const ICONS = {
   x: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.6l-5.2-6.8L5.2 22H2l8.1-9.3L1.5 2H8.3l4.7 6.2L18.9 2zm-2.3 18h1.8L7.5 4H5.6l11 16z"/></svg>`,

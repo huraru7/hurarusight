@@ -1,10 +1,12 @@
 /* =============================================================
    about.js — About セクション（コルクボード）の DOM 生成
-   data/profile.js を読み込み、name/info/memo/image の4種カードを
+   data/content.js（profile）を読み込み、name/info/memo/image の4種カードを
    コルクボードに不規則チルトで配置する。
    ============================================================= */
 
-import { profile } from "../data/profile.js";
+import { content } from "../data/content.js";
+
+const { profile } = content;
 
 // 固定パターン（カードごとの微小回転・位置オフセット。完全ランダムにしない）
 const ROTATIONS = [-3, 2, -1.5, 3.5, -2.5, 1, -4, 2.5];

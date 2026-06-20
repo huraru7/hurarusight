@@ -298,6 +298,10 @@
 }
 
 /* ---------- 全画面オーバーレイ ---------- */
+/* .void-overlay 自体は「黒背景で画面を覆うかどうか」だけを担当し、一切アニメーションしない。
+   is-open になった瞬間から exitVoid() で閉じるまで、常に画面全体を完全に不透明な黒で覆い続ける
+   ことを保証する（この上に重ねるポータル・ローディング等の演出は全て装飾であり、
+   それらの途中状態がどうであれ背側のサイトが透けて見えることはない）。 */
 .void-overlay {
   position: fixed;
   inset: 0;
@@ -306,10 +310,6 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: scale(1);
-  /* opacity/visibility はトランジションさせず即時切り替え（表側が透けて見える隙間を作らない）。
-     ズーム（奥から出てくる動き）だけを transform で滑らかにする。 */
-  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: "IM Fell English", serif;
   color: #7a8aaa;
 }
@@ -318,12 +318,23 @@
   visibility: visible;
   pointer-events: auto;
 }
-/* 奥から出てくる入場時の初期スケール（小さく・遠くに見える状態） */
-.void-overlay.is-emerging {
-  transform: scale(0.4);
+
+/* コンテンツ（星・本文）側だけが「奥から出てくる」ズームの対象。
+   背景の不透明性とは独立しているので、これがどんな途中状態でも安全。 */
+.void-stars,
+.void-scroll {
+  transform: scale(1);
+  opacity: 1;
+  transition: transform 1.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.4s ease;
 }
-/* ポータルが画面を覆っている間に初期状態をセットするための、トランジション無し即時反映 */
-.void-overlay.is-instant {
+.void-overlay.is-content-hidden .void-stars,
+.void-overlay.is-content-hidden .void-scroll {
+  transform: scale(0.5);
+  opacity: 0;
+}
+/* 初期状態をトランジション無しで即時セットするためのフラグ */
+.void-overlay.is-instant .void-stars,
+.void-overlay.is-instant .void-scroll {
   transition: none;
 }
 
