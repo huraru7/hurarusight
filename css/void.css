@@ -1,348 +1,40 @@
 /* =============================================================
-   void.css — 神威空間（Origin Library）の見た目
-   js/terminal/void-ui.js が起動時に動的注入する（index.html からは無関係）。
+   void.css — 神威空間（Origin Library）本体（裏側 / void/index.html）の見た目
+   void/index.html から通常の <link> で読み込む（このページ自体が隠しページのため、
+   index.html のような動的注入によるトレース消しは不要）。
    ============================================================= */
 
-/* ---------- 入場演出（.hero に重ねる一時要素） ---------- */
-.void-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 40vmin;
-  height: 40vmin;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.95), transparent 65%);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.9s ease;
-  z-index: 5;
-}
-.void-glow.is-bright {
-  opacity: 1;
-}
-.void-glow.is-dim {
-  opacity: 0.08;
-  transition: opacity 0.8s ease;
-}
-
-/* 光条（力が放出されている印象のための、ゆっくり回転する疑似光線） */
-.void-rays {
-  position: absolute;
-  inset: -60%;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(255, 255, 255, 0.5) 4deg,
-    transparent 18deg,
-    transparent 40deg,
-    rgba(255, 255, 255, 0.35) 44deg,
-    transparent 58deg,
-    transparent 100deg,
-    rgba(255, 255, 255, 0.4) 104deg,
-    transparent 120deg,
-    transparent 200deg,
-    rgba(255, 255, 255, 0.3) 204deg,
-    transparent 220deg,
-    transparent 300deg,
-    rgba(255, 255, 255, 0.45) 304deg,
-    transparent 320deg,
-    transparent 360deg
-  );
-  opacity: 0.5;
-  animation: voidRaysSpin 6s linear infinite;
-  mix-blend-mode: screen;
-}
-@keyframes voidRaysSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* クリック（崩壊開始）の瞬間の全画面フラッシュ */
-.void-flash {
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease-out;
-  z-index: 8;
-}
-.void-flash.is-flashing {
-  opacity: 0.85;
-  transition: opacity 0.12s ease-in, opacity 0.35s ease-out 0.12s;
-}
-
-/* 画面シェイク */
-.hero.void-shake {
-  animation: voidShake 0.4s ease-in-out;
-}
-@keyframes voidShake {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  20% {
-    transform: translate(-6px, 3px);
-  }
-  40% {
-    transform: translate(5px, -4px);
-  }
-  60% {
-    transform: translate(-4px, -2px);
-  }
-  80% {
-    transform: translate(3px, 4px);
-  }
-}
-
-.void-hotspot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 30vmin;
-  height: 30vmin;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 6;
-}
-
-/* クリック後に発動する光条の高速回転（魔法陣が起動した印象） */
-.void-glow.is-activating .void-rays {
-  animation-duration: 0.7s;
-}
-
-/* 緻密な線で描く魔法陣（粒子だけでは表現しにくい文様を補う装飾） */
-.void-sigil {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.85);
-  stroke-width: 0.6;
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.85));
-  opacity: 0.85;
-}
-.void-sigil__outer,
-.void-sigil__mid,
-.void-sigil__inner {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.void-sigil__outer {
-  animation: voidSigilSpin 42s linear infinite;
-}
-.void-sigil__mid {
-  animation: voidSigilSpin 28s linear infinite reverse;
-}
-.void-sigil__inner {
-  animation: voidSigilSpin 20s linear infinite;
-}
-@keyframes voidSigilSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-/* 発動時: 三層それぞれ違う速さで一気に回転が速くなる（巻き上がっていく印象） */
-.void-glow.is-activating .void-sigil__outer {
-  animation-duration: 2.6s;
-}
-.void-glow.is-activating .void-sigil__mid {
-  animation-duration: 1.6s;
-}
-.void-glow.is-activating .void-sigil__inner {
-  animation-duration: 0.9s;
-}
-/* さらに加速する最高潮（クライマックス直前）。is-activating の上に重ねて適用される */
-.void-glow.is-climax .void-rays {
-  animation-duration: 0.3s;
-}
-.void-glow.is-climax .void-sigil__outer {
-  animation-duration: 1s;
-}
-.void-glow.is-climax .void-sigil__mid {
-  animation-duration: 0.6s;
-}
-.void-glow.is-climax .void-sigil__inner {
-  animation-duration: 0.35s;
-}
-
-/* 魔法陣の外周5つの印に対応する発光ポイント */
-.void-runes {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 6;
-}
-.void-rune {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  margin: -5px;
-  border-radius: 50%;
-  background: #fff;
-  opacity: 0;
-  transform: translate(var(--rx, 0), var(--ry, 0));
-  transition: opacity 0.6s ease, box-shadow 0.6s ease;
-}
-.void-rune.is-lit {
-  opacity: 1;
-  box-shadow: 0 0 18px 6px rgba(255, 255, 255, 0.9);
-}
-
-/* 円の位置から全画面へ広がり、裏側へ抜けるポータル */
-.void-portal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 40vmin;
-  height: 40vmin;
-  transform: translate(-50%, -50%) scale(1);
-  border-radius: 50%;
-  background: radial-gradient(circle, #000 60%, #05070d 100%);
-  box-shadow: 0 0 40px 14px rgba(255, 255, 255, 0.6);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 7;
-  transition: opacity 0.3s ease, transform 1.85s cubic-bezier(0.7, 0, 0.84, 0),
-    box-shadow 1.85s ease;
-}
-.void-portal.is-expanding {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(40);
-  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-}
-/* 空間が奥から現れるのに合わせて、ポータルは静かに消えていく */
-.void-portal.is-fading {
-  transition: opacity 1.5s ease;
-  opacity: 0;
-}
-
-/* ポータルが画面を覆った後の「何かを読み込んでいる」気配の演出（ソナー状に広がる輪） */
-.void-loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  z-index: 9;
-  pointer-events: none;
-}
-.void-loading__core {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 4px;
-  margin: -2px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 14px 5px rgba(255, 255, 255, 0.9);
-  animation: voidLoadingPulse 1.8s ease-in-out infinite;
-}
-.void-loading__ring {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 10px;
-  height: 10px;
-  margin: -5px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  opacity: 0;
-  animation: voidLoadingRing 2.4s ease-out infinite;
-}
-.void-loading__ring:nth-child(3) {
-  animation-delay: 0.8s;
-}
-.void-loading__ring:nth-child(4) {
-  animation-delay: 1.6s;
-}
-@keyframes voidLoadingPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1.8);
-    opacity: 1;
-  }
-}
-@keyframes voidLoadingRing {
-  0% {
-    width: 10px;
-    height: 10px;
-    margin: -5px;
-    opacity: 0.8;
-  }
-  100% {
-    width: 360px;
-    height: 360px;
-    margin: -180px;
-    opacity: 0;
-  }
-}
-
-/* ---------- 全画面オーバーレイ ---------- */
-/* .void-overlay 自体は「黒背景で画面を覆うかどうか」だけを担当し、一切アニメーションしない。
-   is-open になった瞬間から exitVoid() で閉じるまで、常に画面全体を完全に不透明な黒で覆い続ける
-   ことを保証する（この上に重ねるポータル・ローディング等の演出は全て装飾であり、
-   それらの途中状態がどうであれ背側のサイトが透けて見えることはない）。 */
-.void-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 19000; /* ターミナル(.term)より前面 */
-  background: #000;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  font-family: "IM Fell English", serif;
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #000; /* 最初のペイントから常に黒。JSのタイミングに依存しない */
   color: #7a8aaa;
-}
-.void-overlay.is-open {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+  font-family: "IM Fell English", serif;
+  overflow-x: hidden;
 }
 
-/* コンテンツ（星・本文）側だけが「奥から出てくる」ズームの対象。
-   背景の不透明性とは独立しているので、これがどんな途中状態でも安全。 */
+/* 読み込み演出が終わるまで、コンテンツ（星・本文）は最初から非表示状態で始める
+   （body に is-content-hidden クラスを付けた状態でHTMLを配信するため、CSS読み込み完了前の
+   描画でも揺れない）。読み込みが終わったら JS がこのクラスを外す。 */
 .void-stars,
 .void-scroll {
   transform: scale(1);
   opacity: 1;
   transition: transform 1.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.4s ease;
 }
-.void-overlay.is-content-hidden .void-stars,
-.void-overlay.is-content-hidden .void-scroll {
+body.is-content-hidden .void-stars,
+body.is-content-hidden .void-scroll {
   transform: scale(0.5);
   opacity: 0;
 }
-/* 初期状態をトランジション無しで即時セットするためのフラグ */
-.void-overlay.is-instant .void-stars,
-.void-overlay.is-instant .void-scroll {
-  transition: none;
-}
 
 .void-stars {
-  position: absolute;
+  position: fixed;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  z-index: 1;
 }
 .void-star {
   position: absolute;
@@ -363,8 +55,8 @@
 
 .void-scroll {
   position: relative;
-  height: 100%;
-  overflow-y: auto;
+  z-index: 2;
+  min-height: 100vh;
   padding-bottom: 12vh;
 }
 
@@ -556,7 +248,7 @@
 .void-modal {
   position: fixed;
   inset: 0;
-  z-index: 19500;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -632,26 +324,87 @@
   white-space: pre-wrap;
 }
 
+/* ---------- 読み込み演出（ページ読み込み直後、コンテンツが現れる前のソナー状の輪） ---------- */
+.void-loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+.void-loading__core {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  margin: -2px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 14px 5px rgba(255, 255, 255, 0.9);
+  animation: voidLoadingPulse 1.8s ease-in-out infinite;
+}
+.void-loading__ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  margin: -5px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  animation: voidLoadingRing 2.4s ease-out infinite;
+}
+.void-loading__ring:nth-child(3) {
+  animation-delay: 0.8s;
+}
+.void-loading__ring:nth-child(4) {
+  animation-delay: 1.6s;
+}
+@keyframes voidLoadingPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 1;
+  }
+}
+@keyframes voidLoadingRing {
+  0% {
+    width: 10px;
+    height: 10px;
+    margin: -5px;
+    opacity: 0.8;
+  }
+  100% {
+    width: 360px;
+    height: 360px;
+    margin: -180px;
+    opacity: 0;
+  }
+}
+
 /* 視差を減らす設定では、点滅・浮遊・各種フェードを簡略化 */
 @media (prefers-reduced-motion: reduce) {
   .void-star,
   .void-scrollhint,
   .void-book,
   .void-fragment,
-  .void-rays,
-  .void-sigil__outer,
-  .void-sigil__mid,
-  .void-sigil__inner,
   .void-loading__core,
-  .void-loading__ring,
-  .hero.void-shake {
+  .void-loading__ring {
     animation: none !important;
   }
-  .void-overlay,
   .void-modal,
   .void-book,
   .void-fragment,
-  .void-glow {
+  .void-stars,
+  .void-scroll {
     transition: none !important;
   }
 }

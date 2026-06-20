@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>0</title>
+
+    <!-- FOUC対策: 外部CSSの読み込みを待たず、最初のペイントから常に黒であることを保証する -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #000;
+      }
+    </style>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel&family=JetBrains+Mono:wght@400;500&family=IM+Fell+English:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/void.css" />
+  </head>
+  <body class="is-content-hidden">
+    <div class="void-stars" data-void-stars aria-hidden="true"></div>
+
+    <div class="void-scroll">
+      <header class="void-header">
+        <p class="void-coord">COORD — <span data-void-coord></span></p>
+        <p class="void-libtitle">ORIGIN LIBRARY</p>
+        <p class="void-zero" aria-hidden="true">0</p>
+        <p class="void-subtitle">// the root of all worlds</p>
+        <p class="void-scrollhint">▼ scroll to explore ▼</p>
+      </header>
+      <div class="void-books" data-void-books></div>
+      <button class="void-exit" type="button" data-void-exit>return to surface</button>
+    </div>
+
+    <div class="void-modal" data-void-modal>
+      <div class="void-modal__sheet">
+        <div class="void-modal__head">
+          <span class="void-modal__id" data-void-modal-id></span>
+          <button class="void-modal__close" type="button" aria-label="閉じる">[x]</button>
+        </div>
+        <h3 class="void-modal__title" data-void-modal-title></h3>
+        <div class="void-modal__diagram" data-void-modal-diagram></div>
+        <pre class="void-modal__body" data-void-modal-body></pre>
+      </div>
+    </div>
+
+    <div class="void-loading" data-void-loading>
+      <span class="void-loading__core"></span>
+      <span class="void-loading__ring"></span>
+      <span class="void-loading__ring"></span>
+      <span class="void-loading__ring"></span>
+    </div>
+
+    <script type="module" src="void-space.js"></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 /* =============================================================
    void.js — 神威空間（Origin Library）のコンテンツ定義
-   ★ js/terminal/void-ui.js からのみ読み込まれる（他のどのモジュールもこれを参照しない）。
+   ★ void/void-space.js からのみ読み込まれる（他のどのモジュールもこれを参照しない）。
      本文・ノード名・日付など、編集してよい箇所には ★ 要差し替え を付けてある。
    ============================================================= */
 
@@ -53,7 +53,7 @@ export const voidContent = {
 			id: "DOC-005",
 			title: "空間の座標",
 			preview: "意味深な数値が並ぶだけ。説明は一切しない。",
-			isCoordinates: true, // body は coordinates から動的に組み立てる（void-ui.js 側）
+			isCoordinates: true, // body は coordinates から動的に組み立てる（void-space.js 側）
 		},
 	],
 

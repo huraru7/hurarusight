@@ -15,7 +15,7 @@ import { settings } from "../../data/settings.js";
 
 import { getState, resetFragments } from "../fragments/state.js";
 import { open as openFragmentsModal } from "../fragments/modal.js";
-import { beginVoidSequence } from "./void-ui.js";
+import { beginVoidGate } from "./void-gate.js";
 
 const OPEN_TARGET_VERBS = new Set(["go", "unlock", "help", "set"]); // 対象が自由 or 別検証
 
@@ -105,7 +105,7 @@ const HANDLERS = {
     }
     if (target === "effect") {
       if (bracket === "shapez") {
-        if (value === "void") return { lines: [], effect: () => beginVoidSequence() }; // 隠しトリガー
+        if (value === "void") return { lines: [], effect: () => beginVoidGate() }; // 隠しトリガー
         const ok = window.huraruParticles?.goToShape?.(value);
         if (!ok) return { lines: [R.run.notRegistered(value)] };
         return { lines: [R.run.ok(value)] };
