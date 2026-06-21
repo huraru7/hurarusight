@@ -96,16 +96,9 @@ export const GRAMMAR = {
       ],
       // 「void」は秘匿図形のため候補に出さない
       "effect:shapez": [
-        { name: "sphere", desc: "球体" },
-        { name: "torus", desc: "トーラス構造" },
-        { name: "lorenz", desc: "ローレンツアトラクター" },
-        { name: "kleinBottle", desc: "クラインの壺" },
-        { name: "supernovaShell", desc: "超新星残骸のシェル構造" },
-        { name: "quantumFoam", desc: "量子泡" },
+        { name: "sphere", desc: "球体＋土星のような輪" },
         { name: "blackHole", desc: "ブラックホールの降着円盤と光子球" },
-        { name: "wave", desc: "波" },
-        { name: "spiral", desc: "渦巻き" },
-        { name: "helix", desc: "二重らせん" },
+        { name: "lorenz", desc: "ローレンツアトラクター（軌道を粒子が流れる）" },
       ],
     },
     flags: {},
