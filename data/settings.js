@@ -7,37 +7,39 @@
 export const settings = {
 	/* 粒子アニメ（ファーストビュー背景） */
 	particles: {
-		count: 5000, // 粒の数（多いほど密。重い時は減らす）
-		size: 30, // 粒の大きさ
+		count: 13000, // 粒の数（多いほど密。重い時は減らす。モバイル相当の画面では自動で半分に縮小される）
+		size: 22, // 粒の大きさ（明るいコア部分。重なりすぎて白飛びしないよう抑えめに）
 
 		colorEdge: "#2456c8", // 粒のふちの色（背景の空と差をつける濃い青）
 		colorCore: "#5b9bf0", // 粒の芯（中心）の色
+		colorGlow: "#eaffff", // sphereのコアが脈動する時に混ざる色
+
+		/* 縁取り（背景が明るくても暗くても粒子が一目でわかるようにする、影のレイヤー） */
+		haloColor: "#040611", // 縁取りの色（暗い背景ではほぼ見えず、明るい背景でだけ効く）
+		haloSizeMult: 1.6, // コアに対する縁取りの大きさの倍率
+		haloAlpha: 0.2, // 縁取りの濃さ（0で無効）
 
 		/* モーフ（形の巡回） */
-		hold: 5, // 1つの形を保つ秒数
-		morph: 2.6, // 次の形へ移るのにかける秒数
+		hold: 30, // 1つの形を保つ秒数（各形が自前のアニメーションを持つので長めに見せる）
+		morph: 5, // 次の形へ移るのにかける秒数
 		randomOrder: true, // true: ランダムな順番で巡回（同じ形が連続しない）/ false: shapes配列の順番どおりに巡回
-		shapes: [
-			"sphere",
-			"wave",
-			"spiral",
-			"helix",
-			"lorenz",
-			"kleinBottle",
-			"sphere",
-			"torus",
-			"supernovaShell",
-			"quantumFoam",
-			"blackHole",
-		], // 巡回する形と順番（randomOrder: false の時に使う順）
-		shapeScale: 2.4, // 形のおおよその大きさ
+		shapes: ["sphere", "blackHole", "lorenz"], // 巡回する形と順番（randomOrder: false の時に使う順）
+		shapeScale: 3, // 形のおおよその大きさ
+
+		/* 形ごとのアニメーション速度 */
+		lorenzFlowSpeed: 0.012, // ローレンツの軌道を粒子が流れる速さ
+		blackHoleOrbitSpeed: 0.7, // 降着円盤が周回する速さ
+		blackHoleInfallSpeed: 0.01, // 降着円盤が中心へ落ち込む速さ
 
 		/* 動き */
+		cameraZ: 5.5, // カメラの距離
 		rotateSpeed: 0.06, // 全体がゆっくり回る速さ
 		breatheAmp: 0.15, // 上下にふわっと呼吸する幅
+		breatheScaleAmp: 0.04, // 拡大縮小の呼吸の幅（0で無効）
 		breatheSpeed: 0.25, // 呼吸の速さ
 		twinkleSpeed: 1.6, // 粒が瞬く速さ
 		parallax: 0.4, // マウスで視点が寄る強さ（0で無効）
+		dragRotate: 0.005, // ドラッグで回す強さ（0で無効）
 
 		/* 処理 */
 		maxPixelRatio: 2, // 描画の細かさ上限（高いと綺麗だが重い）

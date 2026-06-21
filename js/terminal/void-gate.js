@@ -121,7 +121,7 @@ function createRunes() {
   const wrap = document.createElement("div");
   wrap.className = "void-runes";
   const vmin = Math.min(window.innerWidth, window.innerHeight) / 100;
-  const radius = 18 * vmin; // .void-glow(40vmin)の外周5マークに合わせた半径
+  const radius = 18.5 * vmin; // .void-glow(41vmin)の外周5マークに合わせた半径
   for (let i = 0; i < 5; i++) {
     const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
     const rune = document.createElement("span");

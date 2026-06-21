@@ -10,8 +10,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 40vmin;
-  height: 40vmin;
+  width: 41vmin;
+  height: 41vmin;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.95), transparent 65%);
@@ -106,8 +106,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 30vmin;
-  height: 30vmin;
+  width: 31vmin;
+  height: 31vmin;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: transparent;
@@ -210,8 +210,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 40vmin;
-  height: 40vmin;
+  width: 41vmin;
+  height: 41vmin;
   transform: translate(-50%, -50%) scale(1);
   border-radius: 50%;
   background: radial-gradient(circle, #000 60%, #05070d 100%);
