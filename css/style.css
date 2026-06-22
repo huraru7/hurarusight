@@ -13,7 +13,63 @@
 }
 
 :root {
-  --color-border-secondary: rgba(58, 72, 82, 0.35); /* 落ち着いた青灰の枠線（空のテーマに合わせる） */
+  /* ★ これらはテーマ未適用時のフォールバック値（forestと同値）。
+       実際の値は js/theme.js が起動時/切替時に :root へ setProperty する。 */
+  --color-border-secondary: rgba(58, 72, 82, 0.35);
+  --color-text: #2a3640;
+  --color-text-secondary: #5a6b78;
+  --font-accent: "Cinzel";
+
+  --hero-sky-top: #dceffb;
+  --hero-sky-mid: #a8d6f5;
+  --hero-sky-bottom: #79bce8;
+  --hero-sky-highlight: rgba(255, 251, 235, 0.5);
+  --hero-glow: rgba(245, 250, 255, 0.45);
+  --hero-tagline: #5a6b78;
+  --hero-scroll-hint: #7d8b96;
+
+  --about-title: #2a3640;
+  --about-subtitle: #5a6b78;
+  --about-board-bg: #a9784f;
+  --about-board-speckle-dark: rgba(0, 0, 0, 0.18);
+  --about-board-speckle-light: rgba(255, 255, 255, 0.06);
+  --about-card-bg: #f5efe1;
+  --about-name-card-bg: #fbf6ea;
+  --about-pin-highlight: #e0d0b0;
+  --about-pin-shadow: #8a7a5a;
+  --about-alias-text: #8c7a5a;
+  --about-info-label: #8c98a3;
+  --about-info-value: #2a3640;
+  --about-memo-bg: #fff7c2;
+  --about-memo-tape: rgba(255, 255, 255, 0.55);
+  --about-memo-text: #4a3f2a;
+
+  --links-title: #2a3640;
+  --links-subtitle: #5a6b78;
+  --links-icon-color: #5a6b78;
+  --links-label-color: #2a3640;
+  --links-sublabel-color: #8c98a3;
+  --links-gate-accent: #a78bfa;
+  --links-gate-accent-glow: rgba(167, 139, 250, 0.55);
+  --links-stone-accent: #94a3b8;
+  --links-stone-accent-glow: rgba(148, 163, 184, 0.45);
+  --links-popup-bg: rgba(255, 255, 255, 0.92);
+  --links-popup-text: #2a3640;
+  --links-popup-subtext: #8c98a3;
+  --links-copied-accent: #4ade80;
+
+  --frag-toast-bg: rgba(20, 16, 12, 0.92);
+  --frag-toast-border: #4a3f2f;
+  --frag-toast-text: #e8dcc4;
+  --frag-toast-label: #a8957a;
+  --frag-modal-bg: #f1e6c9;
+  --frag-modal-border: #b8a571;
+  --frag-modal-text: #3b2f1e;
+  --frag-modal-subtext: #6b5a3c;
+  --frag-progress-fill: #8a6a3a;
+  --frag-locked-num: #8a7a5a;
+  --frag-locked-body: #3b2f1e;
+  --frag-stage3-glow: #d8b85a;
 }
 
 /* --- ベース --- */
@@ -21,14 +77,14 @@ body {
   min-height: 100vh;
   font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN",
     "Noto Sans JP", sans-serif;
-  color: #2a3640; /* 青みのある濃いインク（空に合う） */
+  color: var(--color-text); /* 青みのある濃いインク（空に合う） */
   line-height: 1.6;
 
   /* 水色の空（上が明るく、下がしっかり濃い）。地平にごく淡い光を重ねて奥行きを出す */
-  background-color: #a8d6f5;
+  background-color: var(--hero-sky-mid);
   background-image:
-    radial-gradient(120% 70% at 50% 112%, rgba(255, 251, 235, 0.5), transparent 60%),
-    linear-gradient(180deg, #dceffb 0%, #a8d6f5 52%, #79bce8 100%);
+    radial-gradient(120% 70% at 50% 112%, var(--hero-sky-highlight), transparent 60%),
+    linear-gradient(180deg, var(--hero-sky-top) 0%, var(--hero-sky-mid) 52%, var(--hero-sky-bottom) 100%);
   background-attachment: fixed;
 
   /* 操作ミスで文字が選択状態になるのを防ぐ（選択・コピー不可） */
@@ -75,7 +131,7 @@ body {
   z-index: -1;
   background: radial-gradient(
     closest-side at 50% 45%,
-    rgba(245, 250, 255, 0.45),
+    var(--hero-glow),
     rgba(245, 250, 255, 0) 70%
   );
 }
@@ -94,7 +150,7 @@ body {
   letter-spacing: 0.35em;
   text-indent: 0.35em;
   text-transform: uppercase;
-  color: #5a6b78; /* くすんだ青灰 */
+  color: var(--hero-tagline); /* くすんだ青灰 */
 }
 
 /* スクロールを促すヒント（下部） */
@@ -107,7 +163,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0.4rem;
-  color: #7d8b96; /* 空に馴染む青灰 */
+  color: var(--hero-scroll-hint); /* 空に馴染む青灰 */
 }
 .hero__scroll-text {
   font-size: 0.65rem;

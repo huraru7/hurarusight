@@ -65,4 +65,20 @@ export const responses = {
     cancelled: () => `[INFO] Cancelled.`,
     resetDone: () => `[OK] Session state reset.`,
   },
+
+  /* ---- set theme / show themes ---- */
+  theme: {
+    list: (ids, current) => {
+      const lines = [`[DATA] available themes:`];
+      for (const id of ids) {
+        lines.push(`       ${id}${id === current ? "    (current)" : ""}`);
+      }
+      return lines;
+    },
+    switched: () => `[OK] the world shifts. you now see another face of Elyona.`,
+    unknown: (name) => [
+      `[ERROR] unknown theme: '${name}'`,
+      `        use 'show themes' to see available options.`,
+    ],
+  },
 };

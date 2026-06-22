@@ -12,12 +12,15 @@ import { tryUnlock } from "./secrets.js";
 import { GRAMMAR, VERBS, VERSION, TAGS } from "../../data/grammar.js";
 import { responses as R } from "../../data/responses.js";
 import { settings } from "../../data/settings.js";
+import { THEME_IDS } from "../../themes/index.js";
+import { siteConfig } from "../../config/site-config.js";
+import { applyTheme, getCurrentThemeId } from "../theme.js";
 
 import { getState, resetFragments } from "../fragments/state.js";
 import { open as openFragmentsModal } from "../fragments/modal.js";
 import { beginVoidGate } from "./void-gate.js";
 
-const OPEN_TARGET_VERBS = new Set(["go", "unlock", "help", "set"]); // 対象が自由 or 別検証
+const OPEN_TARGET_VERBS = new Set(["go", "unlock", "help"]); // 対象が自由 or 別検証
 
 /** 閉じた target 集合に対する検証（不正なら error 行を返す） */
 function targetError(verb, target) {
@@ -74,6 +77,10 @@ const HANDLERS = {
       lines.push("[INFO] (more sections coming soon)");
       return { lines };
     }
+    if (target === "themes") {
+      const current = getCurrentThemeId() ?? siteConfig.currentTheme;
+      return { lines: R.theme.list(THEME_IDS, current) };
+    }
     return { lines: [] };
   },
 
@@ -121,8 +128,10 @@ const HANDLERS = {
   },
 
   /* ---------- set ---------- */
-  set() {
-    return { lines: [`[INFO] set is not implemented yet. (sound/theme planned)`] };
+  set({ target, value }) {
+    if (target !== "theme") return { lines: [`[ERROR] unknown target: '${target}'`] };
+    if (!THEME_IDS.includes(value)) return { lines: R.theme.unknown(value) };
+    return { lines: [R.theme.switched()], effect: () => applyTheme(value) };
   },
 
   /* ---------- unlock ---------- */

@@ -14,9 +14,9 @@
   pointer-events: none;
 }
 .frag-toast {
-  background: rgba(20, 16, 12, 0.92);
-  color: #e8dcc4;
-  border: 1px solid #4a3f2f;
+  background: var(--frag-toast-bg);
+  color: var(--frag-toast-text);
+  border: 1px solid var(--frag-toast-border);
   border-radius: 6px;
   padding: 10px 14px;
   min-width: 220px;
@@ -34,7 +34,7 @@
   font-family: "JetBrains Mono", monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
-  color: #a8957a;
+  color: var(--frag-toast-label);
   text-transform: uppercase;
 }
 .frag-toast__name {
@@ -74,14 +74,14 @@
   width: min(640px, 92vw);
   max-height: 84vh;
   overflow-y: auto;
-  background: #f1e6c9;
+  background: var(--frag-modal-bg);
   background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
   background-size: 3px 3px;
-  border: 1px solid #b8a571;
+  border: 1px solid var(--frag-modal-border);
   border-radius: 4px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
   padding: 22px 26px;
-  color: #3b2f1e;
+  color: var(--frag-modal-text);
   transform: translateY(10px);
   transition: transform 0.3s ease;
 }
@@ -111,7 +111,7 @@
   font-family: "Crimson Text", "IM Fell English", serif;
   font-style: italic;
   font-size: 13px;
-  color: #6b5a3c;
+  color: var(--frag-modal-subtext);
   margin: 2px 0 0;
 }
 .frag-modal__close {
@@ -122,11 +122,11 @@
   border: none;
   font-family: "JetBrains Mono", monospace;
   font-size: 12px;
-  color: #6b5a3c;
+  color: var(--frag-modal-subtext);
   cursor: pointer;
 }
 .frag-modal__close:hover {
-  color: #3b2f1e;
+  color: var(--frag-modal-text);
 }
 .frag-modal__progress {
   display: flex;
@@ -143,13 +143,13 @@
 }
 .frag-modal__bar-fill {
   height: 100%;
-  background: #8a6a3a;
+  background: var(--frag-progress-fill);
   transition: width 0.4s ease;
 }
 .frag-modal__count {
   font-family: "JetBrains Mono", monospace;
   font-size: 12px;
-  color: #6b5a3c;
+  color: var(--frag-modal-subtext);
 }
 .frag-modal__grid {
   display: grid;
@@ -183,16 +183,16 @@
   font-family: "Crimson Text", "IM Fell English", serif;
   font-style: italic;
   font-size: 11px;
-  color: #6b5a3c;
+  color: var(--frag-modal-subtext);
 }
 
 .frag-card.is-collected {
   background: rgba(139, 110, 60, 0.12);
-  border: 1px solid #b8a571;
+  border: 1px solid var(--frag-modal-border);
   color: #4a3a22;
 }
 .frag-card.is-collected .frag-card__num {
-  color: #8a6a3a;
+  color: var(--frag-progress-fill);
 }
 
 .frag-card.is-locked {
@@ -201,10 +201,10 @@
   color: transparent;
 }
 .frag-card.is-locked .frag-card__num {
-  color: #8a7a5a;
+  color: var(--frag-locked-num);
 }
 .frag-card.is-locked .frag-card__body {
-  color: #3b2f1e;
+  color: var(--frag-locked-body);
   filter: blur(3px);
   opacity: 0.5;
   letter-spacing: 0.1em;
@@ -225,7 +225,7 @@
 }
 
 .frag-modal[data-stage="3"] .frag-modal__sheet {
-  box-shadow: 0 0 0 1px #d8b85a, 0 24px 60px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 1px var(--frag-stage3-glow), 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -16,18 +16,18 @@
   margin-bottom: 5vh;
 }
 .links__title {
-  font-family: "Cinzel", serif;
+  font-family: var(--font-accent), serif;
   font-size: clamp(1.4rem, 3vw, 2rem);
   letter-spacing: 0.4em;
   text-indent: 0.4em;
-  color: #2a3640;
+  color: var(--links-title);
 }
 .links__subtitle {
   margin-top: 0.5rem;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.75rem;
   letter-spacing: 0.05em;
-  color: #5a6b78;
+  color: var(--links-subtitle);
 }
 
 .links__grid {
@@ -59,7 +59,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #5a6b78;
+  color: var(--links-icon-color);
   transition: color 0.3s ease;
 }
 .link-item__icon svg {
@@ -69,13 +69,13 @@
 .link-item__label {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.8rem;
-  color: #2a3640;
+  color: var(--links-label-color);
 }
 .link-item__sublabel {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.6rem;
   letter-spacing: 0.02em;
-  color: #8c98a3;
+  color: var(--links-sublabel-color);
 }
 
 /* ---------- 扉（gate） ---------- */
@@ -130,19 +130,19 @@
 }
 
 .link-item[data-type="gate"]:hover {
-  border-color: #a78bfa;
-  box-shadow: 0 0 6px rgba(167, 139, 250, 0.55);
+  border-color: var(--links-gate-accent);
+  box-shadow: 0 0 6px var(--links-gate-accent-glow);
 }
 .link-item[data-type="gate"]:hover .link-item__icon {
-  color: #a78bfa;
+  color: var(--links-gate-accent);
 }
 .link-item[data-type="gate"]:hover .link-item__arch,
 .link-item[data-type="gate"]:hover .link-item__arch::after {
-  border-color: #a78bfa;
+  border-color: var(--links-gate-accent);
 }
 .link-item[data-type="gate"]:hover .link-item__knobs::before,
 .link-item[data-type="gate"]:hover .link-item__knobs::after {
-  background: #a78bfa;
+  background: var(--links-gate-accent);
 }
 .link-item[data-type="gate"]:hover::before {
   content: "";
@@ -151,7 +151,7 @@
   left: 10%;
   width: 80%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.55), transparent);
+  background: linear-gradient(90deg, transparent, var(--links-gate-accent-glow), transparent);
 }
 .link-item[data-type="gate"]:hover::after {
   content: "";
@@ -160,7 +160,7 @@
   left: 10%;
   width: 80%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.55), transparent);
+  background: linear-gradient(90deg, transparent, var(--links-gate-accent-glow), transparent);
 }
 .link-item[data-type="gate"].is-pressed {
   transform: scale(0.95);
@@ -190,11 +190,11 @@
 }
 
 .link-item[data-type="stone"]:hover {
-  border-color: #94a3b8;
-  box-shadow: 0 0 6px rgba(148, 163, 184, 0.45);
+  border-color: var(--links-stone-accent);
+  box-shadow: 0 0 6px var(--links-stone-accent-glow);
 }
 .link-item[data-type="stone"]:hover .link-item__icon {
-  color: #94a3b8;
+  color: var(--links-stone-accent);
 }
 
 .link-item__popup {
@@ -208,7 +208,7 @@
   align-items: center;
   gap: 0.2rem;
   padding: 0.5rem 0.7rem;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--links-popup-bg);
   border: 1px solid var(--color-border-secondary);
   border-radius: 6px;
   opacity: 0;
@@ -223,18 +223,18 @@
 .link-item__popup-text {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.75rem;
-  color: #2a3640;
+  color: var(--links-popup-text);
 }
 .link-item__popup-sub {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.6rem;
-  color: #8c98a3;
+  color: var(--links-popup-subtext);
 }
 .link-item[data-type="stone"].is-copied .link-item__popup {
-  border-color: #4ade80;
+  border-color: var(--links-copied-accent);
 }
 .link-item[data-type="stone"].is-copied .link-item__popup-text {
-  color: #4ade80;
+  color: var(--links-copied-accent);
 }
 
 /* 視差を減らす設定では、浮き上がり・沈み込み・フェードを簡略化 */

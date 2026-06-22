@@ -17,6 +17,9 @@
    -TAG は TAGS_SUPPORTED にあるものだけ有効（現在は -y のみ）。
    ============================================================= */
 
+import { THEME_IDS } from "../themes/index.js";
+import { siteConfig } from "../config/site-config.js";
+
 export const VERSION = "vβ1.0";
 
 export const GRAMMAR = {
@@ -36,18 +39,19 @@ export const GRAMMAR = {
   show: {
     arg: "required",
     value: "none",
-    targets: ["map", "status", "history", "version"],
+    targets: ["map", "status", "history", "version", "themes"],
     targetDesc: {
       map: "ASCII のサイトマップ",
       status: "現在地・時刻",
       history: "コマンド入力履歴",
       version: "システムのバージョン情報",
+      themes: "利用可能なテーマの一覧",
     },
     flags: {},
-    examples: ["show map", "show version"],
+    examples: ["show map", "show version", "show themes"],
     category: "表示",
     help: "UI・情報を画面に表示する",
-    usage: "show <map|status|history|version>",
+    usage: "show <map|status|history|version|themes>",
   },
   log: {
     arg: "none",
@@ -108,15 +112,23 @@ export const GRAMMAR = {
     usage: "run effect[particles] <next|stop|start> | run effect[shapez] <図形名>",
   },
   set: {
-    arg: "optional", // 何を打っても構文エラーにしない（未実装なので常に同じ応答を返す）
-    value: "optional",
-    targets: [], // 未実装。後日 sound/theme を追加予定
-    targetDesc: {},
+    arg: "required",
+    value: "required",
+    targets: ["theme"],
+    targetDesc: {
+      theme: "世界の見た目を一時的に切り替える（リロードで既定に戻る）",
+    },
+    targetValues: {
+      theme: THEME_IDS.map((id) => ({
+        name: id,
+        desc: id === siteConfig.currentTheme ? "(current)" : "",
+      })),
+    },
     flags: {},
-    examples: ["set"],
+    examples: ["set theme forest"],
     category: "設定",
-    help: "状態・設定を変える（未実装）",
-    usage: "set （未実装。sound/theme は今後追加予定）",
+    help: "状態・設定を変える",
+    usage: "set theme <name>",
   },
   unlock: {
     arg: "required",
