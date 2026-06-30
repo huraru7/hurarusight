@@ -1,0 +1,30 @@
+/* =============================================================
+   why.css — ③ なぜ色々作るのか
+   ============================================================= */
+
+.why {
+  max-width: 640px;
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+.why__body p {
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  margin-top: var(--space-3);
+}
+
+.why__body p:first-child {
+  margin-top: var(--space-4);
+}
+
+.why__link {
+  font-size: var(--text-sm);
+  color: var(--color-sage);
+  text-decoration: none;
+}
+
+.why__link:hover,
+.why__link:focus-visible {
+  text-decoration: underline;
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ふらる | hurarunium</title>
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/link-buttons.css" />
+    <link rel="stylesheet" href="css/hero.css" />
+    <link rel="stylesheet" href="css/about.css" />
+    <link rel="stylesheet" href="css/why.css" />
+    <link rel="stylesheet" href="css/current-work.css" />
+    <link rel="stylesheet" href="css/contact.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="site">
+      <!-- ① ファーストビュー -->
+      <section class="hero" id="hero">
+        <div class="hero__avatar" aria-hidden="true" data-hero-avatar></div>
+        <h1 class="hero__name" data-bind="profile.name">ふらる</h1>
+        <p class="hero__tagline" data-bind="profile.tagline">Wanderer of Worlds</p>
+        <div class="hero__links link-buttons" data-hero-links></div>
+        <div class="hero__scroll-hint" aria-hidden="true">↓</div>
+      </section>
+
+      <!-- ② 人柄紹介 -->
+      <section class="about" id="about">
+        <p class="section-label">ABOUT</p>
+        <div class="about__body" data-about-body></div>
+      </section>
+
+      <!-- ③ なぜ色々作るのか -->
+      <section class="why" id="why">
+        <div class="why__body" data-why-body></div>
+      </section>
+
+      <!-- ④ 今、手を出していること -->
+      <section class="current-work" id="current-work">
+        <p class="section-label">いま、手を出していること</p>
+        <ul class="current-work__list" data-current-work-list></ul>
+      </section>
+
+      <!-- ⑤ 連絡先（再掲） -->
+      <section class="contact" id="contact">
+        <p class="contact__thanks" data-bind="contactNote">ここまで読んでくれて、ありがとうございます。</p>
+        <div class="contact__links link-buttons" data-contact-links></div>
+      </section>
+    </main>
+
+    <!-- サイトの動き（data/content.js を読み込むためモジュール） -->
+    <script type="module" src="js/main.js"></script>
+
+    <!-- 各セクションの DOM 生成 -->
+    <script type="module" src="js/hero.js"></script>
+    <script type="module" src="js/about.js"></script>
+    <script type="module" src="js/why.js"></script>
+    <script type="module" src="js/current-work.js"></script>
+    <script type="module" src="js/contact.js"></script>
+  </body>
+</html>

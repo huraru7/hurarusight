@@ -1,0 +1,80 @@
+/* =============================================================
+   hero.css — ① ファーストビュー
+   ============================================================= */
+
+.site > section.hero {
+  /* tokens.css の .site > section { padding-block } を上書き：
+     ヒーローは min-height: 100svh のみでスクロールなしの初回ビューを成立させる */
+  padding-block: 0;
+}
+
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-4);
+  padding-inline: var(--space-4);
+  position: relative;
+}
+
+.hero__avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--color-sage-light);
+  color: var(--color-sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+}
+
+.hero__name {
+  font-size: var(--text-2xl);
+}
+
+.hero__tagline {
+  font-size: var(--text-lg);
+  color: var(--color-mute);
+}
+
+.hero__links {
+  margin-top: var(--space-4);
+}
+
+.hero__scroll-hint {
+  position: absolute;
+  bottom: var(--space-8);
+  color: var(--color-mute);
+  font-size: var(--text-sm);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__avatar,
+  .hero__name,
+  .hero__tagline,
+  .hero__links,
+  .hero__scroll-hint {
+    animation: fadeInRise 200ms ease-out backwards;
+  }
+  .hero__name { animation-delay: 60ms; }
+  .hero__tagline { animation-delay: 120ms; }
+  .hero__links { animation-delay: 180ms; }
+  .hero__scroll-hint { animation-delay: 240ms; }
+}
+
+@keyframes fadeInRise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

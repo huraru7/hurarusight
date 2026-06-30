@@ -1,145 +1,51 @@
-# huraru
+# huraru-portfolio
 
-ふらるの個人サイト。**シンプルな素の HTML / CSS / JS の土台**から、機能を少しずつ足していきます。
+ハンドルネーム「ふらる（hurarunium）」の自己紹介サイト。ビルドステップなしの素の
+HTML / CSS / JavaScript（ESモジュール）で作られています。Node.js も npm も不要です。
 
-## フォルダ構成
+## 起動方法
+
+ESモジュール（`import`/`export`）とCDNライブラリの読み込み（importmap）はブラウザの
+セキュリティ制約上 `file://` では動かないため、ローカルサーバー経由で開いてください。
+
+- VSCodeの **Live Server** 拡張機能でこのフォルダを開く、または
+- ターミナルでこのフォルダに移動し `python -m http.server` を実行して
+  `http://localhost:8000` を開く
+
+## ディレクトリ構成
 
 ```
-huraru-portfolio/
-├── index.html      入口。ブラウザが最初に開くページ
-├── css/
-│   ├── style.css     見た目（スタイル）
-│   └── terminal.css  ターミナルの見た目（独立）
-├── js/
-│   ├── main.js       内容（data/content.js）を読み込んで HTML に流し込む
-│   ├── particles.js  ファーストビュー背景の粒子アニメ（Three.js）
-│   └── terminal/     ターミナルコンソール（裏の顔・コンソールからのみ参照）
-└── data/
-    ├── content.js    ★サイトの「中身」（キャッチコピー等）の編集場所
-    └── settings.js   ★サイトの「設定」（見た目・動き）の編集場所
+index.html              トップページ（①〜⑤の各セクション）
+garden/                  庭（深掘りコンテンツ）のページ
+  index.html             庭の一覧（ジャンルフィルター付き）
+  article.html           庭の記事個別ページ（?slug=xxx で記事を指定）
+css/                     セクションごとのスタイル（tokens.css にデザイントークン）
+js/                      セクションごとの描画スクリプト
+data/
+  content.js             プロフィール・About・Why・今手を出していること・リンクのテキスト
+  garden-index.js        庭の記事メタ情報（タイトル・ジャンル・各.mdファイルのパス）
+  garden/<slug>/*.md      庭の記事本文（1ファイル＝1回の「手入れ」）
 ```
 
-## 2つのデータファイルの使い分け
+## コンテンツの編集
 
-- **`data/content.js`** … 文章・リンクなどの **中身**（何を表示するか）
-- **`data/settings.js`** … 色・動きなどの **設定**（どう見せるか）。今は粒子アニメの設定（`particles`）。
-  数値を変えるだけで `js/` を触らず調整できます（今後 background や hero の設定もここに追加予定）。
+- **プロフィール・About・Why・今手を出していること・リンク**: `data/content.js` を編集
+- **庭の記事**: `data/garden-index.js`（メタ情報）と `data/garden/<slug>/*.md`（本文）を編集
 
-## 内容の編集（`data/content.js` 一箇所だけ）
+## 庭の「手入れ」のやり方
 
-文章やリンクは **`data/content.js` を直すだけ**で反映されます。HTML 側は「ここに入れる」と
-印を付けておくと、`js/main.js` が自動で流し込みます。
+庭の記事は、過去の記述を編集せず、新しい記述を積み重ねていく運用です。
 
-| HTML の印 | 入るもの | 例 |
-|---|---|---|
-| `data-bind="profile.tagline"` | その値（テキスト） | キャッチコピー |
+1. 対象記事のフォルダ（`data/garden/<slug>/`）に、新しい日付のファイル名で
+   `.md` ファイルを追加し、本文を書く（例: `data/garden/kinkyo-2026-haru/2026-08-01.md`）
+2. `data/garden-index.js` の対象記事の `history` 配列の末尾に
+   `{ date: "2026-08-01", file: "kinkyo-2026-haru/2026-08-01.md" }` を追記する
 
-プロフィール詳細（About セクション）・リンク（Links セクション）も `data/content.js` の
-`profile` / `links` でそれぞれ管理しています（後述）。
+過去のファイル・エントリは編集・削除しません。これにより「手入れ回数」が積み重なって
+いきます。新しい記事を追加したい場合は、`garden-index.js` に新しいオブジェクトを1つ
+追加し、対応するフォルダに最初の `.md` ファイルを置いてください。
 
-- 基本は素の HTML / CSS / JS です。
-- 粒子アニメ用に **Three.js だけ CDN(esm.sh) から読み込む準備**を入れてあります（後述）。
-- ⚠️ Three.js は ES モジュールで読み込むため、`index.html` を **file:// で直接開くと粒子部分は動きません**
-  （モジュール＋CDN はブラウザの制約で HTTP 配信が必要）。**VSCode の Live Server 拡張で開いてください**。
-  ※ Three.js を使わない素の部分（タイトル等）は直接開いても表示されます。
+## 使用しているCDNライブラリ
 
-## ファーストビュー（玄関）
-
-`index.html` の `.hero` が最初の画面です。中央に大きな「huraru」、その下にひとことキャッチ
-（`Wanderer of Worlds`／**文言は編集可**）、下部にスクロールヒント。背景には粒子アニメが動きます。
-
-- 文言を変える → `index.html` の `.hero__tagline`
-- 見た目（大きさ・字間・色） → `css/style.css` の `.hero__*`
-- 文字を読みやすくする白い光は `.hero::before`（粒子が濃く感じたら調整）
-
-## 粒子アニメ（`js/particles.js` / Three.js）
-
-ファーストビューの背景。水色に発光する粒が、**いくつかの形（球・波・らせん・環）に集まり、
-数秒ごとに次の形へモーフして巡回**します。`#particle-canvas` は画面全面・背面。
-
-**調整は `data/settings.js` の `particles` を編集するだけ**（`js/particles.js` は触らなくてOK）:
-
-- 数 → `count` ／ 色 → `colorEdge`(ふち)・`colorCore`(芯) ／ 大きさ → `size`
-- 形を保つ時間・モーフ時間 → `hold` / `morph`
-- 巡回する形と順番 → `shapes`（例 `["sphere","ring"]` にすれば2形だけ）
-- 動き → `rotateSpeed` / `breatheAmp` / `breatheSpeed` / `twinkleSpeed` / `parallax`
-- 処理の重さ → `maxPixelRatio`
-
-その他:
-- `window.huraruParticles` で操作可能（`.stop()` / `.start()` / `.next()` で次の形へ）
-- `prefers-reduced-motion`（視差を減らす設定）では巡回せず1形を静止表示
-- 形の種類そのものを増やす場合は `js/particles.js` の `SHAPE_GENERATORS` に関数を足します
-
-## About セクション（コルクボード）
-
-名前・誕生日や好きなものなどの情報カード・メモ・写真をコルクボードに貼ったように表示するセクション。
-各カードは固定パターンでチルトしており、ホバーすると正面を向く。
-
-- 掲載内容（名前・情報カード・メモ・画像）の編集 → `data/content.js` の `profile`
-- 見た目・演出 → `css/about.css`
-- DOM生成 → `js/about.js`
-
-## Links セクション（扉/石版）
-
-外部リンクを「扉」、メールアドレスなどコピー可能な情報を「石版」として表示するセクション。
-クリックで扉は新しいタブへ遷移、石版は情報を浮かび上がらせてもう一度クリックでコピー。
-
-- 掲載内容（ラベル・リンク先・メールアドレス等）の編集 → `data/content.js` の `links`
-- 見た目・演出 → `css/links.css`
-- 挙動（クリック処理など） → `js/links.js`
-
-## ここから足していくときの目安
-
-- 見た目を変える → `css/style.css`
-- セクション（About / Works など）を増やす → `index.html` に `<section>` を追加し、`css/` で整える
-- 動き（クリック・スクロール演出など）を付ける → `js/main.js`
-- 画像を使う → `images/` フォルダを作ってそこに置く
-
-> メモ: 以前は `src/` で細かくモジュール分割し、CDN からライブラリを読み込む構成でしたが、
-> 個人サイトの出発点としては過剰だったため、分かりやすい classic 構成にリセットしました。
-
-## ターミナルコンソール（vβ1.0 / サイトの「裏の顔」）
-
-画面右下にポップアップする、ターミナル風のコンソール。コマンドでサイトの情報取得・操作ができる。
-
-- **開く/閉じる:** `` ` ``（バッククォート）または `Cmd+K` / `Ctrl+K`。閉じるは `Esc` か `[x]`。
-- **コマンド:** `help` で一覧。`<動詞> <対象>[引数] [値] -TAG` 形式（例 `scan status` / `go top` /
-  `run effect[particles] next` / `exec reset -y` / `clear`）。対象にさらに補足が必要な場合だけ
-  `対象[引数]` の角括弧を使う。`-TAG` は確認プロンプトを省略する `-y` のみ対応。
-- **補完（予測変換）:** 入力すると**説明付きの候補リスト**が出る（`-TAG` 以外の位置は全て対応）。
-  `↑↓` で選択、`Tab`/`→`/クリックで確定、`Enter` でコマンド実行。候補が無い時の `↑↓` は履歴呼び出し。
-- **詳しいヘルプ:** `help <動詞>`（使い方・対象・例）/ `help tags`（`[OK]`/`[ERROR]` などタグの説明）。
-- **vβ1.0:** 10コマンドの**枠組み**まで。まだ無いサイト機能（テーマ・効果音 等）は
-  「未実装」等の応答で受ける（中身はサイトを作り込むほど増える）。
-
-### 編集する場所
-
-- 応答メッセージの文言 → `data/responses.js`
-- コマンドの文法（動詞・対象・使い方） → `data/grammar.js`
-- コマンドの処理 → `js/terminal/commands.js`
-- 見た目 → `css/terminal.css`
-
-### 層のルール（情報の置き場所）
-
-- `data/` … **コンテンツ層**。文言・設定・コマンド文法など「内容」を持つファイルを置く
-  （`content.js`＝プロフィール/リンク/サイト情報、`settings.js`、`grammar.js`、`responses.js`）。
-  サイト全体から参照可。
-- `data/hidden/` … 他のどこからも参照されない・ユーザーに公開しないコンテンツ
-  （`fragments.js`＝断片の定義、`void.js`＝神威空間の本文）。実際に読み込むのは
-  `js/fragments/` / `js/terminal/void-ui.js` のみ。
-- `js/terminal/` … **非公開層**。コンソールの処理・UIロジックを置く（コンソールからのみ参照、
-  サイト本体は import しない）。
-- `js/terminal/secrets.js` … 最深部。**外部 export しない**。解放は `tryUnlock()` 経由のみ。
-
-## 断片収集システム（`js/fragments/`）
-
-サイトの裏側を探索すると見つかる隠しコレクション要素。ターミナルで特定のコードを `unlock`
-すると有効化され、その後サイト内の特定の行動を取ると断片を1つずつ集められる。
-有効化後は `run fragments` で収集状況（モーダル）を確認できる。進捗は `localStorage` に保存され、
-他端末とは同期しない。
-
-- 何が解放トリガーになるか・解放コードなどは**意図的に非公開**（コードを直接読めば分かるが、
-  README やヘルプには出さない）。
-- 関連ファイル: `js/fragments/`（state/toast/modal/triggers）、断片の内容は `data/hidden/fragments.js`、
-  `css/fragments.css`、`robots.txt` / `wanderer/`。`js/terminal/secrets.js` の解放にもフックしている。
-
+- [marked](https://github.com/markedjs/marked)（esm.sh経由） — 庭の記事本文のMarkdown
+  描画にのみ使用。トップページでは読み込まれません。

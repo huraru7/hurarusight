@@ -1,0 +1,105 @@
+/* =============================================================
+   tokens.css — デザイントークン（色・フォント・余白）+ 最小リセット
+   ★ 色やフォントを変えたい場合はここを編集すればサイト全体に反映されます。
+   ============================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* --- 色 --- */
+  --color-bg: #FAFAF7;
+  --color-ink: #1C1C1A;
+  --color-sage: #5B6B5E;
+  --color-sage-light: #E7ECE7;
+  --color-mute: #8C8A7F;
+  --color-line: #E4E2DC;
+  --color-surface: #FFFFFF;
+
+  /* --- フォント --- */
+  --font-heading: "Schibsted Grotesk", sans-serif;
+  --font-body: "Inter", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* --- タイプスケール（1rem = 16px、モバイル基準） --- */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+
+  --leading-body: 1.7;
+  --leading-heading: 1.2;
+
+  /* --- 余白スケール --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  /* --- セクション間の余白 --- */
+  --section-gap: var(--space-16); /* モバイル 64px */
+
+  --bp-sm: 640px;
+  --bp-lg: 1024px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --section-gap: var(--space-24); /* デスクトップ 96px */
+  }
+}
+
+body {
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+}
+
+a {
+  color: inherit;
+}
+
+.site > section {
+  padding-block: var(--section-gap);
+}
+
+.section-label {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-mute);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* --- 動きを減らす設定では、全てのトランジション/アニメーションを止める --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

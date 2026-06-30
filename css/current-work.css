@@ -1,0 +1,46 @@
+/* =============================================================
+   current-work.css — ④ 今、手を出していること
+   ============================================================= */
+
+.current-work {
+  max-width: 640px;
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+.current-work__list {
+  list-style: none;
+  margin-top: var(--space-4);
+}
+
+.current-work__item {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.current-work__item:first-child {
+  border-top: 1px solid var(--color-line);
+}
+
+.current-work__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  text-decoration: none;
+}
+
+.current-work__genre {
+  font-size: var(--text-base);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.current-work__teaser {
+  font-size: var(--text-sm);
+  color: var(--color-mute);
+  flex: 1;
+}
+
+.current-work__arrow {
+  color: var(--color-mute);
+}

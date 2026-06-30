@@ -1,0 +1,163 @@
+/* =============================================================
+   garden.css — 庭（Garden）一覧・個別ページ共用
+   ============================================================= */
+
+.garden-page {
+  max-width: 640px;
+  margin-inline: auto;
+  padding: var(--space-6) var(--space-4) var(--space-24);
+}
+
+.garden-page__back {
+  display: inline-block;
+  font-size: var(--text-sm);
+  color: var(--color-mute);
+  text-decoration: none;
+  margin-bottom: var(--space-4);
+}
+
+.garden-page__back:hover {
+  color: var(--color-sage);
+}
+
+.garden-page__title {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-6);
+}
+
+/* --- フィルタータブ --- */
+.garden-tabs {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.garden-tab {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-mute);
+  white-space: nowrap;
+  padding-block: var(--space-2);
+  cursor: pointer;
+}
+
+.garden-tab.is-active {
+  color: var(--color-sage);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* --- 記事一覧 --- */
+.garden-list {
+  list-style: none;
+}
+
+.garden-list__item {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.garden-list__item:first-child {
+  border-top: 1px solid var(--color-line);
+}
+
+.garden-list__item a {
+  display: block;
+  padding-block: var(--space-4);
+  text-decoration: none;
+}
+
+.garden-list__meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-mute);
+}
+
+.garden-list__title {
+  font-size: var(--text-lg);
+  margin-top: var(--space-1);
+}
+
+.garden-list__excerpt {
+  font-size: var(--text-sm);
+  color: var(--color-mute);
+  margin-top: var(--space-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- 記事個別ページ --- */
+.garden-article__genre {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-mute);
+}
+
+.garden-article__title {
+  font-size: var(--text-xl);
+  margin-top: var(--space-2);
+}
+
+.tending-header {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-mute);
+  cursor: pointer;
+  margin-top: var(--space-3);
+  padding: 0;
+}
+
+.tending-header[hidden] {
+  display: none;
+}
+
+.garden-article hr {
+  border: none;
+  border-top: 1px solid var(--color-line);
+  margin-block: var(--space-4);
+}
+
+.garden-article__body {
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+}
+
+.garden-article__body p + p {
+  margin-top: var(--space-3);
+}
+
+.tending-log {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 200ms ease-out;
+}
+
+.tending-log__entry {
+  padding-top: var(--space-4);
+}
+
+.tending-log__date {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-mute);
+  margin-bottom: var(--space-2);
+}
+
+.tending-log__body {
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+}
+
+.tending-log__body p + p {
+  margin-top: var(--space-3);
+}
