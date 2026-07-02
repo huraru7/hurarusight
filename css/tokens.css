@@ -13,13 +13,23 @@
 
 :root {
   /* --- 色 --- */
-  --color-bg: #FAFAF7;
-  --color-ink: #1C1C1A;
-  --color-sage: #5B6B5E;
-  --color-sage-light: #E7ECE7;
-  --color-mute: #8C8A7F;
-  --color-line: #E4E2DC;
-  --color-surface: #FFFFFF;
+  --color-bg:         #0C100C;
+  --color-ink:        #8AB08A;
+  --color-sage:       #5A8A5A;
+  --color-sage-light: #141A20;
+  --color-mute:       #2A4030;
+  --color-line:       #1E2A1E;
+  --color-surface:    #161C16;
+
+  /* --- ホバー用（通常状態では使用しない） --- */
+  --color-surface-hover:        #141A20;
+  --color-border-hover:         #1E2A3A;
+  --color-text-primary-hover:   #90B0C8;
+  --color-text-secondary:       #3A4E3A;
+  --color-text-secondary-hover: #3A4A5A;
+  --color-text-mute-hover:      #3A6A8A;
+  --color-accent-blue:          #2A5080;
+  --color-header-title:         #7AA87A;
 
   /* --- フォント --- */
   --font-heading: "Schibsted Grotesk", sans-serif;

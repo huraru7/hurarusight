@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tabHost.querySelectorAll(".garden-tab").forEach((t) => t.classList.remove("is-active"));
 
     if (alreadyActive) {
-      listHost.querySelectorAll(".garden-list__item").forEach((item) => {
+      listHost.querySelectorAll(".garden-card").forEach((item) => {
         item.hidden = false;
       });
       return;
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     btn.classList.add("is-active");
     const genre = btn.dataset.genre;
-    listHost.querySelectorAll(".garden-list__item").forEach((item) => {
+    listHost.querySelectorAll(".garden-card").forEach((item) => {
       item.hidden = item.dataset.genre !== genre;
     });
   });

@@ -26,9 +26,15 @@
   <body>
     <main class="garden-page">
       <a class="garden-page__back" href="../index.html">← もどる</a>
-      <h1 class="garden-page__title">庭</h1>
+
+      <header class="garden-header">
+        <p class="garden-header__count" data-garden-count></p>
+        <h1 class="garden-header__title">庭</h1>
+        <p class="garden-header__desc">近況、エッセイ、メモ、かけら — いつも手入れしている思考の断片たち。</p>
+      </header>
+
       <nav class="garden-tabs" data-garden-tabs aria-label="ジャンルで絞り込む"></nav>
-      <ul class="garden-list" data-garden-list></ul>
+      <div class="breath-grid" data-garden-list></div>
     </main>
 
     <script type="module" src="../js/garden/index.js"></script>

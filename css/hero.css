@@ -24,7 +24,7 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: var(--color-sage-light);
+  background: var(--color-surface);
   color: var(--color-sage);
   display: flex;
   align-items: center;

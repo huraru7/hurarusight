@@ -25,7 +25,7 @@
 
 .link-button:hover,
 .link-button:focus-visible {
-  background: var(--color-sage-light);
+  background: var(--color-surface-hover);
 }
 
 .link-button__icon {
