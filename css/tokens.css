@@ -1,5 +1,6 @@
 /* =============================================================
    tokens.css — デザイントークン（色・フォント・余白）+ 最小リセット
+   ダークモード固定（ライトテーマは廃止）。
    ★ 色やフォントを変えたい場合はここを編集すればサイト全体に反映されます。
    ============================================================= */
 
@@ -12,29 +13,41 @@
 }
 
 :root {
-  /* --- 色 --- */
-  --color-bg:         #0C100C;
-  --color-ink:        #8AB08A;
-  --color-sage:       #5A8A5A;
-  --color-sage-light: #141A20;
-  --color-mute:       #2A4030;
-  --color-line:       #1E2A1E;
-  --color-surface:    #161C16;
+  /* --- 色（ダーク固定） --- */
+  --bg-gradient-start: #222532;
+  --bg-gradient-end:   #0f1116;
+  --bg-card:           rgba(30, 35, 50, 0.8);
+  --bg-header:         rgba(20, 25, 35, 0.9);
 
-  /* --- ホバー用（通常状態では使用しない） --- */
-  --color-surface-hover:        #141A20;
-  --color-border-hover:         #1E2A3A;
-  --color-text-primary-hover:   #90B0C8;
-  --color-text-secondary:       #3A4E3A;
-  --color-text-secondary-hover: #3A4A5A;
-  --color-text-mute-hover:      #3A6A8A;
-  --color-accent-blue:          #2A5080;
-  --color-header-title:         #7AA87A;
+  --txt-primary:   #e8e9eb;
+  --txt-primary-h: #ffffff;
+  --txt-secondary: #b8c5d6;
+  --txt-mute:      #a3b5c7;
+
+  --acc-primary:   #94c4ff;
+  --acc-secondary: #beb7fd;
+
+  --border:       #2a3040;
+  --border-hover: #5ba3ff;
+
+  --shadow-color: rgba(128, 183, 255, 0.15);
+  --shadow-hover: rgba(112, 159, 222, 0.25);
+  --glow-color:   rgba(91, 163, 255, 0.1);
+
+  --line-gradient:   linear-gradient(90deg, transparent, #5ba3ff, transparent);
+  --accent-gradient: linear-gradient(135deg, #5ba3ff, #b5adff);
+  --neon-glow: 0 0 10px var(--shadow-color), 0 0 30px var(--glow-color);
+  --cyber-grid:
+    linear-gradient(rgba(91, 163, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91, 163, 255, 0.07) 1px, transparent 1px);
+
+  --ease-water: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-speed: 0.8s;
 
   /* --- フォント --- */
-  --font-heading: "Schibsted Grotesk", sans-serif;
-  --font-body: "Inter", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-heading: Arial, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  --font-body:    Arial, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  --font-mono:    "Courier New", monospace;
 
   /* --- タイプスケール（1rem = 16px、モバイル基準） --- */
   --text-xs: 0.75rem;
@@ -73,11 +86,40 @@
 
 body {
   min-height: 100vh;
-  background: var(--color-bg);
-  color: var(--color-ink);
+  position: relative;
+  color: var(--txt-primary);
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: var(--leading-body);
+  overflow-x: hidden;
+}
+
+/* --- 固定背景（グラデーション + サイバーグリッド） --- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(135deg, #1a1d29 0%, #0f1116 100%),
+    linear-gradient(rgba(91, 163, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91, 163, 255, 0.07) 1px, transparent 1px);
+  background-size: 100% 100%, 60px 60px, 60px 60px;
+  z-index: -2;
+}
+
+/* Three.js の粒子アニメーション背景（js/background.js） */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 固定背景の上にコンテンツを重ねる */
+.site,
+.garden-page {
+  position: relative;
+  z-index: 1;
 }
 
 h1, h2, h3 {
@@ -95,11 +137,30 @@ a {
 }
 
 .section-label {
-  display: block;
+  display: inline-block;
   font-size: var(--text-xs);
-  color: var(--color-mute);
-  letter-spacing: 0.12em;
+  color: var(--acc-primary);
+  letter-spacing: 0.3em;
   text-transform: uppercase;
+  position: relative;
+  padding-bottom: var(--space-3);
+  text-shadow: var(--neon-glow);
+}
+
+.section-label::before {
+  content: "// ";
+  color: var(--acc-secondary);
+  opacity: 0.7;
+}
+
+.section-label::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  height: 2px;
+  background: var(--accent-gradient);
 }
 
 /* --- 動きを減らす設定では、全てのトランジション/アニメーションを止める --- */

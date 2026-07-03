@@ -4,10 +4,11 @@
 
 import { garden } from "../../data/garden-index.js";
 import { loadEntryBody } from "./load-entry.js";
-import { renderMarkdown } from "./render-markdown.js";
+import { toPlainPreview } from "./render-markdown.js";
 import { formatTicks, formatDateRelative } from "../utils/format.js";
 
-const GENRES = ["近況", "エッセイ", "メモ", "かけら"];
+const ALL_GENRE = "すべて";
+const GENRES = [ALL_GENRE, "近況", "エッセイ", "メモ", "かけら"];
 
 /* --- コンテンツスコアリング --- */
 
@@ -49,14 +50,14 @@ function assignSpans(items) {
 /* --- カードHTML --- */
 
 function cardHTML(item) {
-  const { article, bodyHtml, span } = item;
+  const { article, preview, span } = item;
   const latest = article.history[article.history.length - 1];
   const count = article.history.length;
   return `
     <a class="garden-card" href="article.html?slug=${article.slug}" data-span="${span}" data-genre="${article.genre}">
       <p class="garden-card__genre">${article.genre}</p>
       <h2 class="garden-card__title">${article.title}</h2>
-      <div class="garden-card__body">${bodyHtml}</div>
+      <p class="garden-card__body">${preview}</p>
       <p class="garden-card__meta">
         <span class="garden-card__date">${formatDateRelative(latest.date)}</span>
         ・
@@ -71,7 +72,8 @@ function renderTabs() {
   const host = document.querySelector("[data-garden-tabs]");
   if (!host) return;
   host.innerHTML = GENRES.map(
-    (g) => `<button class="garden-tab" data-genre="${g}">${g}</button>`
+    (g) =>
+      `<button class="garden-tab${g === ALL_GENRE ? " is-active" : ""}" data-genre="${g}">${g}</button>`
   ).join("");
 }
 
@@ -94,7 +96,7 @@ async function renderList() {
 
   const withScores = garden.map((article, i) => ({
     article,
-    bodyHtml: renderMarkdown(bodies[i]),
+    preview: toPlainPreview(bodies[i]),
     idealSpan: getIdealSpan(scoreCard(article, bodies[i])),
   }));
 

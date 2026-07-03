@@ -14,18 +14,23 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
-  border-radius: 8px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background: var(--glow-color);
+  border: 1px solid var(--border);
   text-decoration: none;
   font-size: var(--text-sm);
-  color: var(--color-ink);
-  transition: background-color 150ms;
+  color: var(--txt-primary);
+  transition: background var(--transition-speed) var(--ease-water),
+              border-color 0.3s ease,
+              color 0.3s ease,
+              transform 0.3s ease;
 }
 
 .link-button:hover,
 .link-button:focus-visible {
-  background: var(--color-surface-hover);
+  background: var(--acc-primary);
+  border-color: var(--acc-primary);
+  color: #fff;
+  transform: translateY(-2px);
 }
 
 .link-button__icon {

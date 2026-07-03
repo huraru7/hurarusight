@@ -11,13 +11,14 @@
 .garden-page__back {
   display: inline-block;
   font-size: var(--text-sm);
-  color: var(--color-mute);
+  color: var(--txt-mute);
   text-decoration: none;
   margin-bottom: var(--space-4);
+  transition: color 0.2s ease;
 }
 
 .garden-page__back:hover {
-  color: var(--color-ink);
+  color: var(--acc-primary);
 }
 
 /* --- 庭ヘッダー --- */
@@ -28,46 +29,80 @@
 .garden-header__count {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-mute);
+  color: var(--acc-secondary);
+  letter-spacing: 0.1em;
 }
 
 .garden-header__title {
-  font-size: var(--text-xl);
-  color: var(--color-header-title);
+  font-size: var(--text-2xl);
+  color: var(--acc-primary);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-shadow: var(--neon-glow);
   margin-top: var(--space-1);
+  position: relative;
+  display: inline-block;
+  padding-bottom: var(--space-2);
+  transition: color var(--transition-speed) var(--ease-water);
+}
+
+.garden-header__title::before {
+  content: "// ";
+  color: var(--acc-secondary);
+  opacity: 0.7;
+}
+
+.garden-header__title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  height: 3px;
+  background: var(--accent-gradient);
 }
 
 .garden-header__desc {
   font-size: var(--text-sm);
-  color: var(--color-mute);
-  margin-top: var(--space-1);
+  color: var(--txt-mute);
+  margin-top: var(--space-3);
+  transition: color var(--transition-speed) var(--ease-water);
 }
 
-/* --- フィルタータブ --- */
+/* --- フィルタータブ（chip風） --- */
 .garden-tabs {
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-2);
   overflow-x: auto;
   padding-bottom: var(--space-2);
   margin-bottom: var(--space-4);
-  border-bottom: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--border);
 }
 
 .garden-tab {
   background: none;
-  border: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--color-mute);
+  color: var(--txt-mute);
   white-space: nowrap;
-  padding-block: var(--space-2);
+  padding: var(--space-2) var(--space-3);
   cursor: pointer;
+  transition: color 220ms var(--ease-water),
+              border-color 220ms var(--ease-water),
+              background-color 220ms var(--ease-water);
+}
+
+.garden-tab:hover {
+  color: var(--acc-primary);
 }
 
 .garden-tab.is-active {
-  color: var(--color-sage);
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  color: #fff;
+  font-weight: 600;
+  border-color: var(--acc-primary);
+  background: var(--accent-gradient);
 }
 
 /* --- 呼吸するグリッド --- */
@@ -82,6 +117,7 @@
 @media (max-width: 639px) {
   .breath-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
   .garden-card[data-span] {
     grid-column: span 1;
@@ -103,51 +139,67 @@
 
 /* --- カード --- */
 .garden-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: 6px;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid var(--border);
   padding: var(--space-4);
   text-decoration: none;
   display: block;
-  transition: background-color 220ms ease,
-              border-color 220ms ease,
-              transform 220ms ease,
-              box-shadow 220ms ease;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease,
+              box-shadow 0.3s ease,
+              background var(--transition-speed) var(--ease-water),
+              border-color var(--transition-speed) var(--ease-water);
+}
+
+.garden-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 0;
+  background: var(--accent-gradient);
+  transition: height 0.3s ease;
+}
+
+.garden-card:hover::before {
+  height: 100%;
 }
 
 .garden-card:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(30, 60, 100, 0.15);
+  transform: translateY(-5px);
+  border-color: var(--border-hover);
+  box-shadow: 0 10px 30px var(--shadow-hover);
 }
 
 .garden-card__genre {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-mute);
+  color: var(--acc-primary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   transition: color 220ms ease;
-}
-
-.garden-card:hover .garden-card__genre {
-  color: var(--color-text-mute-hover);
 }
 
 .garden-card__title {
   font-size: var(--text-base);
-  font-weight: 500;
-  color: var(--color-ink);
+  font-weight: 600;
+  color: var(--txt-primary);
+  letter-spacing: 0.02em;
   margin-top: var(--space-1);
   transition: color 220ms ease;
 }
 
 .garden-card:hover .garden-card__title {
-  color: var(--color-text-primary-hover);
+  color: var(--acc-primary);
 }
 
 .garden-card__body {
   font-size: var(--text-sm);
-  color: var(--color-text-secondary);
+  color: var(--txt-secondary);
   margin-top: var(--space-2);
   line-height: var(--leading-body);
   transition: color 220ms ease;
@@ -158,13 +210,13 @@
 }
 
 .garden-card:hover .garden-card__body {
-  color: var(--color-text-secondary-hover);
+  color: var(--txt-primary);
 }
 
 .garden-card__meta {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-mute);
+  color: var(--txt-mute);
   margin-top: var(--space-3);
   transition: color 220ms ease;
 }
@@ -174,18 +226,22 @@
 }
 
 .garden-card:hover .garden-card__ticks {
-  color: var(--color-accent-blue);
+  color: var(--acc-secondary);
 }
 
 /* --- 記事個別ページ --- */
 .garden-article__genre {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-mute);
+  color: var(--acc-primary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .garden-article__title {
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
+  color: var(--txt-primary-h);
+  letter-spacing: 0.05em;
   margin-top: var(--space-2);
 }
 
@@ -197,10 +253,15 @@
   border: none;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-mute);
+  color: var(--txt-mute);
   cursor: pointer;
   margin-top: var(--space-3);
   padding: 0;
+  transition: color 0.2s ease;
+}
+
+.tending-header:hover {
+  color: var(--acc-primary);
 }
 
 .tending-header[hidden] {
@@ -209,12 +270,13 @@
 
 .garden-article hr {
   border: none;
-  border-top: 1px solid var(--color-line);
+  border-top: 1px solid var(--border);
   margin-block: var(--space-4);
 }
 
 .garden-article__body {
   font-size: var(--text-base);
+  color: var(--txt-secondary);
   line-height: var(--leading-body);
 }
 
@@ -230,17 +292,20 @@
 
 .tending-log__entry {
   padding-top: var(--space-4);
+  border-left: 3px solid var(--acc-primary);
+  padding-left: var(--space-3);
 }
 
 .tending-log__date {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-mute);
+  color: var(--txt-mute);
   margin-bottom: var(--space-2);
 }
 
 .tending-log__body {
   font-size: var(--text-base);
+  color: var(--txt-secondary);
   line-height: var(--leading-body);
 }
 

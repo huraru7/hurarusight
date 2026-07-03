@@ -1,8 +1,10 @@
 /* =============================================================
    garden/filter.js — ジャンルタブのクリック処理
    タブをクリックすると一致しない記事を hidden にする（再描画なし）。
-   アクティブなタブをもう一度クリックすると解除して全件表示に戻る。
+   「すべて」タブはデフォルトで選択され、全件表示に戻す。
    ============================================================= */
+
+const ALL_GENRE = "すべて";
 
 document.addEventListener("DOMContentLoaded", () => {
   const tabHost = document.querySelector("[data-garden-tabs]");
@@ -13,20 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = e.target.closest(".garden-tab");
     if (!btn) return;
 
-    const alreadyActive = btn.classList.contains("is-active");
     tabHost.querySelectorAll(".garden-tab").forEach((t) => t.classList.remove("is-active"));
-
-    if (alreadyActive) {
-      listHost.querySelectorAll(".garden-card").forEach((item) => {
-        item.hidden = false;
-      });
-      return;
-    }
-
     btn.classList.add("is-active");
+
     const genre = btn.dataset.genre;
     listHost.querySelectorAll(".garden-card").forEach((item) => {
-      item.hidden = item.dataset.genre !== genre;
+      item.hidden = genre !== ALL_GENRE && item.dataset.genre !== genre;
     });
   });
 });

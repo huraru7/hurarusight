@@ -24,23 +24,51 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: var(--color-surface);
-  color: var(--color-sage);
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 3px solid var(--acc-primary);
+  box-shadow: 0 0 30px var(--shadow-color), 0 0 20px var(--shadow-hover);
+  color: var(--acc-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-heading);
   font-size: var(--text-2xl);
   font-weight: 700;
+  position: relative;
+  transition: border-color var(--transition-speed) var(--ease-water),
+              box-shadow var(--transition-speed) var(--ease-water),
+              background var(--transition-speed) var(--ease-water),
+              color var(--transition-speed) var(--ease-water);
+}
+
+.hero__avatar::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border: 2px solid var(--acc-secondary);
+  border-radius: 50%;
+  z-index: -1;
+  transition: border-color var(--transition-speed) var(--ease-water);
 }
 
 .hero__name {
-  font-size: var(--text-2xl);
+  font-size: clamp(2.25rem, 1.7rem + 2vw, 3.5rem);
+  font-weight: bold;
+  color: var(--acc-primary);
+  letter-spacing: 0.2em;
+  text-shadow: var(--neon-glow);
+  transition: color var(--transition-speed) var(--ease-water),
+              text-shadow var(--transition-speed) var(--ease-water);
 }
 
 .hero__tagline {
   font-size: var(--text-lg);
-  color: var(--color-mute);
+  color: var(--txt-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color var(--transition-speed) var(--ease-water);
 }
 
 .hero__links {
@@ -50,8 +78,10 @@
 .hero__scroll-hint {
   position: absolute;
   bottom: var(--space-8);
-  color: var(--color-mute);
-  font-size: var(--text-sm);
+  color: var(--acc-primary);
+  font-size: 24px;
+  opacity: 0.55;
+  transition: color var(--transition-speed) var(--ease-water);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -65,7 +95,11 @@
   .hero__name { animation-delay: 60ms; }
   .hero__tagline { animation-delay: 120ms; }
   .hero__links { animation-delay: 180ms; }
-  .hero__scroll-hint { animation-delay: 240ms; }
+  .hero__scroll-hint {
+    animation:
+      fadeInRise 200ms ease-out 240ms backwards,
+      float 2.4s ease-in-out 440ms infinite;
+  }
 }
 
 @keyframes fadeInRise {
@@ -77,4 +111,9 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
 }

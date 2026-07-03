@@ -8,12 +8,21 @@
   padding-inline: var(--space-4);
 }
 
+.about__body {
+  margin-top: var(--space-6);
+  border-left: 3px solid var(--acc-primary);
+  padding-left: var(--space-4);
+  transition: border-color var(--transition-speed) var(--ease-water);
+}
+
 .about__body p {
   font-size: var(--text-lg);
+  color: var(--txt-secondary);
   line-height: var(--leading-body);
   margin-top: var(--space-3);
+  transition: color var(--transition-speed) var(--ease-water);
 }
 
 .about__body p:first-child {
-  margin-top: var(--space-4);
+  margin-top: 0;
 }
