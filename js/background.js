@@ -1,10 +1,11 @@
 /* =============================================================
-   background.js — Three.jsによる固定背景（漂う粒子 + 接続線のみ）
+   background.js — Three.jsによる固定背景（漂う粒子のみ）
    CDN(esm.sh)からimportmap経由で読み込む（ビルドステップなし）。
-   色はダークテーマのアクセントカラー（--acc-primary #94c4ff / --acc-secondary #beb7fd）に合わせている。
+   粒子数・色などの調整値は js/config/background.config.js を参照。
    ============================================================= */
 
 import * as THREE from "three";
+import { backgroundConfig as cfg } from "./config/background.config.js";
 
 export function initBackground(canvas) {
   const W = window.innerWidth;
@@ -20,7 +21,7 @@ export function initBackground(canvas) {
 
   /* ── 粒子システム ── */
   const isMobile = window.innerWidth < 640;
-  const PCOUNT = isMobile ? 120 : 280;
+  const PCOUNT = isMobile ? cfg.particleCount.mobile : cfg.particleCount.desktop;
   const positions = new Float32Array(PCOUNT * 3);
   const velocities = new Float32Array(PCOUNT * 2);
   const colors = new Float32Array(PCOUNT * 3);
@@ -30,9 +31,9 @@ export function initBackground(canvas) {
   const glows = new Float32Array(PCOUNT);
 
   for (let i = 0; i < PCOUNT; i++) {
-    const isSecondary = Math.random() < 0.25;
+    const isSecondary = Math.random() < cfg.colors.secondaryRatio;
     const angle = Math.random() * Math.PI * 2;
-    const speed = Math.random() * 0.4 + 0.08;
+    const speed = Math.random() * (cfg.speed.max - cfg.speed.min) + cfg.speed.min;
 
     positions[i * 3 + 0] = (Math.random() - 0.5) * W;
     positions[i * 3 + 1] = (Math.random() - 0.5) * H;
@@ -41,22 +42,17 @@ export function initBackground(canvas) {
     velocities[i * 2 + 0] = Math.cos(angle) * speed;
     velocities[i * 2 + 1] = Math.sin(angle) * speed;
 
-    if (isSecondary) {
-      colors[i * 3 + 0] = 0.745;
-      colors[i * 3 + 1] = 0.718;
-      colors[i * 3 + 2] = 0.992;
-    } else {
-      colors[i * 3 + 0] = 0.580;
-      colors[i * 3 + 1] = 0.769;
-      colors[i * 3 + 2] = 1.0;
-    }
+    const color = isSecondary ? cfg.colors.secondary : cfg.colors.primary;
+    colors[i * 3 + 0] = color[0];
+    colors[i * 3 + 1] = color[1];
+    colors[i * 3 + 2] = color[2];
 
-    sizes[i] = Math.random() * 2.5 + 0.8;
+    sizes[i] = Math.random() * (cfg.size.max - cfg.size.min) + cfg.size.min;
     wobbles[i * 3 + 0] = Math.random() * Math.PI * 2;
     wobbles[i * 3 + 1] = Math.random() * 0.012 + 0.003;
     wobbles[i * 3 + 2] = Math.random() * 0.5 + 0.1;
-    opacities[i] = Math.random() * 0.35 + 0.12;
-    glows[i] = Math.random() > 0.85 ? 1.0 : 0.0;
+    opacities[i] = Math.random() * (cfg.opacity.max - cfg.opacity.min) + cfg.opacity.min;
+    glows[i] = Math.random() < cfg.glowChance ? 1.0 : 0.0;
   }
 
   const geo = new THREE.BufferGeometry();
@@ -92,8 +88,8 @@ export function initBackground(canvas) {
 
         vec2 diff = uMouse - pos.xy;
         float d   = length(diff);
-        if (d < 180.0) {
-          pos.xy += normalize(diff) * (1.0 - d / 180.0) * 1.2;
+        if (d < ${cfg.mouseInteractionRadius.toFixed(1)}) {
+          pos.xy += normalize(diff) * (1.0 - d / ${cfg.mouseInteractionRadius.toFixed(1)}) * 1.2;
         }
 
         vec4 mvPos    = modelViewMatrix * vec4(pos, 1.0);
@@ -129,24 +125,6 @@ export function initBackground(canvas) {
   const points = new THREE.Points(geo, particleMat);
   scene.add(points);
 
-  /* ── 接続線 ── */
-  const MAX_LINES = PCOUNT * 4;
-  const linePos = new Float32Array(MAX_LINES * 6);
-  const lineGeo = new THREE.BufferGeometry();
-  const linePosAttr = new THREE.BufferAttribute(linePos, 3);
-  linePosAttr.setUsage(THREE.DynamicDrawUsage);
-  lineGeo.setAttribute("position", linePosAttr);
-
-  const lineMat = new THREE.LineBasicMaterial({
-    color: 0x94c4ff,
-    transparent: true,
-    opacity: 0.09,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  });
-  const lineSegments = new THREE.LineSegments(lineGeo, lineMat);
-  scene.add(lineSegments);
-
   /* ── マウス ── */
   const mouse3D = new THREE.Vector2(-9999, -9999);
   window.addEventListener("mousemove", (e) => {
@@ -168,7 +146,6 @@ export function initBackground(canvas) {
 
   /* ── アニメーションループ ── */
   const clock = new THREE.Clock();
-  const CONNECT_DIST = isMobile ? 0 : 85;
 
   function animate() {
     if (document.hidden) {
@@ -191,28 +168,6 @@ export function initBackground(canvas) {
       if (pos[i * 3 + 1] < -H / 2 - 20) pos[i * 3 + 1] = H / 2 + 20;
     }
     geo.attributes.position.needsUpdate = true;
-
-    if (CONNECT_DIST > 0) {
-      let lineIdx = 0;
-      for (let i = 0; i < PCOUNT && lineIdx < MAX_LINES - 1; i++) {
-        for (let j = i + 1; j < PCOUNT && lineIdx < MAX_LINES - 1; j++) {
-          const dx = pos[i * 3] - pos[j * 3];
-          const dy = pos[i * 3 + 1] - pos[j * 3 + 1];
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < CONNECT_DIST) {
-            linePos[lineIdx * 6 + 0] = pos[i * 3 + 0];
-            linePos[lineIdx * 6 + 1] = pos[i * 3 + 1];
-            linePos[lineIdx * 6 + 2] = 0;
-            linePos[lineIdx * 6 + 3] = pos[j * 3 + 0];
-            linePos[lineIdx * 6 + 4] = pos[j * 3 + 1];
-            linePos[lineIdx * 6 + 5] = 0;
-            lineIdx++;
-          }
-        }
-      }
-      lineGeo.setDrawRange(0, lineIdx * 2);
-      lineGeo.attributes.position.needsUpdate = true;
-    }
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);

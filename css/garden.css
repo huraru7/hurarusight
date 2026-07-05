@@ -138,6 +138,10 @@
 .garden-card[data-span="3"] { grid-column: span 3; }
 
 /* --- カード --- */
+.garden-card[hidden] {
+  display: none;
+}
+
 .garden-card {
   background: var(--bg-card);
   backdrop-filter: blur(10px);
