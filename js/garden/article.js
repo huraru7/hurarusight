@@ -8,6 +8,8 @@ import { garden } from "../../data/garden-index.js";
 import { loadEntryBody } from "./load-entry.js";
 import { renderMarkdown } from "./render-markdown.js";
 import { formatTicks, formatDateRelative } from "../utils/format.js";
+import { initWorld } from "../world/world.js";
+import { markAsRead, saveGardenScroll } from "../world/memory.js";
 
 function getSlugFromURL() {
   return new URLSearchParams(window.location.search).get("slug");
@@ -47,6 +49,15 @@ async function renderArticle() {
   const latest = article.history[article.history.length - 1];
   const past = article.history.slice(0, -1).reverse(); // 新しい順
   const tickCount = article.history.length;
+
+  // 世界観レイヤー起動（手入れ回数で粒子密度が変わる）
+  initWorld(tickCount);
+
+  // 既読マーク + 庭へ戻る時のスクロール位置を記録するリスナー登録
+  markAsRead(slug);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") saveGardenScroll();
+  });
 
   document.title = `${article.title} | ふらる`;
   document.querySelector("[data-article-genre]").textContent = article.genre;

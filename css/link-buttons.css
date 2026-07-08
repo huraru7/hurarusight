@@ -20,7 +20,7 @@
   text-decoration: none;
   font-size: var(--text-sm);
   color: var(--color-ink);
-  transition: background-color 150ms;
+  transition: background-color var(--dur-default) var(--ease-water);
 }
 
 .link-button:hover,

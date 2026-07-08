@@ -103,30 +103,36 @@
 
 /* --- カード --- */
 .garden-card {
-  background: var(--color-surface);
+  background: radial-gradient(ellipse at 50% 40%, #1A201A 0%, #161C16 100%);
   border: 1px solid var(--color-line);
   border-radius: 6px;
   padding: var(--space-4);
   text-decoration: none;
   display: block;
-  transition: background-color 220ms ease,
-              border-color 220ms ease,
-              transform 220ms ease,
-              box-shadow 220ms ease;
+  transition: background var(--dur-default) var(--ease-water),
+              border-color var(--dur-default) var(--ease-water),
+              transform var(--dur-default) var(--ease-water),
+              box-shadow var(--dur-default) var(--ease-water),
+              opacity var(--dur-default) var(--ease-water);
 }
 
 .garden-card:hover {
-  background: var(--color-surface-hover);
+  background: radial-gradient(ellipse at 50% 40%, #1E261E 0%, #141A20 100%);
   border-color: var(--color-border-hover);
   transform: translateY(-3px);
   box-shadow: 0 8px 24px rgba(30, 60, 100, 0.15);
+}
+
+/* 既読: タイトルをわずかに落ち着かせる */
+.garden-card.is-read .garden-card__title {
+  opacity: 0.7;
 }
 
 .garden-card__genre {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--color-mute);
-  transition: color 220ms ease;
+  transition: color var(--dur-default) var(--ease-water);
 }
 
 .garden-card:hover .garden-card__genre {
@@ -138,7 +144,7 @@
   font-weight: 500;
   color: var(--color-ink);
   margin-top: var(--space-1);
-  transition: color 220ms ease;
+  transition: color var(--dur-default) var(--ease-water);
 }
 
 .garden-card:hover .garden-card__title {
@@ -150,7 +156,7 @@
   color: var(--color-text-secondary);
   margin-top: var(--space-2);
   line-height: var(--leading-body);
-  transition: color 220ms ease;
+  transition: color var(--dur-default) var(--ease-water);
 }
 
 .garden-card__body p + p {
@@ -166,11 +172,11 @@
   font-size: var(--text-xs);
   color: var(--color-mute);
   margin-top: var(--space-3);
-  transition: color 220ms ease;
+  transition: color var(--dur-default) var(--ease-water);
 }
 
 .garden-card__ticks {
-  transition: color 220ms ease;
+  transition: color var(--dur-default) var(--ease-water);
 }
 
 .garden-card:hover .garden-card__ticks {
@@ -225,7 +231,7 @@
 .tending-log {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 200ms ease-out;
+  transition: max-height 200ms var(--ease-water);
 }
 
 .tending-log__entry {

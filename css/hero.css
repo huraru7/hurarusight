@@ -60,12 +60,14 @@
   .hero__tagline,
   .hero__links,
   .hero__scroll-hint {
-    animation: fadeInRise 200ms ease-out backwards;
+    animation: fadeInRise 200ms var(--ease-water) backwards;
   }
-  .hero__name { animation-delay: 60ms; }
-  .hero__tagline { animation-delay: 120ms; }
-  .hero__links { animation-delay: 180ms; }
-  .hero__scroll-hint { animation-delay: 240ms; }
+  /* 200ms の沈黙: 粒子だけが先に現れ、その後コンテンツが浮かぶ */
+  .hero__avatar      { animation-delay: 200ms; }
+  .hero__name        { animation-delay: 260ms; }
+  .hero__tagline     { animation-delay: 320ms; }
+  .hero__links       { animation-delay: 380ms; }
+  .hero__scroll-hint { animation-delay: 440ms; }
 }
 
 @keyframes fadeInRise {

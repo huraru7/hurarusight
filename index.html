@@ -54,6 +54,12 @@
       </section>
     </main>
 
+    <!-- 世界観レイヤー -->
+    <script type="module">
+      import { initWorld } from "./js/world/world.js";
+      initWorld(0);
+    </script>
+
     <!-- サイトの動き（data/content.js を読み込むためモジュール） -->
     <script type="module" src="js/main.js"></script>
 

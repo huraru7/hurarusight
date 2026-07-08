@@ -63,12 +63,24 @@
 
   --bp-sm: 640px;
   --bp-lg: 1024px;
+
+  /* --- モーション --- */
+  --ease-water: cubic-bezier(0.23, 1.0, 0.32, 1.0);
+  --dur-default: 220ms;
 }
 
 @media (min-width: 1024px) {
   :root {
     --section-gap: var(--space-24); /* デスクトップ 96px */
   }
+}
+
+* { scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; }
+
+::selection {
+  background: #2A4A30;
+  color: #C8DCC8;
 }
 
 body {
@@ -78,6 +90,7 @@ body {
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: var(--leading-body);
+  font-feature-settings: "palt" 1;
 }
 
 h1, h2, h3 {

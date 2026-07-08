@@ -6,6 +6,7 @@ import { garden } from "../../data/garden-index.js";
 import { loadEntryBody } from "./load-entry.js";
 import { renderMarkdown } from "./render-markdown.js";
 import { formatTicks, formatDateRelative } from "../utils/format.js";
+import { applyReadStyles, restoreGardenScroll } from "../world/memory.js";
 
 const GENRES = ["近況", "エッセイ", "メモ", "かけら"];
 
@@ -53,7 +54,7 @@ function cardHTML(item) {
   const latest = article.history[article.history.length - 1];
   const count = article.history.length;
   return `
-    <a class="garden-card" href="article.html?slug=${article.slug}" data-span="${span}" data-genre="${article.genre}">
+    <a class="garden-card" href="article.html?slug=${article.slug}" data-span="${span}" data-genre="${article.genre}" data-slug="${article.slug}">
       <p class="garden-card__genre">${article.genre}</p>
       <h2 class="garden-card__title">${article.title}</h2>
       <div class="garden-card__body">${bodyHtml}</div>
@@ -105,5 +106,8 @@ async function renderList() {
 document.addEventListener("DOMContentLoaded", () => {
   renderCount();
   renderTabs();
-  renderList();
+  renderList().then(() => {
+    applyReadStyles();
+    restoreGardenScroll();
+  });
 });
