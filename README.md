@@ -49,3 +49,10 @@ data/
 
 - [marked](https://github.com/markedjs/marked)（esm.sh経由） — 庭の記事本文のMarkdown
   描画にのみ使用。トップページでは読み込まれません。
+- [three](https://github.com/mrdoob/three.js/)（esm.sh経由） — 全ページ共通の固定背景
+  （グリッド・星雲・粒子アニメーション）の描画に使用。`js/background.js` を参照。
+
+## デザインシステム
+
+ダークモード固定。配色トークンは `css/tokens.css`、固定装飾（グリッド線・ドット・
+幾何学図形・バーコード）は `css/decor.css` に定義している。

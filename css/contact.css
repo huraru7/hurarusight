@@ -13,5 +13,7 @@
 
 .contact__thanks {
   font-size: var(--text-sm);
-  color: var(--color-mute);
+  color: var(--txt-mute);
+  letter-spacing: 0.05em;
+  transition: color var(--transition-speed) var(--ease-water);
 }

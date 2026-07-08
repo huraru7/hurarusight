@@ -5,25 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>庭 | ふらる</title>
     <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/decor.css" />
     <link rel="stylesheet" href="../css/garden.css" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- 庭の記事本文(Markdown)を描画するための marked を CDN(esm.sh) から読み込む -->
+    <!-- 庭の記事本文(Markdown)を描画するための marked、固定背景の Three.js を CDN(esm.sh) から読み込む -->
     <script type="importmap">
       {
         "imports": {
-          "marked": "https://esm.sh/marked@12.0.2"
+          "marked": "https://esm.sh/marked@12.0.2",
+          "three": "https://esm.sh/three@0.160.0"
         }
       }
     </script>
   </head>
   <body>
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+    <!-- 固定背景装飾 -->
+    <div class="decorative-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <div class="dots-pattern"></div>
+    <div class="barcode"></div>
+    <div class="geometric-shape shape-1"></div>
+    <div class="geometric-shape shape-2"></div>
+    <div class="geometric-shape shape-3"></div>
+
     <main class="garden-page">
       <a class="garden-page__back" href="../index.html">← もどる</a>
 
@@ -37,12 +47,20 @@
       <div class="breath-grid" data-garden-list></div>
     </main>
 
+<<<<<<< HEAD
     <!-- 世界観レイヤー -->
     <script type="module">
       import { initWorld } from "../js/world/world.js";
       initWorld(0);
     </script>
 
+=======
+    <script type="module">
+      import { initBackground } from "../js/background.js";
+      const canvas = document.getElementById("bg-canvas");
+      if (canvas) initBackground(canvas);
+    </script>
+>>>>>>> c19ad417ff5c6b85d54f46f4c3d79ed4600ad6ce
     <script type="module" src="../js/garden/index.js"></script>
     <script type="module" src="../js/garden/filter.js"></script>
   </body>
