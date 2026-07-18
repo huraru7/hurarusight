@@ -5,8 +5,7 @@
 .garden-page {
   max-width: 1080px;
   margin-inline: auto;
-  /* padding-top はヘッダー高さ + 余白 */
-  padding: calc(var(--header-height) + var(--space-6)) var(--space-4) var(--space-24);
+  padding: var(--space-6) var(--space-4) var(--space-24);
 }
 
 .garden-page__back {
@@ -37,7 +36,7 @@
 
 .garden-header__title {
   font-family: "Shippori Mincho", "游明朝", "Yu Mincho", Georgia, serif;
-  font-size: clamp(3.5rem, 9vw, 6rem);
+  font-size: clamp(5rem, 14vw, 9rem);
   font-weight: 400;
   color: var(--txt-primary-h);
   letter-spacing: 0.06em;
@@ -376,6 +375,84 @@
 
 .garden-card:hover .garden-card__ticks {
   color: var(--acc-secondary);
+}
+
+/* --- 記事モーダル --- */
+.garden-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms var(--ease-water);
+}
+
+.garden-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.garden-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.garden-modal__panel {
+  position: fixed;
+  inset: 40px 60px;
+  background: #0f1116;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow-y: auto;
+  transform: translateY(20px);
+  transition: transform 280ms var(--ease-water);
+}
+
+@media (max-width: 768px) {
+  .garden-modal__panel {
+    inset: 20px 12px;
+    border-radius: 12px;
+  }
+}
+
+.garden-modal.is-open .garden-modal__panel {
+  transform: translateY(0);
+}
+
+.garden-modal__close {
+  position: sticky;
+  top: var(--space-4);
+  float: right;
+  margin: var(--space-4) var(--space-4) 0 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--txt-mute);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 180ms var(--ease-water), border-color 180ms var(--ease-water);
+  z-index: 1;
+}
+
+.garden-modal__close:hover {
+  color: var(--txt-primary);
+  border-color: var(--acc-primary);
+}
+
+.garden-modal__content {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6) var(--space-16);
+  clear: both;
 }
 
 /* --- 記事個別ページ --- */

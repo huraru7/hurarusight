@@ -6,6 +6,7 @@
      過去のファイル・エントリは編集しない（積み重ねていく）。
    slug は garden/article.html?slug=xxx の URL に使われます。
    genre は "近況" / "エッセイ" / "メモ" / "かけら" のいずれか。
+   preview はカード一覧に表示する一文。省略すると本文から自動生成される。
    ============================================================= */
 
 export const garden = [
@@ -13,6 +14,7 @@ export const garden = [
 		slug: "kinkyo-2026-haru",
 		title: "最近のこと",
 		genre: "近況",
+		preview: "",
 		thumbnail: "",
 		thumbnailRatio: null,
 		topics: [],
@@ -27,6 +29,7 @@ export const garden = [
 		slug: "naze-tsukuru-no-ka",
 		title: "なぜ作るのか、もう少し",
 		genre: "エッセイ",
+		preview: "",
 		thumbnail: "",
 		thumbnailRatio: null,
 		topics: ["創作", "ゲーム制作"],
@@ -39,6 +42,7 @@ export const garden = [
 		slug: "memo-camera",
 		title: "カメラワークのメモ",
 		genre: "メモ",
+		preview: "",
 		thumbnail: "",
 		thumbnailRatio: null,
 		topics: ["ゲーム制作"],

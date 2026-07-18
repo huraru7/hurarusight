@@ -40,8 +40,9 @@ function getCardSpan(article, bodyText) {
 
 /* --- カードHTML --- */
 
-function cardHTML(article, preview, bodyText) {
+function cardHTML(article, autoPreview, bodyText) {
   const { col, row } = getCardSpan(article, bodyText);
+  const preview = article.preview || autoPreview;
   const latest = article.history[article.history.length - 1];
   const count = article.history.length;
   const topicsAttr = (article.topics || []).join(",");
