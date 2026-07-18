@@ -77,6 +77,9 @@
   --bp-sm: 640px;
   --bp-lg: 1024px;
 
+  /* --- ヘッダー --- */
+  --header-height: 56px;
+
   /* --- モーション --- */
   --ease-water: cubic-bezier(0.23, 1.0, 0.32, 1.0);
   --dur-default: 220ms;
@@ -103,9 +106,7 @@ body {
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: var(--leading-body);
-<<<<<<< HEAD
   font-feature-settings: "palt" 1;
-=======
   overflow-x: hidden;
 }
 
@@ -135,7 +136,6 @@ body::before {
 .garden-page {
   position: relative;
   z-index: 1;
->>>>>>> c19ad417ff5c6b85d54f46f4c3d79ed4600ad6ce
 }
 
 h1, h2, h3 {

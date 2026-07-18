@@ -6,6 +6,7 @@
   max-width: 640px;
   margin-inline: auto;
   padding-inline: var(--space-4);
+  padding-bottom: calc(var(--section-gap) / 2);
 }
 
 .about__body {

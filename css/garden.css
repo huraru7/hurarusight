@@ -5,7 +5,8 @@
 .garden-page {
   max-width: 1080px;
   margin-inline: auto;
-  padding: var(--space-6) var(--space-4) var(--space-24);
+  /* padding-top はヘッダー高さ + 余白 */
+  padding: calc(var(--header-height) + var(--space-6)) var(--space-4) var(--space-24);
 }
 
 .garden-page__back {
@@ -23,7 +24,7 @@
 
 /* --- 庭ヘッダー --- */
 .garden-header {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
 .garden-header__count {
@@ -31,54 +32,111 @@
   font-size: var(--text-xs);
   color: var(--acc-secondary);
   letter-spacing: 0.1em;
+  margin-bottom: var(--space-2);
 }
 
 .garden-header__title {
-  font-size: var(--text-2xl);
-  color: var(--acc-primary);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  text-shadow: var(--neon-glow);
-  margin-top: var(--space-1);
-  position: relative;
-  display: inline-block;
-  padding-bottom: var(--space-2);
-  transition: color var(--transition-speed) var(--ease-water);
-}
-
-.garden-header__title::before {
-  content: "// ";
-  color: var(--acc-secondary);
-  opacity: 0.7;
-}
-
-.garden-header__title::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 50%;
-  height: 3px;
-  background: var(--accent-gradient);
+  font-family: "Shippori Mincho", "游明朝", "Yu Mincho", Georgia, serif;
+  font-size: clamp(3.5rem, 9vw, 6rem);
+  font-weight: 400;
+  color: var(--txt-primary-h);
+  letter-spacing: 0.06em;
+  line-height: 1.05;
+  margin: 0;
 }
 
 .garden-header__desc {
-  font-size: var(--text-sm);
-  color: var(--txt-mute);
-  margin-top: var(--space-3);
-  transition: color var(--transition-speed) var(--ease-water);
+  font-size: var(--text-base);
+  color: var(--txt-secondary);
+  margin-top: var(--space-4);
+  line-height: var(--leading-body);
+  max-width: 480px;
 }
 
-/* --- フィルタータブ（chip風） --- */
-.garden-tabs {
+/* --- フィルター（TOPICS横スクロール + Typeドロップダウン） --- */
+.garden-filters {
   display: flex;
-  gap: var(--space-2);
-  overflow-x: auto;
-  padding-bottom: var(--space-2);
-  margin-bottom: var(--space-4);
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--border);
 }
 
+.garden-filter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.garden-filter-row--topics {
+  flex: 1;
+  min-width: 0;
+}
+
+.garden-filter-row--type {
+  flex-shrink: 0;
+}
+
+.garden-filter-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--txt-mute);
+  letter-spacing: 0.15em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0.65;
+}
+
+.garden-filter-sep {
+  width: 1px;
+  height: 1.1em;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* TOPICS 横スクロールエリア */
+.garden-topics-scroll {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  flex: 1;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding: var(--space-1) 0;
+}
+
+.garden-topics-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* スクロール矢印ボタン */
+.garden-scroll-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--txt-mute);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: color 180ms var(--ease-water), border-color 180ms var(--ease-water);
+}
+
+.garden-scroll-btn:hover {
+  color: var(--acc-primary);
+  border-color: var(--acc-primary);
+}
+
+/* トピックチップ */
 .garden-tab {
   background: none;
   border: 1px solid transparent;
@@ -87,11 +145,11 @@
   font-size: var(--text-sm);
   color: var(--txt-mute);
   white-space: nowrap;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-1) var(--space-3);
   cursor: pointer;
-  transition: color 220ms var(--ease-water),
-              border-color 220ms var(--ease-water),
-              background-color 220ms var(--ease-water);
+  transition: color 200ms var(--ease-water),
+              border-color 200ms var(--ease-water),
+              background-color 200ms var(--ease-water);
 }
 
 .garden-tab:hover {
@@ -105,37 +163,117 @@
   background: var(--accent-gradient);
 }
 
-/* --- 呼吸するグリッド --- */
+/* Typeドロップダウン */
+.garden-type-dropdown {
+  position: relative;
+}
+
+.garden-type-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--txt-mute);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: color 180ms var(--ease-water), border-color 180ms var(--ease-water);
+}
+
+.garden-type-trigger:hover,
+.garden-type-trigger[aria-expanded="true"] {
+  color: var(--acc-primary);
+  border-color: var(--acc-primary);
+}
+
+.garden-type-trigger__caret {
+  font-size: 0.65em;
+  opacity: 0.8;
+  transition: transform 220ms var(--ease-water);
+}
+
+.garden-type-trigger[aria-expanded="true"] .garden-type-trigger__caret {
+  transform: rotate(180deg);
+}
+
+.garden-type-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 140px;
+  background: rgba(20, 25, 35, 0.96);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: var(--space-1) 0;
+  list-style: none;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.garden-type-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--txt-secondary);
+  cursor: pointer;
+  transition: color 140ms, background 140ms;
+}
+
+.garden-type-option:hover {
+  color: var(--txt-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.garden-type-option.is-active {
+  color: var(--acc-primary);
+}
+
+/* --- 0件の空状態 --- */
+.garden-empty {
+  text-align: center;
+  padding: var(--space-12) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--txt-mute);
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+/* --- グリッド --- */
 .breath-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: auto;
-  gap: 10px;
+  grid-auto-rows: 200px;
+  gap: 12px;
   margin-top: var(--space-4);
 }
 
-@media (max-width: 639px) {
-  .breath-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .garden-card[data-span] {
-    grid-column: span 1;
-  }
-}
-
-@media (min-width: 640px) and (max-width: 1023px) {
+@media (min-width: 641px) and (max-width: 1023px) {
   .breath-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .garden-card[data-span="3"] {
-    grid-column: span 2;
-  }
 }
 
-.garden-card[data-span="1"] { grid-column: span 1; }
-.garden-card[data-span="2"] { grid-column: span 2; }
-.garden-card[data-span="3"] { grid-column: span 3; }
+@media (max-width: 640px) {
+  .breath-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+  .garden-card {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+}
 
 /* --- カード --- */
 .garden-card[hidden] {
@@ -143,33 +281,15 @@
 }
 
 .garden-card {
-<<<<<<< HEAD
-  background: radial-gradient(ellipse at 50% 40%, #1A201A 0%, #161C16 100%);
-  border: 1px solid var(--color-line);
-  border-radius: 6px;
-  padding: var(--space-4);
-  text-decoration: none;
   display: block;
-  transition: background var(--dur-default) var(--ease-water),
-              border-color var(--dur-default) var(--ease-water),
-              transform var(--dur-default) var(--ease-water),
-              box-shadow var(--dur-default) var(--ease-water),
-              opacity var(--dur-default) var(--ease-water);
-}
-
-.garden-card:hover {
-  background: radial-gradient(ellipse at 50% 40%, #1E261E 0%, #141A20 100%);
-  border-color: var(--color-border-hover);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(30, 60, 100, 0.15);
-=======
+  overflow: hidden;
   background: var(--bg-card);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 2px solid var(--border);
+  border-radius: 6px;
   padding: var(--space-4);
   text-decoration: none;
-  display: block;
   position: relative;
   overflow: hidden;
   transition: transform 0.3s ease,
@@ -197,7 +317,6 @@
   transform: translateY(-5px);
   border-color: var(--border-hover);
   box-shadow: 0 10px 30px var(--shadow-hover);
->>>>>>> c19ad417ff5c6b85d54f46f4c3d79ed4600ad6ce
 }
 
 /* 既読: タイトルをわずかに落ち着かせる */
@@ -208,15 +327,10 @@
 .garden-card__genre {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-<<<<<<< HEAD
-  color: var(--color-mute);
-  transition: color var(--dur-default) var(--ease-water);
-=======
   color: var(--acc-primary);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  transition: color 220ms ease;
->>>>>>> c19ad417ff5c6b85d54f46f4c3d79ed4600ad6ce
+  transition: color 220ms var(--ease-water);
 }
 
 .garden-card__title {

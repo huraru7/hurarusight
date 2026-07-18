@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>庭 | ふらる</title>
     <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/header.css" />
     <link rel="stylesheet" href="../css/decor.css" />
     <link rel="stylesheet" href="../css/garden.css" />
 
@@ -51,6 +52,12 @@
         <div class="tending-log" id="tending-log" data-tending-log></div>
       </article>
     </main>
+
+    <!-- ヘッダー -->
+    <script type="module">
+      import { initHeader } from "../js/header.js";
+      initHeader();
+    </script>
 
     <script type="module">
       import { initBackground } from "../js/background.js";

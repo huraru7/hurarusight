@@ -1,5 +1,5 @@
 /* =============================================================
-   garden/index.js — 庭トップページ：一覧＋フィルタータブの描画
+   garden/index.js — 庭トップページ：一覧＋フィルターの描画
    ============================================================= */
 
 import { garden } from "../../data/garden-index.js";
@@ -8,54 +8,50 @@ import { toPlainPreview } from "./render-markdown.js";
 import { formatTicks, formatDateRelative } from "../utils/format.js";
 import { applyReadStyles, restoreGardenScroll } from "../world/memory.js";
 
-const ALL_GENRE = "すべて";
-const GENRES = [ALL_GENRE, "近況", "エッセイ", "メモ", "かけら"];
+const ALL = "すべて";
+const GENRES = [ALL, "近況", "エッセイ", "メモ", "かけら"];
 
-/* --- コンテンツスコアリング --- */
+/* --- topicsを全記事から重複なく抽出 --- */
 
-function scoreCard(article, bodyText) {
-  const wordCount = bodyText.trim().split(/\s+/).filter(Boolean).length;
-  let score = 0;
-  score += Math.min(wordCount / 80, 3);            // 本文の長さ: 0〜3点
-  score += Math.min(article.history.length / 3, 1); // 手入れ回数: 0〜1点
-  return score;
+function extractTopics(posts) {
+  const all = posts.flatMap((p) => p.topics || []);
+  return [ALL, ...new Set(all)];
 }
 
-function getIdealSpan(score) {
-  if (score >= 3.5) return 3;
-  if (score >= 2)   return 2;
-  return 1;
-}
+/* --- カードサイズ算出 --- */
 
-/* --- 3列グリッドへの貪欲法span割当 --- */
+function getCardSpan(article, bodyText) {
+  const tending = article.history.length;
+  const bodyLen = bodyText.replace(/[#*\->\[\]()]/g, "").length;
+  const hasThumb = !!article.thumbnail;
 
-function assignSpans(items) {
-  const COLS = 3;
-  let colsUsed = 0;
-  return items.map((item) => {
-    let span = item.idealSpan;
-    if (colsUsed + span > COLS) {
-      const remaining = COLS - colsUsed;
-      if (remaining > 0) {
-        span = remaining;
-      } else {
-        colsUsed = 0;
-        span = Math.min(item.idealSpan, COLS);
-      }
-    }
-    colsUsed = (colsUsed + span) % COLS;
-    return { ...item, span };
-  });
+  if (hasThumb) {
+    const ratio = article.thumbnailRatio || 1;
+    if (ratio >= 0.8 && ratio <= 1.2) return { col: 2, row: 2 };
+    if (ratio < 0.5)                  return { col: 2, row: 1 };
+    if (ratio > 1.5)                  return { col: 1, row: 2 };
+    return { col: 2, row: 1 };
+  }
+
+  if (bodyLen >= 100 && tending >= 3) return { col: 2, row: 1 };
+  if (bodyLen >= 50)                  return { col: 1, row: 1 };
+  return { col: 1, row: 1 };
 }
 
 /* --- カードHTML --- */
 
-function cardHTML(item) {
-  const { article, preview, span } = item;
+function cardHTML(article, preview, bodyText) {
+  const { col, row } = getCardSpan(article, bodyText);
   const latest = article.history[article.history.length - 1];
   const count = article.history.length;
+  const topicsAttr = (article.topics || []).join(",");
   return `
-    <a class="garden-card" href="article.html?slug=${article.slug}" data-span="${span}" data-genre="${article.genre}" data-slug="${article.slug}">
+    <a class="garden-card"
+       href="article.html?slug=${article.slug}"
+       style="grid-column: span ${col}; grid-row: span ${row};"
+       data-genre="${article.genre}"
+       data-slug="${article.slug}"
+       data-topics="${topicsAttr}">
       <p class="garden-card__genre">${article.genre}</p>
       <h2 class="garden-card__title">${article.title}</h2>
       <p class="garden-card__body">${preview}</p>
@@ -67,15 +63,48 @@ function cardHTML(item) {
     </a>`;
 }
 
-/* --- タブ描画 --- */
+/* --- フィルター描画（TOPICS横スクロール + Typeドロップダウン） --- */
 
-function renderTabs() {
-  const host = document.querySelector("[data-garden-tabs]");
+function renderFilters(allTopics) {
+  const host = document.querySelector("[data-garden-filters]");
   if (!host) return;
-  host.innerHTML = GENRES.map(
+
+  const topicButtons = allTopics
+    .map(
+      (t) =>
+        `<button class="garden-tab${t === ALL ? " is-active" : ""}" data-topic="${t}">${t}</button>`
+    )
+    .join("");
+
+  const typeOptions = GENRES.map(
     (g) =>
-      `<button class="garden-tab${g === ALL_GENRE ? " is-active" : ""}" data-genre="${g}">${g}</button>`
+      `<li><button class="garden-type-option${g === ALL ? " is-active" : ""}" data-type-option="${g}">
+        ${g === ALL ? "すべて" : g}
+      </button></li>`
   ).join("");
+
+  host.innerHTML = `
+    <div class="garden-filter-row garden-filter-row--topics">
+      <span class="garden-filter-label">TOPICS</span>
+      <span class="garden-filter-sep" aria-hidden="true"></span>
+      <button class="garden-scroll-btn" data-scroll-dir="left" aria-label="左へスクロール">&#8249;</button>
+      <div class="garden-topics-scroll" data-topics-scroll>
+        ${topicButtons}
+      </div>
+      <button class="garden-scroll-btn" data-scroll-dir="right" aria-label="右へスクロール">&#8250;</button>
+    </div>
+    <div class="garden-filter-row garden-filter-row--type">
+      <div class="garden-type-dropdown">
+        <button class="garden-type-trigger" data-type-trigger aria-expanded="false" aria-haspopup="listbox">
+          <span data-type-label>すべてのType</span>
+          <span class="garden-type-trigger__caret">▼</span>
+        </button>
+        <ul class="garden-type-menu" data-type-menu role="listbox" hidden>
+          ${typeOptions}
+        </ul>
+      </div>
+    </div>
+  `;
 }
 
 /* --- 件数ヘッダー --- */
@@ -85,7 +114,7 @@ function renderCount() {
   if (el) el.textContent = `${garden.length}株`;
 }
 
-/* --- 一覧描画（全文fetch・スコア計算・グリッド配置） --- */
+/* --- 一覧描画（全文fetch） --- */
 
 async function renderList() {
   const host = document.querySelector("[data-garden-list]");
@@ -95,19 +124,12 @@ async function renderList() {
     garden.map((a) => loadEntryBody(a.history[a.history.length - 1].file))
   );
 
-  const withScores = garden.map((article, i) => ({
-    article,
-    preview: toPlainPreview(bodies[i]),
-    idealSpan: getIdealSpan(scoreCard(article, bodies[i])),
-  }));
-
-  const placed = assignSpans(withScores);
-  host.innerHTML = placed.map(cardHTML).join("");
+  host.innerHTML = garden.map((article, i) => cardHTML(article, toPlainPreview(bodies[i]), bodies[i])).join("");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   renderCount();
-  renderTabs();
+  renderFilters(extractTopics(garden));
   renderList().then(() => {
     applyReadStyles();
     restoreGardenScroll();

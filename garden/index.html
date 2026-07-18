@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>庭 | ふらる</title>
-    <link rel="stylesheet" href="../css/tokens.css" />
-    <link rel="stylesheet" href="../css/decor.css" />
-    <link rel="stylesheet" href="../css/garden.css" />
 
-    <!-- 庭の記事本文(Markdown)を描画するための marked、固定背景の Three.js を CDN(esm.sh) から読み込む -->
-    <script type="importmap">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>庭 | ふらる</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/decor.css" />
+  <link rel="stylesheet" href="../css/garden.css" />
+
+  <!-- 庭の記事本文(Markdown)を描画するための marked、固定背景の Three.js を CDN(esm.sh) から読み込む -->
+  <script type="importmap">
       {
         "imports": {
           "marked": "https://esm.sh/marked@12.0.2",
@@ -17,51 +22,51 @@
         }
       }
     </script>
-  </head>
-  <body>
-    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+</head>
 
-    <!-- 固定背景装飾 -->
-    <div class="decorative-lines">
-      <div class="line"></div>
-      <div class="line"></div>
-      <div class="line"></div>
-      <div class="line"></div>
-    </div>
-    <div class="dots-pattern"></div>
-    <div class="barcode"></div>
-    <div class="geometric-shape shape-1"></div>
-    <div class="geometric-shape shape-2"></div>
-    <div class="geometric-shape shape-3"></div>
+<body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
-    <main class="garden-page">
-      <a class="garden-page__back" href="../index.html">← もどる</a>
+  <!-- 固定背景装飾 -->
+  <div class="decorative-lines">
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
+  </div>
+  <div class="dots-pattern"></div>
+  <div class="barcode"></div>
+  <div class="geometric-shape shape-1"></div>
+  <div class="geometric-shape shape-2"></div>
+  <div class="geometric-shape shape-3"></div>
 
-      <header class="garden-header">
-        <p class="garden-header__count" data-garden-count></p>
-        <h1 class="garden-header__title">庭</h1>
-        <p class="garden-header__desc">近況、エッセイ、メモ、かけら — いつも手入れしている思考の断片たち。</p>
-      </header>
+  <main class="garden-page">
+    <a class="garden-page__back" href="../index.html">← もどる</a>
 
-      <nav class="garden-tabs" data-garden-tabs aria-label="ジャンルで絞り込む"></nav>
-      <div class="breath-grid" data-garden-list></div>
-    </main>
+    <header class="garden-header">
+      <p class="garden-header__count" data-garden-count></p>
+      <h1 class="garden-header__title">Garden</h1>
+      <p class="garden-header__desc">近況、エッセイ、メモ、かけら — いつも手入れしている思考の断片たち。</p>
+    </header>
 
-<<<<<<< HEAD
-    <!-- 世界観レイヤー -->
-    <script type="module">
-      import { initWorld } from "../js/world/world.js";
-      initWorld(0);
-    </script>
+    <div class="garden-filters" data-garden-filters></div>
+    <div class="breath-grid" data-garden-list></div>
+    <p class="garden-empty" data-garden-empty hidden>記事が見つかりませんでした</p>
+  </main>
 
-=======
-    <script type="module">
-      import { initBackground } from "../js/background.js";
-      const canvas = document.getElementById("bg-canvas");
-      if (canvas) initBackground(canvas);
-    </script>
->>>>>>> c19ad417ff5c6b85d54f46f4c3d79ed4600ad6ce
-    <script type="module" src="../js/garden/index.js"></script>
-    <script type="module" src="../js/garden/filter.js"></script>
-  </body>
+  <!-- ヘッダー -->
+  <script type="module">
+    import { initHeader } from "../js/header.js";
+    initHeader();
+  </script>
+
+  <script type="module">
+    import { initBackground } from "../js/background.js";
+    const canvas = document.getElementById("bg-canvas");
+    if (canvas) initBackground(canvas);
+  </script>
+  <script type="module" src="../js/garden/index.js"></script>
+  <script type="module" src="../js/garden/filter.js"></script>
+</body>
+
 </html>
