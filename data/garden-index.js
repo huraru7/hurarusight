@@ -13,7 +13,7 @@ export const garden = [
 	{
 		slug: "kinkyo-2026-haru",
 		title: "最近のこと",
-		genre: "近況",
+		genre: "update",
 		preview: "",
 		thumbnail: "",
 		thumbnailRatio: null,
@@ -28,11 +28,11 @@ export const garden = [
 	{
 		slug: "naze-tsukuru-no-ka",
 		title: "なぜ作るのか、もう少し",
-		genre: "エッセイ",
+		genre: "essay",
 		preview: "",
 		thumbnail: "",
 		thumbnailRatio: null,
-		topics: ["創作", "ゲーム制作"],
+		topics: ["creative", "gamedev"],
 		history: [
 			{ date: "2026-03-12", file: "naze-tsukuru-no-ka/2026-03-12.md" },
 			{ date: "2026-05-20", file: "naze-tsukuru-no-ka/2026-05-20.md" },
@@ -41,11 +41,11 @@ export const garden = [
 	{
 		slug: "memo-camera",
 		title: "カメラワークのメモ",
-		genre: "メモ",
+		genre: "note",
 		preview: "",
 		thumbnail: "",
 		thumbnailRatio: null,
-		topics: ["ゲーム制作"],
+		topics: ["gamedev"],
 		history: [{ date: "2026-05-01", file: "memo-camera/2026-05-01.md" }],
 	},
 ];

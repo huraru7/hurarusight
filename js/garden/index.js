@@ -8,8 +8,8 @@ import { toPlainPreview } from "./render-markdown.js";
 import { formatTicks, formatDateRelative } from "../utils/format.js";
 import { applyReadStyles, restoreGardenScroll } from "../world/memory.js";
 
-const ALL = "すべて";
-const GENRES = [ALL, "近況", "エッセイ", "メモ", "かけら"];
+const ALL = "all";
+const GENRES = [ALL, "update", "essay", "note", "fragment"];
 
 /* --- topicsを全記事から重複なく抽出 --- */
 
@@ -77,12 +77,17 @@ function renderFilters(allTopics) {
     )
     .join("");
 
-  const typeOptions = GENRES.map(
-    (g) =>
-      `<li><button class="garden-type-option${g === ALL ? " is-active" : ""}" data-type-option="${g}">
-        ${g === ALL ? "すべて" : g}
-      </button></li>`
-  ).join("");
+  const typeOptions = GENRES.filter((g) => g !== ALL)
+    .map(
+      (g) =>
+        `<li>
+          <label class="garden-type-option">
+            <input class="garden-type-checkbox" type="checkbox" value="${g}" />
+            <span>${g}</span>
+          </label>
+        </li>`
+    )
+    .join("");
 
   host.innerHTML = `
     <div class="garden-filter-row garden-filter-row--topics">
@@ -97,7 +102,7 @@ function renderFilters(allTopics) {
     <div class="garden-filter-row garden-filter-row--type">
       <div class="garden-type-dropdown">
         <button class="garden-type-trigger" data-type-trigger aria-expanded="false" aria-haspopup="listbox">
-          <span data-type-label>すべてのType</span>
+          <span data-type-label>All Types</span>
           <span class="garden-type-trigger__caret">▼</span>
         </button>
         <ul class="garden-type-menu" data-type-menu role="listbox" hidden>
