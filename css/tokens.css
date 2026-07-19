@@ -102,25 +102,13 @@
 body {
   min-height: 100vh;
   position: relative;
+  background: #0a0d12;
   color: var(--txt-primary);
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: var(--leading-body);
   font-feature-settings: "palt" 1;
   overflow-x: hidden;
-}
-
-/* --- 固定背景（グラデーション + サイバーグリッド） --- */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(135deg, #1a1d29 0%, #0f1116 100%),
-    linear-gradient(rgba(91, 163, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(91, 163, 255, 0.07) 1px, transparent 1px);
-  background-size: 100% 100%, 60px 60px, 60px 60px;
-  z-index: -2;
 }
 
 /* Three.js の粒子アニメーション背景（js/background.js） */
