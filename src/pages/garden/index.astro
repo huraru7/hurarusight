@@ -112,11 +112,13 @@ const allTopics = ['all', ...new Set(articles.flatMap((a) => a.data.topics))];
     <p class="garden-empty" data-garden-empty hidden>記事が見つかりませんでした</p>
   </main>
 
-  <script is:inline type="module">
-    import { applyReadStyles, restoreGardenScroll, saveGardenScroll } from '/js/world/memory.js';
+  <script>
+    import { applyReadStyles, restoreGardenScroll, saveGardenScroll } from '../../scripts/memory.js';
     applyReadStyles();
     restoreGardenScroll();
     window.addEventListener('pagehide', saveGardenScroll);
   </script>
-  <Fragment set:html={`<script type="module" src="/js/garden/filter.js"></script>`} />
+  <script>
+    import '../../scripts/garden/filter.js';
+  </script>
 </Layout>

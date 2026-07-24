@@ -68,9 +68,9 @@ const count = logs.length;
     </article>
   </main>
 
-  <script is:inline type="module">
-    import { markAsRead } from '/js/world/memory.js';
-    const slug = document.querySelector('[data-slug]')?.dataset.slug;
+  <script>
+    import { markAsRead } from '../../scripts/memory.js';
+    const slug = (document.querySelector('[data-slug]') as HTMLElement | null)?.dataset.slug;
     if (slug) markAsRead(slug);
 
     const btn = document.querySelector('[data-tending-header]');
