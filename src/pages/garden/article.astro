@@ -1,0 +1,37 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const importmap = JSON.stringify({
+  imports: {
+    "marked": "https://esm.sh/marked@12.0.2",
+    "three": "https://esm.sh/three@0.160.0"
+  }
+});
+---
+<Layout
+  title="庭 | ふらる"
+  extraStyles={["/css/garden.css"]}
+  importmap={importmap}
+>
+  <main class="garden-page">
+    <a class="garden-page__back" href="/garden/">← 庭にもどる</a>
+
+    <article class="garden-article" data-article-root>
+      <p class="garden-article__genre" data-article-genre></p>
+      <h1 class="garden-article__title" data-article-title></h1>
+
+      <button class="tending-header" data-tending-header aria-expanded="false" aria-controls="tending-log">
+        <span data-tending-label></span>
+      </button>
+
+      <hr />
+
+      <div class="garden-article__body" data-article-body></div>
+
+      <div class="tending-log" id="tending-log" data-tending-log></div>
+    </article>
+  </main>
+  <Fragment set:html={`
+    <script type="module" src="/js/garden/article.js"></script>
+  `} />
+</Layout>

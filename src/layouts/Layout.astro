@@ -1,0 +1,40 @@
+---
+interface Props {
+  title: string;
+  extraStyles?: string[];
+  importmap?: string;
+  googleFonts?: boolean;
+}
+const { title, extraStyles = [], importmap, googleFonts = false } = Astro.props;
+---
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    {googleFonts && (
+      <>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet" />
+      </>
+    )}
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/header.css" />
+    {extraStyles.map(href => <link rel="stylesheet" href={href} />)}
+    {importmap && <script type="importmap" set:html={importmap} />}
+  </head>
+  <body>
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+    <slot />
+    <script is:inline type="module">
+      import { initHeader } from "/js/header.js";
+      initHeader();
+    </script>
+    <script is:inline type="module">
+      import { initBackground } from "/js/background.js";
+      const canvas = document.getElementById("bg-canvas");
+      if (canvas) initBackground(canvas);
+    </script>
+  </body>
+</html>

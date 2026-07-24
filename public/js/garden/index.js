@@ -48,7 +48,7 @@ function cardHTML(article, autoPreview, bodyText) {
   const topicsAttr = (article.topics || []).join(",");
   return `
     <a class="garden-card"
-       href="article.html?slug=${article.slug}"
+       href="/garden/article/?slug=${article.slug}"
        style="grid-column: span ${col}; grid-row: span ${row};"
        data-genre="${article.genre}"
        data-slug="${article.slug}"
