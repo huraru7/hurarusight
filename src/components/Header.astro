@@ -1,0 +1,13 @@
+---
+const path = Astro.url.pathname;
+const isGarden = path.startsWith('/garden/');
+const isGardenIndex = path === '/garden/';
+---
+<header class="site-header">
+  <a class="site-header__logo" href="/">ふらる</a>
+  <nav class="site-header__nav" aria-label="メインナビゲーション">
+    <a class={`site-header__link${!isGarden ? ' is-current' : ''}`} href="/">Top</a>
+    <a class={`site-header__link${isGardenIndex ? ' is-current' : ''}`} href="/garden/">Garden</a>
+    <a class="site-header__link" href="/#about">About</a>
+  </nav>
+</header>

@@ -1,0 +1,86 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { formatTicks, formatDate } from '../../utils/format.ts';
+import '../../styles/garden.css';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('garden');
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+
+const allLogs = await getCollection('gardenLog');
+const logs = allLogs
+  .filter((e) => e.id.startsWith(article.id + '/'))
+  .sort((a, b) => b.id.localeCompare(a.id));
+
+const latestLog = logs[0];
+const pastLogs  = logs.slice(1);
+
+const latestDate = latestLog?.id.split('/')[1] ?? '';
+const count = logs.length;
+---
+<Layout title={`${article.data.title} | 庭 | ふらる`}>
+  <main class="garden-page">
+    <a class="garden-page__back" href="/garden/">← 庭にもどる</a>
+
+    <article class="garden-article" data-slug={article.id}>
+      <p class="garden-article__genre">{article.data.genre}</p>
+      <h1 class="garden-article__title">{article.data.title}</h1>
+
+      {pastLogs.length > 0 && (
+        <button class="tending-header" data-tending-header aria-expanded="false" aria-controls="tending-log">
+          <span data-tending-label>
+            {formatTicks(count)} ×{count} &mdash; 過去の手入れを見る
+          </span>
+        </button>
+      )}
+
+      <hr />
+
+      <div class="garden-article__body">
+        <p class="garden-card__meta" style="margin-bottom: var(--space-4);">
+          <span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--txt-mute);">
+            {formatDate(latestDate)}
+          </span>
+        </p>
+        <div set:html={latestLog?.rendered?.html ?? ''} />
+      </div>
+
+      {pastLogs.length > 0 && (
+        <div class="tending-log" id="tending-log" data-tending-log>
+          {pastLogs.map((entry) => {
+            const date = entry.id.split('/')[1] ?? '';
+            return (
+              <div class="tending-log__entry">
+                <p class="tending-log__date">{formatDate(date)}</p>
+                <div class="tending-log__body" set:html={entry.rendered?.html ?? ''} />
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </article>
+  </main>
+
+  <script is:inline type="module">
+    import { markAsRead } from '/js/world/memory.js';
+    const slug = document.querySelector('[data-slug]')?.dataset.slug;
+    if (slug) markAsRead(slug);
+
+    const btn = document.querySelector('[data-tending-header]');
+    const log = document.getElementById('tending-log');
+    if (btn && log) {
+      btn.addEventListener('click', () => {
+        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!isOpen));
+        log.style.maxHeight = isOpen ? '0' : log.scrollHeight + 'px';
+      });
+    }
+  </script>
+</Layout>

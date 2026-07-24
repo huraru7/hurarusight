@@ -1,43 +1,46 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import LinkButtons from '../components/LinkButtons.astro';
+import { content } from '../data/content.js';
+import '../styles/hero.css';
+import '../styles/link-buttons.css';
+import '../styles/sections.css';
 
-const importmap = JSON.stringify({
-  imports: { "three": "https://esm.sh/three@0.160.0" }
-});
+const { profile, about, why, contactNote } = content;
+const lastWhyIdx = why.paragraphs.length - 1;
 ---
-<Layout
-  title="ふらる | hurarunium"
-  extraStyles={["/css/link-buttons.css", "/css/hero.css", "/css/about.css", "/css/why.css", "/css/contact.css"]}
-  importmap={importmap}
->
+<Layout title="ふらる | hurarunium">
   <main class="site">
     <section class="hero" id="hero">
-      <div class="hero__avatar" aria-hidden="true" data-hero-avatar></div>
-      <h1 class="hero__name" data-bind="profile.name">ふらる</h1>
-      <p class="hero__tagline" data-bind="profile.tagline">Wanderer of Worlds</p>
-      <div class="hero__links link-buttons" data-hero-links></div>
+      <div class="hero__avatar" aria-hidden="true">{profile.name.charAt(0)}</div>
+      <h1 class="hero__name">{profile.name}</h1>
+      <p class="hero__tagline">{profile.tagline}</p>
+      <div class="hero__links">
+        <LinkButtons />
+      </div>
       <div class="hero__scroll-hint" aria-hidden="true">↓</div>
     </section>
 
     <section class="about" id="about">
       <p class="section-label">ABOUT</p>
-      <div class="about__body" data-about-body></div>
+      <div class="about__body">
+        {about.paragraphs.map((p) => <p>{p}</p>)}
+      </div>
     </section>
 
     <section class="why" id="why">
-      <div class="why__body" data-why-body></div>
+      <div class="why__body">
+        {why.paragraphs.map((p, i) =>
+          i !== lastWhyIdx
+            ? <p>{p}</p>
+            : <p>{p} <a class="why__link" href={why.linkHref}>{why.linkText}</a></p>
+        )}
+      </div>
     </section>
 
     <section class="contact" id="contact">
-      <p class="contact__thanks" data-bind="contactNote">ここまで読んでくれて、ありがとうございます。</p>
-      <div class="contact__links link-buttons" data-contact-links></div>
+      <p class="contact__thanks">{contactNote}</p>
+      <LinkButtons />
     </section>
   </main>
-  <Fragment set:html={`
-    <script type="module" src="/js/main.js"></script>
-    <script type="module" src="/js/hero.js"></script>
-    <script type="module" src="/js/about.js"></script>
-    <script type="module" src="/js/why.js"></script>
-    <script type="module" src="/js/contact.js"></script>
-  `} />
 </Layout>

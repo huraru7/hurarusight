@@ -18,16 +18,11 @@
   border: 1px solid var(--border);
   text-decoration: none;
   font-size: var(--text-sm);
-<<<<<<< HEAD
-  color: var(--color-ink);
-  transition: background-color var(--dur-default) var(--ease-water);
-=======
   color: var(--txt-primary);
   transition: background var(--transition-speed) var(--ease-water),
               border-color 0.3s ease,
               color 0.3s ease,
               transform 0.3s ease;
->>>>>>> c19ad417ff5c6b85d54f46f4c3d79ed4600ad6ce
 }
 
 .link-button:hover,
