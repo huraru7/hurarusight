@@ -21,15 +21,14 @@ const { title, googleFonts = false } = Astro.props;
         <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet" />
       </>
     )}
-    <Fragment set:html={`<script type="importmap">{"imports":{"three":"https://esm.sh/three@0.160.0"}}</script>`} />
   </head>
   <body>
     <canvas id="bg-canvas" aria-hidden="true"></canvas>
     <Header />
     <slot />
-    <script is:inline type="module">
-      import { initBackground } from "/js/background.js";
-      const canvas = document.getElementById("bg-canvas");
+    <script>
+      import { initBackground } from '../scripts/background.js';
+      const canvas = document.getElementById('bg-canvas');
       if (canvas) initBackground(canvas);
     </script>
   </body>

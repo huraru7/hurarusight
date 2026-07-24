@@ -1,7 +1,6 @@
 /* =============================================================
    background.js — Three.jsによる固定背景（漂う粒子のみ）
-   CDN(esm.sh)からimportmap経由で読み込む（ビルドステップなし）。
-   粒子数・色などの調整値は js/config/background.config.js を参照。
+   粒子数・色などの調整値は config/background.config.js を参照。
    ============================================================= */
 
 import * as THREE from "three";
