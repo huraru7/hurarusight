@@ -9,7 +9,7 @@ interface Props {
   ogType?: 'website' | 'article';
   noindex?: boolean;
 }
-const defaultDescription = 'ふらるの個人サイト。ゲーム制作や文章など、作ったものを置いています。';
+const defaultDescription = 'ふらる(a.k.a hurarunium)の個人サイト。';
 const { title, description = defaultDescription, ogType = 'website', noindex = false } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const gaId = import.meta.env.PUBLIC_GA_ID;
