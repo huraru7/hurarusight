@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { formatDate } from '../../utils/format.ts';
+
+const notes = (await getCollection('notes')).sort((a, b) => b.data.date.localeCompare(a.data.date));
+---
+<Layout title="Notes | ふらる">
+  <main class="container page">
+    <h1 class="page__title">Notes</h1>
+    {notes.length === 0 ? (
+      <p class="empty">まだ記事がありません。</p>
+    ) : (
+      <ul class="note-list">
+        {notes.map((n) => (
+          <li class="note-list__item">
+            <a class="note-list__link" href={`/notes/${n.id}/`}>
+              <p class="note-list__title">{n.data.title}</p>
+              <p class="note-list__date">{formatDate(n.data.date)}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </main>
+</Layout>

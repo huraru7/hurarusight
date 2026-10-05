@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { content } from '../data/content.js';
+import { formatDate } from '../utils/format.ts';
+
+const { profile, links } = content;
+const recent = (await getCollection('notes'))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .slice(0, 5);
+---
+<Layout title="ふらる | hurarunium">
+  <main class="container">
+    <section class="intro">
+      <h1 class="intro__name">{profile.name}</h1>
+      <p class="intro__tagline">{profile.tagline}</p>
+      <p class="intro__text">{profile.intro}</p>
+      <div class="intro__links">
+        {links.map((l) => <a href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>)}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">NOTES</h2>
+      {recent.length === 0 ? (
+        <p class="empty">まだ記事がありません。</p>
+      ) : (
+        <ul class="note-list">
+          {recent.map((n) => (
+            <li class="note-list__item">
+              <a class="note-list__link" href={`/notes/${n.id}/`}>
+                <p class="note-list__title">{n.data.title}</p>
+                <p class="note-list__date">{formatDate(n.data.date)}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+      <a class="more" href="/notes/">すべて見る →</a>
+    </section>
+  </main>
+</Layout>

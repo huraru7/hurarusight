@@ -1,0 +1,11 @@
+---
+const isNotes = Astro.url.pathname.startsWith('/notes');
+---
+<header class="site-header">
+  <div class="container">
+    <a class="site-header__logo" href="/">ふらる</a>
+    <nav class="site-header__nav" aria-label="メインナビゲーション">
+      <a class={isNotes ? 'is-current' : ''} href="/notes/">Notes</a>
+    </nav>
+  </div>
+</header>

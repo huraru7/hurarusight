@@ -1,0 +1,24 @@
+# Astro
+dist/
+.astro/
+
+# 依存関係
+node_modules/
+
+# ビルドキャッシュ
+.vite/
+.cache/
+
+# 環境変数
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# エディタ
+.vscode/
+.idea/
+*.swp
