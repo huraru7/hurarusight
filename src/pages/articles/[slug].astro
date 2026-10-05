@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import { siteName } from '../../data/content.ts';
 import { formatDate } from '../../utils/format.ts';
 
 export async function getStaticPaths() {
@@ -15,11 +16,13 @@ const { article } = Astro.props;
 const { Content } = await render(article);
 ---
 <Layout
-  title={`${article.data.title} | ふらる`}
+  title={`${article.data.title} | ${siteName}`}
   description={article.data.description}
   ogType="article"
+  noindex={article.data.unlisted}
 >
   <main class="container page">
+    <a class="back-link" href="/articles/">← 記事一覧に戻る</a>
     <article class="article">
       <h1 class="article__title">{article.data.title}</h1>
       <p class="article__date">{formatDate(article.data.date)}</p>

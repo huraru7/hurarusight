@@ -1,21 +1,19 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import { profile, links } from '../data/content.ts';
+import { siteName, profile, links } from '../data/content.ts';
+import { getListedArticles } from '../utils/articles.ts';
 import ArticleList from '../components/ArticleList.astro';
 
-const recent = (await getCollection('articles'))
-  .sort((a, b) => b.data.date.localeCompare(a.data.date))
-  .slice(0, 4);
+const recent = (await getListedArticles()).slice(0, 4);
 const siteJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: profile.name,
-  alternateName: profile.aka,
+  name: siteName,
+  alternateName: [profile.name, ...profile.aka],
   url: Astro.site?.href,
 });
 ---
-<Layout title={profile.name}>
+<Layout title={siteName}>
   <script type="application/ld+json" slot="head" set:html={siteJsonLd} />
   <main class="container">
     <section class="intro">

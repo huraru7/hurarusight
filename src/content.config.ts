@@ -10,6 +10,8 @@ const articles = defineCollection({
     // URL表記用(半角英数字とハイフン)。/articles/<slug>/ になる
     slug: z.string().regex(/^[a-z0-9-]+$/),
     title: z.string(),
+    // true にすると、一覧(トップ・Articles)とサイトマップに出さず、検索にも載せない。URLを直接開けば読める
+    unlisted: z.boolean().default(false),
     // 検索結果やSNS共有に出る説明文(120字前後まで)
     description: z.string(),
     date: z.string(),

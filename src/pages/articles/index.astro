@@ -1,11 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import { siteName } from '../../data/content.ts';
+import { getListedArticles } from '../../utils/articles.ts';
 import ArticleList from '../../components/ArticleList.astro';
 
-const articles = (await getCollection('articles')).sort((a, b) => b.data.date.localeCompare(a.data.date));
+const articles = await getListedArticles();
 ---
-<Layout title="Articles | ふらる">
+<Layout title={`Articles | ${siteName}`}>
   <main class="container page">
     <h1 class="page__title">Articles</h1>
     <ArticleList articles={articles} />
