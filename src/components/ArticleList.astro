@@ -1,0 +1,23 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../utils/format.ts';
+
+interface Props {
+  articles: CollectionEntry<'articles'>[];
+}
+const { articles } = Astro.props;
+---
+{articles.length === 0 ? (
+  <p class="empty">まだ記事がありません。</p>
+) : (
+  <ul class="article-list">
+    {articles.map((a) => (
+      <li class="article-list__item">
+        <a class="article-list__link" href={`/articles/${a.id}/`}>
+          <p class="article-list__title">{a.data.title}</p>
+          <p class="article-list__date">{formatDate(a.data.date)}</p>
+        </a>
+      </li>
+    ))}
+  </ul>
+)}

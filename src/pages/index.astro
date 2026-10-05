@@ -1,18 +1,26 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import { content } from '../data/content.js';
-import { formatDate } from '../utils/format.ts';
+import { profile, links } from '../data/content.ts';
+import ArticleList from '../components/ArticleList.astro';
 
-const { profile, links } = content;
-const recent = (await getCollection('notes'))
+const recent = (await getCollection('articles'))
   .sort((a, b) => b.data.date.localeCompare(a.data.date))
-  .slice(0, 5);
+  .slice(0, 4);
+const siteJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: profile.name,
+  alternateName: profile.aka,
+  url: Astro.site?.href,
+});
 ---
-<Layout title="ふらる | hurarunium">
+<Layout title={profile.name}>
+  <script type="application/ld+json" slot="head" set:html={siteJsonLd} />
   <main class="container">
     <section class="intro">
       <h1 class="intro__name">{profile.name}</h1>
+      <p class="intro__aka">a.k.a. {profile.aka.join(" / ")}</p>
       <p class="intro__tagline">{profile.tagline}</p>
       <p class="intro__text">{profile.intro}</p>
       <div class="intro__links">
@@ -21,22 +29,8 @@ const recent = (await getCollection('notes'))
     </section>
 
     <section>
-      <h2 class="section-title">NOTES</h2>
-      {recent.length === 0 ? (
-        <p class="empty">まだ記事がありません。</p>
-      ) : (
-        <ul class="note-list">
-          {recent.map((n) => (
-            <li class="note-list__item">
-              <a class="note-list__link" href={`/notes/${n.id}/`}>
-                <p class="note-list__title">{n.data.title}</p>
-                <p class="note-list__date">{formatDate(n.data.date)}</p>
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-      <a class="more" href="/notes/">すべて見る →</a>
+      <h2 class="section-title">ARTICLES</h2>
+      <ArticleList articles={recent} />
     </section>
   </main>
 </Layout>
