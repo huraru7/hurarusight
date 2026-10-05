@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Header from '../components/Header.astro';
+import { siteName } from '../data/content.ts';
 
 interface Props {
   title: string;
@@ -23,7 +24,7 @@ const gaId = import.meta.env.PUBLIC_GA_ID;
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" type="image/png" href="/profile-icon.png" />
     <link rel="apple-touch-icon" href="/profile-icon.png" />
-    <meta property="og:site_name" content="ふらる" />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

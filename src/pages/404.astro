@@ -1,7 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { siteName } from '../data/content.ts';
 ---
-<Layout title="404 | ふらる" description="ページが見つかりませんでした。" noindex>
+<Layout title={`404 | ${siteName}`} description="ページが見つかりませんでした。" noindex>
   <main class="container page">
     <h1 class="page__title">404</h1>
     <p class="not-found__text">お探しのページは見つかりませんでした。URLが間違っているか、移動・削除された可能性があります。</p>

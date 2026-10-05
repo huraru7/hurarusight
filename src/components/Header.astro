@@ -1,9 +1,13 @@
 ---
+import { siteName } from '../data/content.ts';
+
 const isArticles = Astro.url.pathname.startsWith('/articles');
+// Articles 配下ではロゴを現在地つきの表記にする(サイト名の title などは変えない)
+const logoText = isArticles ? 'huraru(home.articles)' : siteName;
 ---
 <header class="site-header">
   <div class="container">
-    <a class="site-header__logo" href="/">ふらる</a>
+    <a class="site-header__logo" href="/">{logoText}</a>
     <nav class="site-header__nav" aria-label="メインナビゲーション">
       <a class={isArticles ? 'is-current' : ''} href="/articles/">Articles</a>
     </nav>

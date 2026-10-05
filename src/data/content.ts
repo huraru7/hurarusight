@@ -10,11 +10,14 @@ export interface Link {
   url: string;
 }
 
+// サイト名(title・検索結果・ヘッダーのロゴで共通に使う)
+export const siteName = "huraru(home)";
+
 export const profile: Profile = {
   name: "ふらる",
   aka: ["hurarunium", "ふらるにうむ"],
   tagline: "Geometric Never-Ending Creating",
-  intro: "ゲームを作ったり、文章を書いたり、思いついたものを形にするのが好きです。",
+  intro: "ゲームを作ったり。ツールを作ったり。 思ったものを作ることが好きです。",
 };
 
 export const links: Link[] = [
