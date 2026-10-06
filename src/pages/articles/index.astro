@@ -7,8 +7,36 @@ import ArticleList from '../../components/ArticleList.astro';
 const articles = await getListedArticles();
 ---
 <Layout title={`Articles | ${siteName}`}>
-  <main class="container page">
-    <h1 class="page__title">Articles</h1>
+  <main class="container page page--articles">
+    <div class="articles-head">
+      <h1 class="page__title">Articles</h1>
+      <label class="search-box">
+        <svg class="search-box__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" />
+        </svg>
+        <input id="article-search" class="search-box__input" type="search" placeholder="記事を検索" aria-label="記事を検索" autocomplete="off" />
+      </label>
+    </div>
     <ArticleList articles={articles} />
+    <p id="article-search-empty" class="empty" hidden>該当する記事がありません。</p>
   </main>
 </Layout>
+
+<script>
+  // 入力のたびに、スペース区切りの全語を含む記事だけを表示する
+  const input = document.getElementById('article-search') as HTMLInputElement;
+  const emptyMessage = document.getElementById('article-search-empty') as HTMLElement;
+  const items = document.querySelectorAll<HTMLElement>('.article-list__item');
+
+  input.addEventListener('input', () => {
+    const words = input.value.toLowerCase().split(/\s+/).filter(Boolean);
+    let visible = 0;
+    items.forEach((item) => {
+      const text = item.dataset.search ?? '';
+      const match = words.every((w) => text.includes(w));
+      item.hidden = !match;
+      if (match) visible++;
+    });
+    emptyMessage.hidden = visible > 0 || items.length === 0;
+  });
+</script>

@@ -71,6 +71,22 @@ main { width: 100%; max-width: var(--width); margin-inline: auto; }
 .page { padding-block: 40px 80px; }
 .page__title { font-size: 22px; margin-bottom: 24px; }
 
+/* Articles: タイトルの右に検索ボックス(狭い画面では下に回り込む) */
+.articles-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; margin-bottom: 24px; }
+.articles-head .page__title { margin-bottom: 0; }
+.search-box { position: relative; display: block; flex: 0 1 260px; }
+.search-box__icon {
+  position: absolute; left: 10px; top: 50%; width: 16px; height: 16px; transform: translateY(-50%);
+  fill: none; stroke: var(--txt-mute); stroke-width: 2; stroke-linecap: round; pointer-events: none;
+}
+.search-box__input {
+  width: 100%; padding: 8px 10px 8px 34px; font: inherit; color: var(--txt);
+  background: #1e1e1e; border: 1px solid var(--line); border-radius: 6px;
+}
+.search-box__input:focus { outline: none; border-color: var(--accent); }
+.search-box:focus-within .search-box__icon { stroke: var(--accent); }
+.article-list__item[hidden] { display: none; }
+
 /* 記事本文 */
 .back-link { display: inline-block; color: var(--txt-mute); font-size: 13px; margin-bottom: 24px; }
 .back-link:hover { color: var(--accent); }
