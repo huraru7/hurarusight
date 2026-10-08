@@ -9,11 +9,11 @@ const siteJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: siteName,
-  alternateName: [profile.name, ...profile.aka],
+  alternateName: [profile.name, 'hurarunium', ...profile.aka],
   url: Astro.site?.href,
 });
 ---
-<Layout title={siteName}>
+<Layout title={siteName} description="hurarunium(ふらるにうむ / a.k.a huraru)の個人サイト。ゲームを作ったり、考えたことを書いたりしています。">
   <script type="application/ld+json" slot="head" set:html={siteJsonLd} />
   <main class="container">
     <section class="intro">

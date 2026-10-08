@@ -5,14 +5,16 @@ import { unified } from '@astrojs/markdown-remark';
 import remarkBreaks from 'remark-breaks';
 import remarkSubtext from './src/plugins/remark-subtext.ts';
 import remarkLinkCard from './src/plugins/remark-link-card.ts';
+import { articlesDir } from './src/utils/articlesDir.js';
 
-// frontmatter に `unlisted: true` がある記事のURLを集める(サイトマップから除外するため)
-const articlesDir = './src/content/articles';
-const unlistedPaths = readdirSync(articlesDir)
-  .filter((f) => f.endsWith('.md'))
-  .map((f) => readFileSync(`${articlesDir}/${f}`, 'utf-8').split('---')[1] ?? '')
-  .filter((fm) => /^unlisted:\s*true\s*$/m.test(fm))
-  .map((fm) => `/articles/${/^slug:\s*(\S+)\s*$/m.exec(fm)?.[1]}/`);
+// 記事が0本のまま公開されないよう、ビルドを止める
+const articleFiles = readdirSync(articlesDir).filter((f) => f.endsWith('.md'));
+if (articleFiles.length === 0) throw new Error(`記事が見つかりません: ${articlesDir}`);
+
+// frontmatter の status が unlisted の記事のURLを集める(サイトマップから除外するため)
+const unlistedPaths = articleFiles
+  .filter((f) => /^status:\s*unlisted\s*$/m.test(readFileSync(`${articlesDir}/${f}`, 'utf-8').split('---')[1] ?? ''))
+  .map((f) => `/articles/${f.replace(/\.md$/, '')}/`);
 
 export default defineConfig({
   site: 'https://huraru.com',

@@ -2,8 +2,11 @@
   "name": "huraru-portfolio",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/copy-article-images.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/copy-article-images.mjs",
     "build": "astro build",
+    "build:cf": "node scripts/fetch-articles.mjs && npm run build",
     "preview": "astro preview"
   },
   "dependencies": {

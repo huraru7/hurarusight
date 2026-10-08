@@ -58,6 +58,7 @@ main { width: 100%; max-width: var(--width); margin-inline: auto; }
 .article-list__link { display: block; padding: 18px 0; }
 .article-list__link:hover .article-list__title { color: var(--accent); }
 .article-list__title { font-weight: 700; }
+.article-list__tags { color: var(--txt-mute); font-size: 12px; }
 .article-list__date { color: var(--txt-mute); font-size: 13px; }
 .empty { color: var(--txt-mute); padding-block: 24px; }
 
