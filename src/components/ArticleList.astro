@@ -16,6 +16,9 @@ const { articles } = Astro.props;
         <a class="article-list__link" href={`/articles/${a.id}/`}>
           <p class="article-list__title">{a.data.title}</p>
           <p class="article-list__date">{formatDate(a.data.date)}</p>
+          {a.data.tags.length > 0 && (
+            <p class="article-list__tags">{a.data.tags.map((t) => `#${t}`).join(' ')}</p>
+          )}
         </a>
       </li>
     ))}

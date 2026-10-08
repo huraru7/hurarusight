@@ -22,3 +22,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# 記事リポジトリから取得するもの
+.articles/
+public/article-images/
