@@ -9,7 +9,7 @@ interface Props {
   ogType?: 'website' | 'article';
   noindex?: boolean;
 }
-const defaultDescription = 'ふらる(a.k.a hurarunium)の個人サイト。';
+const defaultDescription = 'hurarunium(ふらるにうむ / a.k.a huraru)の個人サイト。';
 const { title, description = defaultDescription, ogType = 'website', noindex = false } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const gaId = import.meta.env.PUBLIC_GA_ID;
@@ -52,7 +52,7 @@ const gaId = import.meta.env.PUBLIC_GA_ID;
     <Header />
     <slot />
     <footer class="site-footer">
-      <div class="container">© 2026 huraru / (hurarunium)</div>
+      <div class="container">© 2026 hurarunium / (huraru)</div>
     </footer>
   </body>
 </html>

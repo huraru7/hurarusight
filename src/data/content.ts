@@ -14,8 +14,8 @@ export interface Link {
 export const siteName = "huraru(home)";
 
 export const profile: Profile = {
-  name: "ふらる",
-  aka: ["hurarunium", "ふらるにうむ"],
+  name: "ふらるにうむ",
+  aka: ["huraru", "ふらる"],
   tagline: "Geometric Never-Ending Creating",
   intro: "ゲームを作ったり。ツールを作ったり。 思ったものを作ることが好きです。",
 };
