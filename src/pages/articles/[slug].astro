@@ -4,6 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 import { siteName } from '../../data/content.ts';
 import { formatDate } from '../../utils/format.ts';
 import { getPublishedArticles } from '../../utils/articles.ts';
+import TagLinks from '../../components/TagLinks.astro';
 
 export async function getStaticPaths() {
   const articles = await getPublishedArticles();
@@ -27,6 +28,7 @@ const { Content } = await render(article);
     <article class="article">
       <h1 class="article__title">{article.data.title}</h1>
       <p class="article__date">{formatDate(article.data.date)}</p>
+      <TagLinks tags={article.data.tags} class="article__tags" />
       <div class="article__body">
         <Content />
       </div>

@@ -1,14 +1,106 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { siteName } from '../../data/content.ts';
-import { getListedArticles } from '../../utils/articles.ts';
+import { collectTags, getListedArticles } from '../../utils/articles.ts';
 import ArticleList from '../../components/ArticleList.astro';
 
 const articles = await getListedArticles();
+const tags = collectTags(articles);
+// 折りたたまずに見せるタグの数(記事数の多い順に、この数まで)
+const visibleTagCount = 8;
+const hiddenTagCount = Math.max(tags.length - visibleTagCount, 0);
 ---
 <Layout title={`Articles | ${siteName}`}>
-  <main class="container page">
-    <h1 class="page__title">Articles</h1>
+  <main class="container page page--articles">
+    <div class="articles-head">
+      <h1 class="page__title">Articles</h1>
+      <label class="search-box">
+        <svg class="search-box__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" />
+        </svg>
+        <input id="article-search" class="search-box__input" type="search" placeholder="記事を検索" aria-label="記事を検索" autocomplete="off" />
+      </label>
+    </div>
+    {tags.length > 0 && (
+      <div class="tag-filter" role="group" aria-label="タグで絞り込む">
+        <button class="tag-filter__chip" type="button" data-tag="" aria-pressed="true">すべて</button>
+        {tags.map((t, i) => (
+          <button class="tag-filter__chip" type="button" data-tag={t} data-extra={i >= visibleTagCount ? '' : undefined} hidden={i >= visibleTagCount} aria-pressed="false">#{t}</button>
+        ))}
+        {hiddenTagCount > 0 && (
+          <button id="tag-filter-more" class="tag-filter__more" type="button" aria-expanded="false">+{hiddenTagCount}</button>
+        )}
+      </div>
+    )}
     <ArticleList articles={articles} />
+    <p id="article-search-empty" class="empty" hidden>該当する記事がありません。</p>
   </main>
 </Layout>
+
+<script>
+  // 検索語(スペース区切りの全語を含む)と選択中のタグの両方を満たす記事だけを表示する
+  const input = document.getElementById('article-search') as HTMLInputElement;
+  const emptyMessage = document.getElementById('article-search-empty') as HTMLElement;
+  const chips = document.querySelectorAll<HTMLButtonElement>('.tag-filter__chip');
+  const moreButton = document.getElementById('tag-filter-more') as HTMLButtonElement | null;
+  const entries = [...document.querySelectorAll<HTMLElement>('.article-list__item')].map((item) => ({
+    item,
+    search: item.dataset.search ?? '',
+    tags: JSON.parse(item.dataset.tags ?? '[]') as string[],
+  }));
+
+  // 選択中のタグは ?tag= に持たせ、他のページのタグリンクから絞り込んだ状態で開けるようにする
+  let selectedTag = new URLSearchParams(location.search).get('tag') ?? '';
+  let expanded = false;
+
+  // 折りたたみ中も、選択中のタグのチップは見せておく(何で絞り込んでいるか分かるように)
+  function updateChips() {
+    chips.forEach((chip) => {
+      chip.setAttribute('aria-pressed', String(chip.dataset.tag === selectedTag));
+      if (chip.dataset.extra !== undefined) chip.hidden = !expanded && chip.dataset.tag !== selectedTag;
+    });
+    if (moreButton) {
+      moreButton.setAttribute('aria-expanded', String(expanded));
+      const hiddenCount = [...chips].filter((chip) => chip.hidden).length;
+      moreButton.textContent = expanded ? '閉じる' : `+${hiddenCount}`;
+    }
+  }
+
+  function applyFilter() {
+    const words = input.value.toLowerCase().split(/\s+/).filter(Boolean);
+    let visible = 0;
+    for (const { item, search, tags } of entries) {
+      const match = words.every((w) => search.includes(w)) && (selectedTag === '' || tags.includes(selectedTag));
+      item.hidden = !match;
+      if (match) visible++;
+    }
+    emptyMessage.hidden = visible > 0 || entries.length === 0;
+    updateChips();
+  }
+
+  function selectTag(tag: string) {
+    selectedTag = tag;
+    const url = new URL(location.href);
+    if (tag === '') url.searchParams.delete('tag');
+    else url.searchParams.set('tag', tag);
+    history.replaceState(null, '', url);
+    applyFilter();
+  }
+
+  input.addEventListener('input', applyFilter);
+  chips.forEach((chip) => chip.addEventListener('click', () => selectTag(chip.dataset.tag ?? '')));
+  moreButton?.addEventListener('click', () => {
+    expanded = !expanded;
+    updateChips();
+  });
+
+  // 一覧の中のタグリンクは、ページを読み込み直さずに絞り込む(入力中の検索語を消さないため)
+  document.querySelectorAll<HTMLAnchorElement>('.article-list__tags a').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      selectTag(new URL(link.href).searchParams.get('tag') ?? '');
+    });
+  });
+
+  applyFilter();
+</script>
