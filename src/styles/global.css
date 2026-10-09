@@ -54,11 +54,10 @@ main { width: 100%; max-width: var(--width); margin-inline: auto; }
 
 /* 記事一覧 */
 .article-list { list-style: none; }
-.article-list__item { border-bottom: 1px solid var(--line); }
-.article-list__link { display: block; padding: 18px 0; }
+.article-list__item { border-bottom: 1px solid var(--line); padding-block: 18px; }
+.article-list__link { display: block; }
 .article-list__link:hover .article-list__title { color: var(--accent); }
 .article-list__title { font-weight: 700; }
-.article-list__tags { color: var(--txt-mute); font-size: 12px; }
 .article-list__date { color: var(--txt-mute); font-size: 13px; }
 .empty { color: var(--txt-mute); padding-block: 24px; }
 
@@ -87,11 +86,28 @@ main { width: 100%; max-width: var(--width); margin-inline: auto; }
 .search-box:focus-within .search-box__icon { stroke: var(--accent); }
 .article-list__item[hidden] { display: none; }
 
+/* タグ(一覧・記事ページ共通のリンク) */
+.tag-links { display: flex; flex-wrap: wrap; gap: 4px 12px; list-style: none; color: var(--txt-mute); font-size: 12px; }
+.tag-links__link:hover { color: var(--accent); }
+
+/* Articles: タグで絞り込むチップ */
+.tag-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.tag-filter__chip {
+  padding: 2px 12px; font: inherit; font-size: 12px; color: var(--txt-mute); cursor: pointer;
+  background: none; border: 1px solid var(--line); border-radius: 999px;
+}
+.tag-filter__chip:hover { color: var(--txt); }
+.tag-filter__chip[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+.tag-filter__chip[hidden] { display: none; }
+.tag-filter__more { padding: 2px 8px; font: inherit; font-size: 12px; color: var(--txt-mute); cursor: pointer; background: none; border: none; }
+.tag-filter__more:hover { color: var(--accent); }
+
 /* 記事本文 */
 .back-link { display: inline-block; color: var(--txt-mute); font-size: 13px; margin-bottom: 24px; }
 .back-link:hover { color: var(--accent); }
 .article__title { font-size: 24px; line-height: 1.4; }
 .article__date { color: var(--txt-mute); font-size: 13px; margin-top: 8px; }
+.article__tags { margin-top: 4px; }
 .article__body { margin-top: 32px; }
 .article__body > * + * { margin-top: 1.2em; }
 .article__body h2 { font-size: 19px; margin-top: 2em; }

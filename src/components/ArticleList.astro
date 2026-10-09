@@ -1,19 +1,20 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { formatDate } from '../utils/format.ts';
+import TagLinks from './TagLinks.astro';
 
 interface Props {
   articles: CollectionEntry<'articles'>[];
 }
 const { articles } = Astro.props;
 
-// 検索用に、タイトル・説明・本文(Markdown記号を除いたもの)を1本の文字列にする
+// 検索用に、タイトル・説明・タグ・本文(Markdown記号を除いたもの)を1本の文字列にする
 function searchText(a: CollectionEntry<'articles'>) {
   const body = (a.body ?? '')
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[#>*_`|~-]/g, ' ');
-  return `${a.data.title} ${a.data.description} ${body}`.replace(/\s+/g, ' ').toLowerCase();
+  return `${a.data.title} ${a.data.description} ${a.data.tags.join(' ')} ${body}`.replace(/\s+/g, ' ').toLowerCase();
 }
 ---
 {articles.length === 0 ? (
@@ -21,14 +22,13 @@ function searchText(a: CollectionEntry<'articles'>) {
 ) : (
   <ul class="article-list">
     {articles.map((a) => (
-      <li class="article-list__item" data-search={searchText(a)}>
+      <li class="article-list__item" data-search={searchText(a)} data-tags={JSON.stringify(a.data.tags)}>
         <a class="article-list__link" href={`/articles/${a.id}/`}>
           <p class="article-list__title">{a.data.title}</p>
           <p class="article-list__date">{formatDate(a.data.date)}</p>
-          {a.data.tags.length > 0 && (
-            <p class="article-list__tags">{a.data.tags.map((t) => `#${t}`).join(' ')}</p>
-          )}
         </a>
+        <!-- タグは別のリンクなので、記事へのリンクの外に置く(<a>は入れ子にできない) -->
+        <TagLinks tags={a.data.tags} class="article-list__tags" />
       </li>
     ))}
   </ul>

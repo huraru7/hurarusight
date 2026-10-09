@@ -1,0 +1,16 @@
+---
+import { tagFilterUrl } from '../utils/articles.ts';
+
+interface Props {
+  tags: string[];
+  class?: string;
+}
+const { tags, class: className } = Astro.props;
+---
+{tags.length > 0 && (
+  <ul class:list={['tag-links', className]}>
+    {tags.map((t) => (
+      <li><a class="tag-links__link" href={tagFilterUrl(t)}>#{t}</a></li>
+    ))}
+  </ul>
+)}
